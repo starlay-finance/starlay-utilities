@@ -1,4 +1,4 @@
-import { BytesLike, Signature, splitSignature } from '@ethersproject/bytes';
+import { BytesLike, Signature } from '@ethersproject/bytes';
 import { BigNumberish, constants, providers, utils } from 'ethers';
 import BaseService from '../commons/BaseService';
 import {
@@ -28,7 +28,6 @@ import {
   isPositiveAmount,
   isPositiveOrMinusOneAmount,
 } from '../commons/validators/paramValidators';
-import { ERC20_2612Service, ERC20_2612Interface } from '../erc20-2612';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import {
   augustusFromAmountOffsetFromCalldata,
@@ -62,7 +61,7 @@ import {
   LPWithdrawParamsType,
 } from './lendingPoolTypes';
 import { IPool } from './typechain/IPool';
-import { IPool__factory } from './typechain/IPool__factory';
+import { IPoolFactory } from './typechain/IPoolFactory';
 
 export interface PoolInterface {
   deposit: (
@@ -158,8 +157,6 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
 
   readonly repayWithCollateralAdapterService: RepayWithCollateralAdapterInterface;
 
-  readonly erc20_2612Service: ERC20_2612Interface;
-
   readonly flashLiquidationAddress: string;
 
   readonly swapCollateralAddress: string;
@@ -170,7 +167,7 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
     provider: providers.Provider,
     lendingPoolConfig?: LendingPoolMarketConfigV3,
   ) {
-    super(provider, IPool__factory);
+    super(provider, IPoolFactory);
 
     const {
       POOL,
@@ -186,7 +183,6 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
     this.repayWithCollateralAddress = REPAY_WITH_COLLATERAL_ADAPTER ?? '';
 
     // initialize services
-    this.erc20_2612Service = new ERC20_2612Service(provider);
     this.erc20Service = new ERC20Service(provider);
     this.synthetixService = new SynthetixService(provider);
     this.wethGatewayService = new WETHGatewayService(
@@ -370,38 +366,15 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
   public async signERC20Approval(
     @isEthAddress('user')
     @isEthAddress('reserve')
-    @isPositiveOrMinusOneAmount('amount')
+    @isPositiveAmount('amount')
     { user, reserve, amount }: LPSignERC20ApprovalType,
   ): Promise<string> {
-    const { getTokenData, isApproved } = this.erc20Service;
+    const { getTokenData } = this.erc20Service;
     const { name, decimals } = await getTokenData(reserve);
-
-    const convertedAmount =
-      amount === '-1'
-        ? constants.MaxUint256.toString()
-        : valueToWei(amount, decimals);
-
-    const approved = await isApproved({
-      token: reserve,
-      user,
-      spender: this.poolAddress,
-      amount,
-    });
-
-    if (approved) {
-      return '';
-    }
+    const convertedAmount: string = valueToWei(amount, decimals);
 
     const { chainId } = await this.provider.getNetwork();
-
-    const nonce = await this.erc20_2612Service.getNonce({
-      token: reserve,
-      owner: user,
-    });
-
-    if (nonce === null) {
-      return '';
-    }
+    const nonce = await this.provider.getTransactionCount(user);
 
     const typeData = {
       types: {
@@ -434,6 +407,7 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
         deadline: constants.MaxUint256.toString(),
       },
     };
+
     return JSON.stringify(typeData);
   }
 
@@ -458,8 +432,8 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
     const poolContract: IPool = this.getContractInstance(this.poolAddress);
     const stakedTokenDecimals: number = await decimalsOf(reserve);
     const convertedAmount: string = valueToWei(amount, stakedTokenDecimals);
-    // const sig: Signature = utils.splitSignature(signature);
-    const sig: Signature = splitSignature(signature);
+    const sig: Signature = utils.splitSignature(signature);
+
     const fundsAvailable: boolean =
       await this.synthetixService.synthetixValidation({
         user,
@@ -488,7 +462,11 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
     txs.push({
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
-      gas: this.generateTxPriceEstimation(txs, txCallback),
+      gas: this.generateTxPriceEstimation(
+        txs,
+        txCallback,
+        ProtocolAction.deposit,
+      ),
     });
 
     return txs;
@@ -1271,8 +1249,9 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
   public async repayWithATokens(
     @isEthAddress('user')
     @isEthAddress('reserve')
+    @isEthAddress('onBehalfOf')
     @isPositiveOrMinusOneAmount('amount')
-    { user, amount, reserve, rateMode }: LPRepayWithATokensType,
+    { user, amount, reserve, rateMode, onBehalfOf }: LPRepayWithATokensType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     if (reserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()) {
       throw new Error(
@@ -1293,12 +1272,25 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
         ? constants.MaxUint256.toString()
         : valueToWei(amount, decimals);
 
+    if (amount !== '-1') {
+      const fundsAvailable: boolean =
+        await this.synthetixService.synthetixValidation({
+          user,
+          reserve,
+          amount: convertedAmount,
+        });
+      if (!fundsAvailable) {
+        throw new Error('Not enough funds to execute operation');
+      }
+    }
+
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
         populateTransaction.repayWithATokens(
           reserve,
           convertedAmount,
           numericRateMode,
+          onBehalfOf ?? user,
         ),
       from: user,
       value: getTxValue(reserve, convertedAmount),

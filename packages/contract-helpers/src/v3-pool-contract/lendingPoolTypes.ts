@@ -143,4 +143,5 @@ export type LPRepayWithATokensType = {
   reserve: string;
   amount: string;
   rateMode: InterestRate;
+  onBehalfOf?: string;
 };
