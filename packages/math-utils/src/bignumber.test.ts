@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { normalize, normalizeBN, valueToBigNumber } from './';
+import { BigNumber, normalize, normalizeBN, valueToBigNumber } from './';
 
 describe('BigNumber tests', () => {
   describe('valueToBigNumber', () => {

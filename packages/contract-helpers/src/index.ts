@@ -21,3 +21,4 @@ export * from './governance-power-delegation-contract';
 // commons
 export * from './commons/types';
 export * from './commons/ipfs';
+export * from './commons/utils';
