@@ -52,7 +52,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 18,
       8: 18,
     },
-    aIncentiveData: {
+    lIncentiveData: {
       emissionPerSecond: BigNumber.from({
         type: 'BigNumber',
         hex: '0x06ae90db3da1ed',
@@ -128,7 +128,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 18,
       8: 18,
     },
-    vIncentiveData: {
+    vdIncentiveData: {
       emissionPerSecond: BigNumber.from({
         type: 'BigNumber',
         hex: '0x06ae90db3da1ed',
@@ -183,7 +183,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 0,
       8: 0,
     },
-    sIncentiveData: {
+    sdIncentiveData: {
       emissionPerSecond: BigNumber.from({ type: 'BigNumber', hex: '0x00' }),
       incentivesLastUpdateTimestamp: BigNumber.from({
         type: 'BigNumber',
@@ -254,7 +254,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 18,
       8: 18,
     },
-    aIncentiveData: {
+    lIncentiveData: {
       emissionPerSecond: BigNumber.from({
         type: 'BigNumber',
         hex: '0x06ae90db3da1ed',
@@ -330,7 +330,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 18,
       8: 18,
     },
-    vIncentiveData: {
+    vdIncentiveData: {
       emissionPerSecond: BigNumber.from({
         type: 'BigNumber',
         hex: '0x06ae90db3da1ed',
@@ -385,7 +385,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
       7: 0,
       8: 0,
     },
-    sIncentiveData: {
+    sdIncentiveData: {
       emissionPerSecond: BigNumber.from({ type: 'BigNumber', hex: '0x00' }),
       incentivesLastUpdateTimestamp: BigNumber.from({
         type: 'BigNumber',
@@ -414,7 +414,7 @@ export const getReservesIncentivesDataMock: ReserveIncentiveDataResponse[] = [
 export const getUserIncentivesDataMock: UserReserveIncentiveDataResponse[] = [
   {
     underlyingAsset: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    aTokenIncentivesUserData: {
+    lTokenIncentivesUserData: {
       tokenincentivesUserIndex: BigNumber.from({
         type: 'BigNumber',
         hex: '0x24094726ecb06549c3afce',
@@ -440,7 +440,7 @@ export const getUserIncentivesDataMock: UserReserveIncentiveDataResponse[] = [
       4: '0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5',
       5: 18,
     },
-    vTokenIncentivesUserData: {
+    vdTokenIncentivesUserData: {
       tokenincentivesUserIndex: BigNumber.from({
         type: 'BigNumber',
         hex: '0x24094726ecb06549c3afce',
@@ -466,7 +466,7 @@ export const getUserIncentivesDataMock: UserReserveIncentiveDataResponse[] = [
       4: '0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5',
       5: 18,
     },
-    sTokenIncentivesUserData: {
+    sdTokenIncentivesUserData: {
       tokenincentivesUserIndex: BigNumber.from({
         type: 'BigNumber',
         hex: '0x24094726ecb06549c3afce',
