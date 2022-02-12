@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.0.2 (2022-02-12)
 
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.2 (2022-02-12)
+
 **Note:** Version bump only for package @starlay/contract-helpers
 
 
