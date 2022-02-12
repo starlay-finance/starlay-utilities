@@ -144,7 +144,7 @@ describe('UiPoolDataProvider', () => {
             variableBorrowRate: '0',
             stableBorrowRate: '0',
             lastUpdateTimestamp: 1631772892,
-            aTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
+            lTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
             stableDebtTokenAddress:
               '0x9157d57DC97A7AFFC7b0a78E78fe25e1401B1dCc',
             variableDebtTokenAddress:
@@ -183,7 +183,7 @@ describe('UiPoolDataProvider', () => {
             variableBorrowRate: '0',
             stableBorrowRate: '0',
             lastUpdateTimestamp: 1631772892,
-            aTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
+            lTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
             stableDebtTokenAddress:
               '0x9157d57DC97A7AFFC7b0a78E78fe25e1401B1dCc',
             variableDebtTokenAddress:
@@ -240,7 +240,7 @@ describe('UiPoolDataProvider', () => {
       expect(result).toEqual([
         {
           principalStableDebt: '0',
-          scaledATokenBalance: '0',
+          scaledLTokenBalance: '0',
           scaledVariableDebt: '0',
           stableBorrowLastUpdateTimestamp: 0,
           stableBorrowRate: '0',
