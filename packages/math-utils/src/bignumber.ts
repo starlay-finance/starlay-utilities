@@ -1,5 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
+export { BigNumber };
+
 export type BigNumberValue = string | number | BigNumber;
 
 export const BigNumberZeroDecimal = BigNumber.clone({
