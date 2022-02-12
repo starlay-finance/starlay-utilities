@@ -13,7 +13,6 @@ export enum InterestRate {
 export const ChainIdToNetwork: Record<number, string> = {
   1: 'mainnet',
   3: 'ropsten',
-  4: 'rinkeby',
   42: 'kovan',
   100: 'xDAI',
   137: 'polygon',
@@ -22,18 +21,11 @@ export const ChainIdToNetwork: Record<number, string> = {
   43113: 'fuji',
   42161: 'arbitrum_one',
   421611: 'arbitrum_rinkeby',
-  250: 'fantom_opera',
-  4002: 'fantom_testnet',
-  10: 'optimism',
-  69: 'optimism_kovan',
-  1666600000: 'harmony',
-  1666700000: 'harmony_testnet',
 };
 
 export enum ChainId {
   mainnet = 1,
   ropsten = 3,
-  rinkeby = 4,
   kovan = 42,
   xdai = 100,
   polygon = 137,
@@ -42,12 +34,6 @@ export enum ChainId {
   fuji = 43113, // avalanche test network
   arbitrum_one = 42161,
   arbitrum_rinkeby = 421611,
-  fantom = 250,
-  fantom_testnet = 4002,
-  optimism = 10,
-  optimism_kovan = 69,
-  harmony = 1666600000,
-  harmony_testnet = 1666700000,
 }
 export type ConstantAddressesByNetwork = Record<
   string,
@@ -63,9 +49,6 @@ export type MigratorConfig = {
 export type LendingPoolMarketConfig = {
   LENDING_POOL: tEthereumAddress;
   WETH_GATEWAY?: tEthereumAddress;
-  FLASH_LIQUIDATION_ADAPTER?: tEthereumAddress;
-  REPAY_WITH_COLLATERAL_ADAPTER?: tEthereumAddress;
-  SWAP_COLLATERAL_ADAPTER?: tEthereumAddress;
 };
 
 export type LendingPoolConfig = Record<
@@ -91,8 +74,6 @@ export enum ProtocolAction {
   liquidationCall = 'liquidationCall',
   liquidationFlash = 'liquidationFlash',
   repay = 'repay',
-  swapCollateral = 'swapCollateral',
-  repayCollateral = 'repayCollateral',
   withdrawETH = 'withdrawETH',
   borrowETH = 'borrwoETH',
 }
@@ -141,16 +122,12 @@ export type AddressModel = {
   LENDINGPOOL_CORE_ADDRESS: tEthereumAddress;
   SYNTHETIX_PROXY_ADDRESS: tEthereumAddress;
   GOVERNANCE_PROTO_CONTRACT: tEthereumAddress;
-  LEND_TO_AAVE_MIGRATOR: tEthereumAddress;
   WETH_GATEWAY: tEthereumAddress;
   FAUCET: tEthereumAddress;
-  SWAP_COLLATERAL_ADAPTER: tEthereumAddress;
-  REPAY_WITH_COLLATERAL_ADAPTER: tEthereumAddress;
   AAVE_GOVERNANCE_V2: tEthereumAddress;
   AAVE_GOVERNANCE_V2_EXECUTOR_SHORT: tEthereumAddress;
   AAVE_GOVERNANCE_V2_EXECUTOR_LONG: tEthereumAddress;
   AAVE_GOVERNANCE_V2_HELPER: tEthereumAddress;
-  FLASHLIQUIDATION: tEthereumAddress;
   INCENTIVES_CONTROLLER: tEthereumAddress;
   INCENTIVES_CONTROLLER_REWARD_TOKEN: tEthereumAddress;
 };
@@ -159,12 +136,8 @@ export type tCommonContractAddressBetweenMarkets = Pick<
   AddressModel,
   | 'SYNTHETIX_PROXY_ADDRESS'
   | 'GOVERNANCE_PROTO_CONTRACT'
-  | 'LEND_TO_AAVE_MIGRATOR'
   | 'WETH_GATEWAY'
   | 'FAUCET'
-  | 'SWAP_COLLATERAL_ADAPTER'
-  | 'REPAY_WITH_COLLATERAL_ADAPTER'
-  | 'FLASHLIQUIDATION'
   | 'INCENTIVES_CONTROLLER'
   | 'INCENTIVES_CONTROLLER_REWARD_TOKEN'
 >;

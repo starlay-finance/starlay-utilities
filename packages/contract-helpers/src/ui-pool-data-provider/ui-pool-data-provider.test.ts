@@ -10,7 +10,6 @@ describe('UiPoolDataProvider', () => {
     const instance = new UiPoolDataProvider({
       uiPoolDataProviderAddress: mockValidEthereumAddress,
       provider: new providers.JsonRpcProvider(),
-      chainId: 137,
     });
 
     const mockGetReservesData = jest.fn();
@@ -36,7 +35,6 @@ describe('UiPoolDataProvider', () => {
           new UiPoolDataProvider({
             uiPoolDataProviderAddress: mockInvalidEthereumAddress,
             provider: new providers.JsonRpcProvider(),
-            chainId: 137,
           }),
       ).toThrowError('contract address is not valid');
     });
@@ -44,7 +42,6 @@ describe('UiPoolDataProvider', () => {
       const instance = new UiPoolDataProvider({
         uiPoolDataProviderAddress: mockValidEthereumAddress,
         provider: new providers.JsonRpcProvider(),
-        chainId: 137,
       });
 
       expect(instance instanceof UiPoolDataProvider).toEqual(true);
@@ -127,7 +124,7 @@ describe('UiPoolDataProvider', () => {
       expect(result).toEqual({
         reservesData: [
           {
-            id: '137-0x3e0437898a5667a4769b1ca5a34aab1ae7e81377-0x88757f2f99175387ab4c6a4b3067c77a695b0349',
+            id: '0x3e0437898a5667a4769b1ca5a34aab1ae7e813770x88757f2f99175387ab4c6a4b3067c77a695b0349',
             underlyingAsset: '0x3e0437898a5667a4769b1ca5a34aab1ae7e81377',
             name: '',
             symbol: 'AMPL',
@@ -147,7 +144,7 @@ describe('UiPoolDataProvider', () => {
             variableBorrowRate: '0',
             stableBorrowRate: '0',
             lastUpdateTimestamp: 1631772892,
-            aTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
+            lTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
             stableDebtTokenAddress:
               '0x9157d57DC97A7AFFC7b0a78E78fe25e1401B1dCc',
             variableDebtTokenAddress:
@@ -166,7 +163,7 @@ describe('UiPoolDataProvider', () => {
             stableRateSlope2: '0',
           },
           {
-            id: '137-0xa478c2975ab1ea89e8196811f51a7b7ade33eb11-0x88757f2f99175387ab4c6a4b3067c77a695b0349',
+            id: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb110x88757f2f99175387ab4c6a4b3067c77a695b0349',
             underlyingAsset: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
             name: '',
             symbol: 'UNIDAIWETH',
@@ -186,7 +183,7 @@ describe('UiPoolDataProvider', () => {
             variableBorrowRate: '0',
             stableBorrowRate: '0',
             lastUpdateTimestamp: 1631772892,
-            aTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
+            lTokenAddress: '0xb8a16bbab34FA7A5C09Ec7679EAfb8fEC06897bc',
             stableDebtTokenAddress:
               '0x9157d57DC97A7AFFC7b0a78E78fe25e1401B1dCc',
             variableDebtTokenAddress:
@@ -242,9 +239,8 @@ describe('UiPoolDataProvider', () => {
 
       expect(result).toEqual([
         {
-          id: '137-0x88757f2f99175387ab4c6a4b3067c77a695b0349-0xb597cd8d3217ea6477232f9217fa70837ff667af-0x88757f2f99175387ab4c6a4b3067c77a695b0349',
           principalStableDebt: '0',
-          scaledATokenBalance: '0',
+          scaledLTokenBalance: '0',
           scaledVariableDebt: '0',
           stableBorrowLastUpdateTimestamp: 0,
           stableBorrowRate: '0',

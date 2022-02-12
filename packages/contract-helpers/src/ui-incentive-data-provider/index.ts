@@ -49,7 +49,6 @@ export interface UiIncentiveDataProviderInterface {
 export interface UiIncentiveDataProviderContext {
   incentiveDataProviderAddress: string;
   provider: providers.Provider;
-  chainId: number;
 }
 
 export interface FeedResultSuccessful {
@@ -77,8 +76,6 @@ export class UiIncentiveDataProvider
 
   private readonly _context: UiIncentiveDataProviderContext;
 
-  private readonly chainId: number;
-
   /**
    * Constructor
    * @param context The ui incentive data provider context
@@ -96,8 +93,6 @@ export class UiIncentiveDataProvider
       context.incentiveDataProviderAddress,
       context.provider,
     );
-
-    this.chainId = context.chainId;
   }
 
   /**
@@ -143,11 +138,10 @@ export class UiIncentiveDataProvider
     );
 
     return response.map(r => ({
-      id: `${this.chainId}-${r.underlyingAsset}-${lendingPoolAddressProvider}`.toLowerCase(),
       underlyingAsset: r.underlyingAsset.toLowerCase(),
-      aIncentiveData: this._formatIncentiveData(r.aIncentiveData),
-      vIncentiveData: this._formatIncentiveData(r.vIncentiveData),
-      sIncentiveData: this._formatIncentiveData(r.sIncentiveData),
+      lIncentiveData: this._formatIncentiveData(r.lIncentiveData),
+      vdIncentiveData: this._formatIncentiveData(r.vdIncentiveData),
+      sdIncentiveData: this._formatIncentiveData(r.sdIncentiveData),
     }));
   }
 
@@ -161,16 +155,15 @@ export class UiIncentiveDataProvider
     );
 
     return response.map(r => ({
-      id: `${this.chainId}-${user}-${r.underlyingAsset}-${lendingPoolAddressProvider}`.toLowerCase(),
       underlyingAsset: r.underlyingAsset.toLowerCase(),
-      aTokenIncentivesUserData: this._formatUserIncentiveData(
-        r.aTokenIncentivesUserData,
+      lTokenIncentivesUserData: this._formatUserIncentiveData(
+        r.lTokenIncentivesUserData,
       ),
-      vTokenIncentivesUserData: this._formatUserIncentiveData(
-        r.vTokenIncentivesUserData,
+      vdTokenIncentivesUserData: this._formatUserIncentiveData(
+        r.vdTokenIncentivesUserData,
       ),
-      sTokenIncentivesUserData: this._formatUserIncentiveData(
-        r.sTokenIncentivesUserData,
+      sdTokenIncentivesUserData: this._formatUserIncentiveData(
+        r.sdTokenIncentivesUserData,
       ),
     }));
   }
@@ -221,13 +214,13 @@ export class UiIncentiveDataProvider
 
       incentives.forEach(incentive => {
         allIncentiveRewardTokens.add(
-          incentive.aIncentiveData.rewardTokenAddress,
+          incentive.lIncentiveData.rewardTokenAddress,
         );
         allIncentiveRewardTokens.add(
-          incentive.vIncentiveData.rewardTokenAddress,
+          incentive.vdIncentiveData.rewardTokenAddress,
         );
         allIncentiveRewardTokens.add(
-          incentive.sIncentiveData.rewardTokenAddress,
+          incentive.sdIncentiveData.rewardTokenAddress,
         );
       });
 
@@ -249,41 +242,41 @@ export class UiIncentiveDataProvider
 
     return incentives.map(
       (incentive: ReserveIncentiveDataHumanizedResponse) => {
-        const aFeed = feeds.find(
+        const lFeed = feeds.find(
           feed =>
             feed.rewardTokenAddress ===
-            incentive.aIncentiveData.rewardTokenAddress,
+            incentive.lIncentiveData.rewardTokenAddress,
         );
-        const vFeed = feeds.find(
+        const vdFeed = feeds.find(
           feed =>
             feed.rewardTokenAddress ===
-            incentive.vIncentiveData.rewardTokenAddress,
+            incentive.vdIncentiveData.rewardTokenAddress,
         );
-        const sFeed = feeds.find(
+        const sdFeed = feeds.find(
           feed =>
             feed.rewardTokenAddress ===
-            incentive.sIncentiveData.rewardTokenAddress,
+            incentive.sdIncentiveData.rewardTokenAddress,
         );
 
         return {
           underlyingAsset: incentive.underlyingAsset,
-          aIncentiveData: {
-            ...incentive.aIncentiveData,
-            priceFeed: aFeed ? aFeed.answer : '0',
-            priceFeedTimestamp: aFeed ? aFeed.updatedAt : 0,
-            priceFeedDecimals: aFeed ? aFeed.decimals : 0,
+          lIncentiveData: {
+            ...incentive.lIncentiveData,
+            priceFeed: lFeed ? lFeed.answer : '0',
+            priceFeedTimestamp: lFeed ? lFeed.updatedAt : 0,
+            priceFeedDecimals: lFeed ? lFeed.decimals : 0,
           },
-          vIncentiveData: {
-            ...incentive.vIncentiveData,
-            priceFeed: vFeed ? vFeed.answer : '0',
-            priceFeedTimestamp: vFeed ? vFeed.updatedAt : 0,
-            priceFeedDecimals: vFeed ? vFeed.decimals : 0,
+          vdIncentiveData: {
+            ...incentive.vdIncentiveData,
+            priceFeed: vdFeed ? vdFeed.answer : '0',
+            priceFeedTimestamp: vdFeed ? vdFeed.updatedAt : 0,
+            priceFeedDecimals: vdFeed ? vdFeed.decimals : 0,
           },
-          sIncentiveData: {
-            ...incentive.sIncentiveData,
-            priceFeed: sFeed ? sFeed.answer : '0',
-            priceFeedTimestamp: sFeed ? sFeed.updatedAt : 0,
-            priceFeedDecimals: sFeed ? sFeed.decimals : 0,
+          sdIncentiveData: {
+            ...incentive.sdIncentiveData,
+            priceFeed: sdFeed ? sdFeed.answer : '0',
+            priceFeedTimestamp: sdFeed ? sdFeed.updatedAt : 0,
+            priceFeedDecimals: sdFeed ? sdFeed.decimals : 0,
           },
         };
       },

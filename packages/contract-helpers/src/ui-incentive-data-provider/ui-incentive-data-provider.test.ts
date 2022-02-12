@@ -23,7 +23,6 @@ describe('UiIncentiveDataProvider', () => {
     const instance = new UiIncentiveDataProvider({
       incentiveDataProviderAddress: mockValidEthereumAddress,
       provider: new providers.JsonRpcProvider(),
-      chainId: 137,
     });
 
     const mockGetReservesIncentivesData = jest.fn();
@@ -52,7 +51,6 @@ describe('UiIncentiveDataProvider', () => {
           new UiIncentiveDataProvider({
             incentiveDataProviderAddress: mockInvalidEthereumAddress,
             provider: new providers.JsonRpcProvider(),
-            chainId: 137,
           }),
       ).toThrowError('contract address is not valid');
     });
@@ -143,9 +141,8 @@ describe('UiIncentiveDataProvider', () => {
 
       expect(response).toEqual([
         {
-          id: '137-0x1f9840a85d5af5bf1d1762f925bdaddc4201f984-0xdac17f958d2ee523a2206206994597c13d831ec7-0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aTokenIncentivesUserData: {
+          lTokenIncentivesUserData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
             incentiveControllerAddress:
@@ -154,7 +151,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesUserIndex: '43565143328112327495233486',
             userUnclaimedRewards: '1637573428',
           },
-          vTokenIncentivesUserData: {
+          vdTokenIncentivesUserData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
             incentiveControllerAddress:
@@ -163,7 +160,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesUserIndex: '43565143328112327495233486',
             userUnclaimedRewards: '1637573428',
           },
-          sTokenIncentivesUserData: {
+          sdTokenIncentivesUserData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
             incentiveControllerAddress:
@@ -209,13 +206,13 @@ describe('UiIncentiveDataProvider', () => {
         });
 
       expect(clInstance.getPriceFeed).toBeCalled();
-      expect(typeof result[0].aIncentiveData.emissionEndTimestamp).toEqual(
+      expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
       );
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -230,7 +227,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -245,7 +242,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -263,7 +260,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -278,7 +275,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -293,7 +290,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -334,13 +331,13 @@ describe('UiIncentiveDataProvider', () => {
         });
 
       expect(clInstance.getPriceFeed).toBeCalled();
-      expect(typeof result[0].aIncentiveData.emissionEndTimestamp).toEqual(
+      expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
       );
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -355,7 +352,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -370,7 +367,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -388,7 +385,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -403,7 +400,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -418,7 +415,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -458,13 +455,13 @@ describe('UiIncentiveDataProvider', () => {
         });
 
       expect(clInstance.getPriceFeed).toBeCalled();
-      expect(typeof result[0].aIncentiveData.emissionEndTimestamp).toEqual(
+      expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
       );
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -479,7 +476,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -494,7 +491,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -512,7 +509,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -527,7 +524,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -542,7 +539,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 4,
             priceFeedDecimals: 1,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -577,13 +574,13 @@ describe('UiIncentiveDataProvider', () => {
         });
 
       expect(clInstance.getPriceFeed).toBeCalled();
-      expect(typeof result[0].aIncentiveData.emissionEndTimestamp).toEqual(
+      expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
       );
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -598,7 +595,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -613,7 +610,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -631,7 +628,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -646,7 +643,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -661,7 +658,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -702,13 +699,13 @@ describe('UiIncentiveDataProvider', () => {
         });
 
       expect(clInstance.getPriceFeed).toBeCalled();
-      expect(typeof result[0].aIncentiveData.emissionEndTimestamp).toEqual(
+      expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
       );
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -723,7 +720,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -738,7 +735,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -756,7 +753,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -771,7 +768,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -786,7 +783,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -806,7 +803,7 @@ describe('UiIncentiveDataProvider', () => {
       expect(result2).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -821,7 +818,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -836,7 +833,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -854,7 +851,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -869,7 +866,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -884,7 +881,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -914,7 +911,7 @@ describe('UiIncentiveDataProvider', () => {
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -929,7 +926,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -944,7 +941,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -962,7 +959,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -977,7 +974,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -992,7 +989,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1020,7 +1017,7 @@ describe('UiIncentiveDataProvider', () => {
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -1035,7 +1032,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -1050,7 +1047,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1068,7 +1065,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -1083,7 +1080,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -1098,7 +1095,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1127,7 +1124,7 @@ describe('UiIncentiveDataProvider', () => {
       expect(result).toEqual([
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -1142,7 +1139,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -1157,7 +1154,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1175,7 +1172,7 @@ describe('UiIncentiveDataProvider', () => {
         },
         {
           underlyingAsset: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-          aIncentiveData: {
+          lIncentiveData: {
             tokenAddress: '0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f5',
@@ -1190,7 +1187,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          vIncentiveData: {
+          vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
             precision: 18,
             rewardTokenAddress: '0x4da27a545c0c5B758a6BA100e3a049001de870f4',
@@ -1205,7 +1202,7 @@ describe('UiIncentiveDataProvider', () => {
             priceFeedTimestamp: 0,
             priceFeedDecimals: 0,
           },
-          sIncentiveData: {
+          sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
             precision: 0,
             rewardTokenAddress: '0x0000000000000000000000000000000000000000',

@@ -1,107 +1,74 @@
-import { UserReserveMock } from '../../mocks';
 import { calculateUserReserveTotals } from './calculate-user-reserve-totals';
 import {
   generateUserReserveSummary,
   UserReserveSummaryResponse,
 } from './generate-user-reserve-summary';
+import {
+  usdcUserReserveEthMarket,
+  ethUserReserveEthMarket,
+} from './user.mocks';
 
 describe('calculateUserReserveTotals', () => {
-  // 1 reserve token = 10 marketReferenceCurrency tokens = 100 USD
-  const usdcReserveMock = new UserReserveMock({ decimals: 6 })
-    .supply(200)
-    .variableBorrow(100);
-  const marketReferencePriceInUsdNormalized = 10;
-  const marketReferenceCurrencyDecimals = 18;
-  const currentTimestamp = 1;
+  const marketRefPriceInUsd = 309519442156873;
+  const currentTimestamp = 1629942229;
   const rawUSDCSummary: UserReserveSummaryResponse = generateUserReserveSummary(
     {
-      userReserve: {
-        ...usdcReserveMock.userReserve,
-        reserve: { ...usdcReserveMock.reserve },
-      },
-      marketReferencePriceInUsdNormalized,
-      marketReferenceCurrencyDecimals,
+      userReserve: usdcUserReserveEthMarket,
+      marketRefPriceInUsd,
+      marketRefCurrencyDecimals: 18,
       currentTimestamp,
     },
   );
 
-  const ethReserveMock = new UserReserveMock({ decimals: 18 })
-    .supply(200)
-    .stableBorrow(100);
   const rawETHSummary: UserReserveSummaryResponse = generateUserReserveSummary({
-    userReserve: {
-      ...ethReserveMock.userReserve,
-      reserve: {
-        ...ethReserveMock.reserve,
-        debtCeiling: '1',
-      },
-    },
-    marketReferencePriceInUsdNormalized,
-    marketReferenceCurrencyDecimals,
+    userReserve: ethUserReserveEthMarket,
+    marketRefPriceInUsd,
+    marketRefCurrencyDecimals: 18,
     currentTimestamp,
   });
 
   it('should compute totals from user reserve array', () => {
-    // Computed totals will be in BigNumber units, so expected values are normalized
     const userReserveTotals = calculateUserReserveTotals({
       userReserves: [rawUSDCSummary, rawETHSummary],
-      userEmodeCategoryId: 0,
     });
     expect(
-      userReserveTotals.totalLiquidityMarketReferenceCurrency
-        .shiftedBy(-marketReferenceCurrencyDecimals)
-        .toString(),
-    ).toEqual('4000');
+      userReserveTotals.totalLiquidityMarketReferenceCurrency.toFixed(),
+    ).toEqual('11819951652201573862');
     expect(
-      userReserveTotals.totalBorrowsMarketReferenceCurrency
-        .shiftedBy(-marketReferenceCurrencyDecimals)
-        .toString(),
-    ).toEqual('2000');
+      userReserveTotals.totalBorrowsMarketReferenceCurrency.toFixed(),
+    ).toEqual('1788570685417553847');
     expect(
-      userReserveTotals.totalCollateralMarketReferenceCurrency
-        .shiftedBy(-marketReferenceCurrencyDecimals)
-        .toString(),
-    ).toEqual('4000');
-    expect(userReserveTotals.currentLtv.toFixed()).toEqual('5000');
+      userReserveTotals.totalCollateralMarketReferenceCurrency.toFixed(),
+    ).toEqual('11819951652201573862');
+    expect(userReserveTotals.currentLtv.toFixed()).toEqual('8000');
     expect(userReserveTotals.currentLiquidationThreshold.toFixed()).toEqual(
-      '6000',
+      '8261.3698796199320993174',
     );
-    const userReserveEModeTotals = calculateUserReserveTotals({
-      userReserves: [rawUSDCSummary, rawETHSummary],
-      userEmodeCategoryId: 1,
-    });
-    expect(userReserveEModeTotals.currentLtv.toFixed()).toEqual('6000');
-    expect(
-      userReserveEModeTotals.currentLiquidationThreshold.toFixed(),
-    ).toEqual('7000');
   });
 
   it('should not compute collateral or LTV if usageAsCollateralEnabledOnUser is false', () => {
     const rawUSDCSummary: UserReserveSummaryResponse =
       generateUserReserveSummary({
         userReserve: {
-          ...usdcReserveMock.userReserve,
-          reserve: usdcReserveMock.reserve,
+          ...usdcUserReserveEthMarket,
           usageAsCollateralEnabledOnUser: false,
         },
-        marketReferencePriceInUsdNormalized,
-        marketReferenceCurrencyDecimals,
+        marketRefPriceInUsd,
+        marketRefCurrencyDecimals: 18,
         currentTimestamp,
       });
     const rawETHSummary: UserReserveSummaryResponse =
       generateUserReserveSummary({
         userReserve: {
-          ...ethReserveMock.userReserve,
-          reserve: ethReserveMock.reserve,
+          ...ethUserReserveEthMarket,
           usageAsCollateralEnabledOnUser: false,
         },
-        marketReferencePriceInUsdNormalized,
-        marketReferenceCurrencyDecimals,
+        marketRefPriceInUsd,
+        marketRefCurrencyDecimals: 18,
         currentTimestamp,
       });
     const userReserveTotals = calculateUserReserveTotals({
       userReserves: [rawUSDCSummary, rawETHSummary],
-      userEmodeCategoryId: 0,
     });
     expect(
       userReserveTotals.totalCollateralMarketReferenceCurrency.toFixed(),

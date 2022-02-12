@@ -21,16 +21,25 @@ import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
 interface UiPoolDataProviderInterface extends ethers.utils.Interface {
   functions: {
     'ETH_CURRENCY_UNIT()': FunctionFragment;
+    'baseTokenAddress()': FunctionFragment;
+    'bytes32ToString(bytes32)': FunctionFragment;
     'getReservesData(address)': FunctionFragment;
     'getReservesList(address)': FunctionFragment;
     'getUserReservesData(address,address)': FunctionFragment;
-    'marketReferenceCurrencyPriceInUsdProxyAggregator()': FunctionFragment;
-    'networkBaseTokenPriceInUsdProxyAggregator()': FunctionFragment;
+    'networkBaseTokenPriceInUsdProxyAggregatorAdapter()': FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: 'ETH_CURRENCY_UNIT',
     values?: undefined,
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'baseTokenAddress',
+    values?: undefined,
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'bytes32ToString',
+    values: [BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: 'getReservesData',
@@ -45,16 +54,20 @@ interface UiPoolDataProviderInterface extends ethers.utils.Interface {
     values: [string, string],
   ): string;
   encodeFunctionData(
-    functionFragment: 'marketReferenceCurrencyPriceInUsdProxyAggregator',
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'networkBaseTokenPriceInUsdProxyAggregator',
+    functionFragment: 'networkBaseTokenPriceInUsdProxyAggregatorAdapter',
     values?: undefined,
   ): string;
 
   decodeFunctionResult(
     functionFragment: 'ETH_CURRENCY_UNIT',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'baseTokenAddress',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'bytes32ToString',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -70,11 +83,7 @@ interface UiPoolDataProviderInterface extends ethers.utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'marketReferenceCurrencyPriceInUsdProxyAggregator',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'networkBaseTokenPriceInUsdProxyAggregator',
+    functionFragment: 'networkBaseTokenPriceInUsdProxyAggregatorAdapter',
     data: BytesLike,
   ): Result;
 
@@ -103,6 +112,28 @@ export class UiPoolDataProvider extends Contract {
       0: BigNumber;
     }>;
 
+    baseTokenAddress(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'baseTokenAddress()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    bytes32ToString(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: string;
+    }>;
+
+    'bytes32ToString(bytes32)'(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: string;
+    }>;
+
     getReservesData(
       provider: string,
       overrides?: CallOverrides,
@@ -127,7 +158,7 @@ export class UiPoolDataProvider extends Contract {
         variableBorrowRate: BigNumber;
         stableBorrowRate: BigNumber;
         lastUpdateTimestamp: number;
-        aTokenAddress: string;
+        lTokenAddress: string;
         stableDebtTokenAddress: string;
         variableDebtTokenAddress: string;
         interestRateStrategyAddress: string;
@@ -211,7 +242,7 @@ export class UiPoolDataProvider extends Contract {
         variableBorrowRate: BigNumber;
         stableBorrowRate: BigNumber;
         lastUpdateTimestamp: number;
-        aTokenAddress: string;
+        lTokenAddress: string;
         stableDebtTokenAddress: string;
         variableDebtTokenAddress: string;
         interestRateStrategyAddress: string;
@@ -292,7 +323,7 @@ export class UiPoolDataProvider extends Contract {
     ): Promise<{
       0: {
         underlyingAsset: string;
-        scaledATokenBalance: BigNumber;
+        scaledLTokenBalance: BigNumber;
         usageAsCollateralEnabledOnUser: boolean;
         stableBorrowRate: BigNumber;
         scaledVariableDebt: BigNumber;
@@ -315,7 +346,7 @@ export class UiPoolDataProvider extends Contract {
     ): Promise<{
       0: {
         underlyingAsset: string;
-        scaledATokenBalance: BigNumber;
+        scaledLTokenBalance: BigNumber;
         usageAsCollateralEnabledOnUser: boolean;
         stableBorrowRate: BigNumber;
         scaledVariableDebt: BigNumber;
@@ -331,25 +362,13 @@ export class UiPoolDataProvider extends Contract {
       }[];
     }>;
 
-    marketReferenceCurrencyPriceInUsdProxyAggregator(
+    networkBaseTokenPriceInUsdProxyAggregatorAdapter(
       overrides?: CallOverrides,
     ): Promise<{
       0: string;
     }>;
 
-    'marketReferenceCurrencyPriceInUsdProxyAggregator()'(
-      overrides?: CallOverrides,
-    ): Promise<{
-      0: string;
-    }>;
-
-    networkBaseTokenPriceInUsdProxyAggregator(
-      overrides?: CallOverrides,
-    ): Promise<{
-      0: string;
-    }>;
-
-    'networkBaseTokenPriceInUsdProxyAggregator()'(
+    'networkBaseTokenPriceInUsdProxyAggregatorAdapter()'(
       overrides?: CallOverrides,
     ): Promise<{
       0: string;
@@ -359,6 +378,20 @@ export class UiPoolDataProvider extends Contract {
   ETH_CURRENCY_UNIT(overrides?: CallOverrides): Promise<BigNumber>;
 
   'ETH_CURRENCY_UNIT()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  baseTokenAddress(overrides?: CallOverrides): Promise<string>;
+
+  'baseTokenAddress()'(overrides?: CallOverrides): Promise<string>;
+
+  bytes32ToString(
+    _bytes32: BytesLike,
+    overrides?: CallOverrides,
+  ): Promise<string>;
+
+  'bytes32ToString(bytes32)'(
+    _bytes32: BytesLike,
+    overrides?: CallOverrides,
+  ): Promise<string>;
 
   getReservesData(
     provider: string,
@@ -384,7 +417,7 @@ export class UiPoolDataProvider extends Contract {
       variableBorrowRate: BigNumber;
       stableBorrowRate: BigNumber;
       lastUpdateTimestamp: number;
-      aTokenAddress: string;
+      lTokenAddress: string;
       stableDebtTokenAddress: string;
       variableDebtTokenAddress: string;
       interestRateStrategyAddress: string;
@@ -468,7 +501,7 @@ export class UiPoolDataProvider extends Contract {
       variableBorrowRate: BigNumber;
       stableBorrowRate: BigNumber;
       lastUpdateTimestamp: number;
-      aTokenAddress: string;
+      lTokenAddress: string;
       stableDebtTokenAddress: string;
       variableDebtTokenAddress: string;
       interestRateStrategyAddress: string;
@@ -545,7 +578,7 @@ export class UiPoolDataProvider extends Contract {
   ): Promise<
     {
       underlyingAsset: string;
-      scaledATokenBalance: BigNumber;
+      scaledLTokenBalance: BigNumber;
       usageAsCollateralEnabledOnUser: boolean;
       stableBorrowRate: BigNumber;
       scaledVariableDebt: BigNumber;
@@ -568,7 +601,7 @@ export class UiPoolDataProvider extends Contract {
   ): Promise<
     {
       underlyingAsset: string;
-      scaledATokenBalance: BigNumber;
+      scaledLTokenBalance: BigNumber;
       usageAsCollateralEnabledOnUser: boolean;
       stableBorrowRate: BigNumber;
       scaledVariableDebt: BigNumber;
@@ -584,19 +617,11 @@ export class UiPoolDataProvider extends Contract {
     }[]
   >;
 
-  marketReferenceCurrencyPriceInUsdProxyAggregator(
+  networkBaseTokenPriceInUsdProxyAggregatorAdapter(
     overrides?: CallOverrides,
   ): Promise<string>;
 
-  'marketReferenceCurrencyPriceInUsdProxyAggregator()'(
-    overrides?: CallOverrides,
-  ): Promise<string>;
-
-  networkBaseTokenPriceInUsdProxyAggregator(
-    overrides?: CallOverrides,
-  ): Promise<string>;
-
-  'networkBaseTokenPriceInUsdProxyAggregator()'(
+  'networkBaseTokenPriceInUsdProxyAggregatorAdapter()'(
     overrides?: CallOverrides,
   ): Promise<string>;
 
@@ -604,6 +629,20 @@ export class UiPoolDataProvider extends Contract {
     ETH_CURRENCY_UNIT(overrides?: CallOverrides): Promise<BigNumber>;
 
     'ETH_CURRENCY_UNIT()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    baseTokenAddress(overrides?: CallOverrides): Promise<string>;
+
+    'baseTokenAddress()'(overrides?: CallOverrides): Promise<string>;
+
+    bytes32ToString(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<string>;
+
+    'bytes32ToString(bytes32)'(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<string>;
 
     getReservesData(
       provider: string,
@@ -629,7 +668,7 @@ export class UiPoolDataProvider extends Contract {
         variableBorrowRate: BigNumber;
         stableBorrowRate: BigNumber;
         lastUpdateTimestamp: number;
-        aTokenAddress: string;
+        lTokenAddress: string;
         stableDebtTokenAddress: string;
         variableDebtTokenAddress: string;
         interestRateStrategyAddress: string;
@@ -713,7 +752,7 @@ export class UiPoolDataProvider extends Contract {
         variableBorrowRate: BigNumber;
         stableBorrowRate: BigNumber;
         lastUpdateTimestamp: number;
-        aTokenAddress: string;
+        lTokenAddress: string;
         stableDebtTokenAddress: string;
         variableDebtTokenAddress: string;
         interestRateStrategyAddress: string;
@@ -790,7 +829,7 @@ export class UiPoolDataProvider extends Contract {
     ): Promise<
       {
         underlyingAsset: string;
-        scaledATokenBalance: BigNumber;
+        scaledLTokenBalance: BigNumber;
         usageAsCollateralEnabledOnUser: boolean;
         stableBorrowRate: BigNumber;
         scaledVariableDebt: BigNumber;
@@ -813,7 +852,7 @@ export class UiPoolDataProvider extends Contract {
     ): Promise<
       {
         underlyingAsset: string;
-        scaledATokenBalance: BigNumber;
+        scaledLTokenBalance: BigNumber;
         usageAsCollateralEnabledOnUser: boolean;
         stableBorrowRate: BigNumber;
         scaledVariableDebt: BigNumber;
@@ -829,19 +868,11 @@ export class UiPoolDataProvider extends Contract {
       }[]
     >;
 
-    marketReferenceCurrencyPriceInUsdProxyAggregator(
+    networkBaseTokenPriceInUsdProxyAggregatorAdapter(
       overrides?: CallOverrides,
     ): Promise<string>;
 
-    'marketReferenceCurrencyPriceInUsdProxyAggregator()'(
-      overrides?: CallOverrides,
-    ): Promise<string>;
-
-    networkBaseTokenPriceInUsdProxyAggregator(
-      overrides?: CallOverrides,
-    ): Promise<string>;
-
-    'networkBaseTokenPriceInUsdProxyAggregator()'(
+    'networkBaseTokenPriceInUsdProxyAggregatorAdapter()'(
       overrides?: CallOverrides,
     ): Promise<string>;
   };
@@ -853,6 +884,20 @@ export class UiPoolDataProvider extends Contract {
 
     'ETH_CURRENCY_UNIT()'(overrides?: CallOverrides): Promise<BigNumber>;
 
+    baseTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'baseTokenAddress()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    bytes32ToString(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'bytes32ToString(bytes32)'(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
     getReservesData(
       provider: string,
       overrides?: CallOverrides,
@@ -885,19 +930,11 @@ export class UiPoolDataProvider extends Contract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    marketReferenceCurrencyPriceInUsdProxyAggregator(
+    networkBaseTokenPriceInUsdProxyAggregatorAdapter(
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    'marketReferenceCurrencyPriceInUsdProxyAggregator()'(
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
-    networkBaseTokenPriceInUsdProxyAggregator(
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
-    'networkBaseTokenPriceInUsdProxyAggregator()'(
+    'networkBaseTokenPriceInUsdProxyAggregatorAdapter()'(
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
@@ -909,6 +946,22 @@ export class UiPoolDataProvider extends Contract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
+    baseTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'baseTokenAddress()'(
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    bytes32ToString(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'bytes32ToString(bytes32)'(
+      _bytes32: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
     getReservesData(
       provider: string,
       overrides?: CallOverrides,
@@ -941,19 +994,11 @@ export class UiPoolDataProvider extends Contract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
-    marketReferenceCurrencyPriceInUsdProxyAggregator(
+    networkBaseTokenPriceInUsdProxyAggregatorAdapter(
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
-    'marketReferenceCurrencyPriceInUsdProxyAggregator()'(
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
-    networkBaseTokenPriceInUsdProxyAggregator(
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
-    'networkBaseTokenPriceInUsdProxyAggregator()'(
+    'networkBaseTokenPriceInUsdProxyAggregatorAdapter()'(
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };

@@ -1,67 +1,55 @@
 // From UiIncentiveDatProvider
-export interface ReservesIncentiveDataHumanized {
+export interface ReserveIncentiveWithFeedsResponse {
   underlyingAsset: string;
-  aIncentiveData: IncentiveDataHumanized;
-  vIncentiveData: IncentiveDataHumanized;
-  sIncentiveData: IncentiveDataHumanized;
+  aIncentiveData: IncentivesWithFeeds;
+  vIncentiveData: IncentivesWithFeeds;
+  sIncentiveData: IncentivesWithFeeds;
+}
+
+export interface IncentivesWithFeeds extends IncentiveDataHumanized {
+  priceFeed: string;
+  priceFeedTimestamp: number;
+  priceFeedDecimals: number;
 }
 
 export interface IncentiveDataHumanized {
-  tokenAddress: string;
-  incentiveControllerAddress: string;
-  rewardsTokenInformation: RewardInfoHumanized[];
-}
-
-export interface RewardInfoHumanized {
-  rewardTokenSymbol: string;
-  rewardTokenAddress: string;
-  rewardOracleAddress: string;
   emissionPerSecond: string;
   incentivesLastUpdateTimestamp: number;
   tokenIncentivesIndex: string;
   emissionEndTimestamp: number;
-  rewardPriceFeed: string;
+  tokenAddress: string;
+  rewardTokenAddress: string;
+  incentiveControllerAddress: string;
   rewardTokenDecimals: number;
   precision: number;
-  priceFeedDecimals: number;
 }
 
-export interface UserReservesIncentivesDataHumanized {
+// From UiIncentiveDataProvider
+export interface UserReserveIncentiveDataHumanizedResponse {
   underlyingAsset: string;
-  aTokenIncentivesUserData: UserIncentiveDataHumanized;
-  vTokenIncentivesUserData: UserIncentiveDataHumanized;
-  sTokenIncentivesUserData: UserIncentiveDataHumanized;
+  aTokenIncentivesUserData: IncentiveUserDataHumanized;
+  vTokenIncentivesUserData: IncentiveUserDataHumanized;
+  sTokenIncentivesUserData: IncentiveUserDataHumanized;
 }
 
-export interface UserIncentiveDataHumanized {
-  tokenAddress: string;
-  incentiveControllerAddress: string;
-  userRewardsInformation: UserRewardInfoHumanized[];
-}
-
-export interface UserRewardInfoHumanized {
-  rewardTokenSymbol: string;
-  rewardOracleAddress: string;
-  rewardTokenAddress: string;
-  userUnclaimedRewards: string;
+export interface IncentiveUserDataHumanized {
   tokenIncentivesUserIndex: string;
-  rewardPriceFeed: string;
-  priceFeedDecimals: number;
+  userUnclaimedRewards: string;
+  tokenAddress: string;
+  rewardTokenAddress: string;
+  incentiveControllerAddress: string;
   rewardTokenDecimals: number;
 }
 
 export interface UserReserveCalculationData {
+  underlyingAsset: string;
+  totalLiquidity: string;
+  liquidityIndex: string;
+  totalScaledVariableDebt: string;
+  totalPrincipalStableDebt: string;
   scaledATokenBalance: string;
   scaledVariableDebt: string;
   principalStableDebt: string;
-  reserve: {
-    underlyingAsset: string;
-    totalLiquidity: string;
-    liquidityIndex: string;
-    totalScaledVariableDebt: string;
-    totalPrincipalStableDebt: string;
-    decimals: number;
-  };
 }
 
 export interface ReserveCalculationData {
@@ -70,6 +58,7 @@ export interface ReserveCalculationData {
   totalLiquidity: string;
   totalVariableDebt: string;
   totalStableDebt: string;
-  formattedPriceInMarketReferenceCurrency: string;
+  priceInMarketReferenceCurrency: string;
+  marketReferenceCurrencyDecimals: number;
   decimals: number;
 }

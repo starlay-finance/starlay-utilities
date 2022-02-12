@@ -65,9 +65,9 @@ export interface IncentiveUserDataHumanized {
 
 export interface ReserveIncentiveDataResponse {
   underlyingAsset: string;
-  aIncentiveData: IncentiveData;
-  vIncentiveData: IncentiveData;
-  sIncentiveData: IncentiveData;
+  lIncentiveData: IncentiveData;
+  vdIncentiveData: IncentiveData;
+  sdIncentiveData: IncentiveData;
   0: string;
   1: IncentiveData;
   2: IncentiveData;
@@ -75,25 +75,24 @@ export interface ReserveIncentiveDataResponse {
 }
 
 export interface ReserveIncentiveDataHumanizedResponse {
-  id: string;
   underlyingAsset: string;
-  aIncentiveData: IncentiveDataHumanized;
-  vIncentiveData: IncentiveDataHumanized;
-  sIncentiveData: IncentiveDataHumanized;
+  lIncentiveData: IncentiveDataHumanized;
+  vdIncentiveData: IncentiveDataHumanized;
+  sdIncentiveData: IncentiveDataHumanized;
 }
 
 export interface ReserveIncentiveWithFeedsResponse {
   underlyingAsset: string;
-  aIncentiveData: IncentivesWithFeeds;
-  vIncentiveData: IncentivesWithFeeds;
-  sIncentiveData: IncentivesWithFeeds;
+  lIncentiveData: IncentivesWithFeeds;
+  vdIncentiveData: IncentivesWithFeeds;
+  sdIncentiveData: IncentivesWithFeeds;
 }
 
 export interface UserReserveIncentiveDataResponse {
   underlyingAsset: string;
-  aTokenIncentivesUserData: IncentiveUserData;
-  vTokenIncentivesUserData: IncentiveUserData;
-  sTokenIncentivesUserData: IncentiveUserData;
+  lTokenIncentivesUserData: IncentiveUserData;
+  vdTokenIncentivesUserData: IncentiveUserData;
+  sdTokenIncentivesUserData: IncentiveUserData;
   0: string;
   1: IncentiveUserData;
   2: IncentiveUserData;
@@ -101,11 +100,10 @@ export interface UserReserveIncentiveDataResponse {
 }
 
 export interface UserReserveIncentiveDataHumanizedResponse {
-  id: string;
   underlyingAsset: string;
-  aTokenIncentivesUserData: IncentiveUserDataHumanized;
-  vTokenIncentivesUserData: IncentiveUserDataHumanized;
-  sTokenIncentivesUserData: IncentiveUserDataHumanized;
+  lTokenIncentivesUserData: IncentiveUserDataHumanized;
+  vdTokenIncentivesUserData: IncentiveUserDataHumanized;
+  sdTokenIncentivesUserData: IncentiveUserDataHumanized;
 }
 
 export interface FullReservesIncentiveDataResponse {

@@ -66,14 +66,6 @@ export const gasLimitRecommendations: GasRecommendationType = {
     limit: '640000',
     recommended: '640000',
   },
-  [ProtocolAction.swapCollateral]: {
-    limit: '1000000',
-    recommended: '1000000',
-  },
-  [ProtocolAction.repayCollateral]: {
-    limit: '700000',
-    recommended: '700000',
-  },
 };
 
 export const mintAmountsPerToken: Record<string, string> = {
@@ -108,5 +100,4 @@ export const mintAmountsPerToken: Record<string, string> = {
   UNILENDETH: valueToWei(uniswapEthAmount, 18),
   UNILINKETH: valueToWei(uniswapEthAmount, 18),
   UNIMKRETH: valueToWei(uniswapEthAmount, 18),
-  EURS: valueToWei('10000', 2),
 };
