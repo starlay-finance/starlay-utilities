@@ -15,33 +15,6 @@ import {
   // optionalValidator,
 } from './validations';
 
-export function LPSwapCollateralValidator(
-  target: any,
-  propertyName: string,
-  descriptor: TypedPropertyDescriptor<any>,
-): any {
-  const method = descriptor.value;
-  descriptor.value = function () {
-    if (
-      // @ts-expect-error todo: check why this ignore is needed
-      !utils.isAddress(this.lendingPoolAddress) ||
-      // @ts-expect-error todo: check why this ignore is needed
-      !utils.isAddress(this.swapCollateralAddress)
-    ) {
-      console.error(
-        `[LPSwapCollateralValidator] You need to pass valid addresses`,
-      );
-      return [];
-    }
-
-    isEthAddressValidator(target, propertyName, arguments);
-
-    amountGtThan0Validator(target, propertyName, arguments);
-
-    return method.apply(this, arguments);
-  };
-}
-
 export function LPValidator(
   target: any,
   propertyName: string,
@@ -143,31 +116,6 @@ export function ERC20Validator(
 ): any {
   const method = descriptor.value;
   descriptor.value = function () {
-    isEthAddressValidator(target, propertyName, arguments);
-
-    amountGtThan0Validator(target, propertyName, arguments);
-
-    amountGtThan0OrMinus1(target, propertyName, arguments);
-
-    return method.apply(this, arguments);
-  };
-}
-
-export function LiquiditySwapValidator(
-  target: any,
-  propertyName: string,
-  descriptor: TypedPropertyDescriptor<any>,
-): any {
-  const method = descriptor.value;
-  descriptor.value = function () {
-    // @ts-expect-error todo: check why this ignore is needed
-    if (!utils.isAddress(this.liquiditySwapAdapterAddress)) {
-      console.error(
-        `[LiquiditySwapValidator] You need to pass valid addresses`,
-      );
-      return [];
-    }
-
     isEthAddressValidator(target, propertyName, arguments);
 
     amountGtThan0Validator(target, propertyName, arguments);

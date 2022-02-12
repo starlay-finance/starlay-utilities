@@ -1,4 +1,4 @@
-import { constants, utils, BigNumberish, BytesLike, providers } from 'ethers';
+import { constants, providers } from 'ethers';
 import BaseService from '../commons/BaseService';
 import {
   eEthereumTxType,
@@ -6,7 +6,6 @@ import {
   InterestRate,
   ProtocolAction,
   transactionType,
-  tEthereumAddress,
   LendingPoolMarketConfig,
 } from '../commons/types';
 import {
@@ -14,23 +13,14 @@ import {
   valueToWei,
   API_ETH_MOCK_ADDRESS,
   DEFAULT_APPROVE_AMOUNT,
-  SURPLUS,
 } from '../commons/utils';
-import {
-  LPSwapCollateralValidator,
-  LPValidator,
-} from '../commons/validators/methodValidators';
+import { LPValidator } from '../commons/validators/methodValidators';
 import {
   isEthAddress,
   isPositiveAmount,
   isPositiveOrMinusOneAmount,
 } from '../commons/validators/paramValidators';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
-import {
-  LiquiditySwapAdapterInterface,
-  augustusFromAmountOffsetFromCalldata,
-  LiquiditySwapAdapterService,
-} from '../paraswap-liquiditySwapAdapter-contract';
 
 import { SynthetixInterface, SynthetixService } from '../synthetix-contract';
 import {
@@ -44,43 +34,10 @@ import {
   LPRepayParamsType,
   LPSetUsageAsCollateral,
   LPSwapBorrowRateMode,
-  LPSwapCollateral,
   LPWithdrawParamsType,
 } from './lendingPoolTypes';
 import { ILendingPool } from './typechain/ILendingPool';
 import { ILendingPool__factory } from './typechain/ILendingPool__factory';
-
-const buildParaSwapLiquiditySwapParams = (
-  assetToSwapTo: tEthereumAddress,
-  minAmountToReceive: BigNumberish,
-  swapAllBalanceOffset: BigNumberish,
-  swapCalldata: string | Buffer | BytesLike,
-  augustus: tEthereumAddress,
-  permitAmount: BigNumberish,
-  deadline: BigNumberish,
-  v: BigNumberish,
-  r: string | Buffer | BytesLike,
-  s: string | Buffer | BytesLike,
-) => {
-  return utils.defaultAbiCoder.encode(
-    [
-      'address',
-      'uint256',
-      'uint256',
-      'bytes',
-      'address',
-      'tuple(uint256,uint256,uint8,bytes32,bytes32)',
-    ],
-    [
-      assetToSwapTo,
-      minAmountToReceive,
-      swapAllBalanceOffset,
-      swapCalldata,
-      augustus,
-      [permitAmount, deadline, v, r, s],
-    ],
-  );
-};
 
 export interface LendingPoolInterface {
   deposit: (
@@ -104,9 +61,6 @@ export interface LendingPoolInterface {
   liquidationCall: (
     args: LPLiquidationCall,
   ) => Promise<EthereumTransactionTypeExtended[]>;
-  swapCollateral: (
-    args: LPSwapCollateral,
-  ) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
 export class LendingPool
@@ -121,23 +75,15 @@ export class LendingPool
 
   readonly wethGatewayService: WETHGatewayInterface;
 
-  readonly liquiditySwapAdapterService: LiquiditySwapAdapterInterface;
-
-  readonly swapCollateralAddress: string;
-
-  readonly repayWithCollateralAddress: string;
-
   constructor(
     provider: providers.Provider,
     lendingPoolConfig?: LendingPoolMarketConfig,
   ) {
     super(provider, ILendingPool__factory);
 
-    const { LENDING_POOL, SWAP_COLLATERAL_ADAPTER, WETH_GATEWAY } =
-      lendingPoolConfig ?? {};
+    const { LENDING_POOL, WETH_GATEWAY } = lendingPoolConfig ?? {};
 
     this.lendingPoolAddress = LENDING_POOL ?? '';
-    this.swapCollateralAddress = SWAP_COLLATERAL_ADAPTER ?? '';
 
     // initialize services
     this.erc20Service = new ERC20Service(provider);
@@ -146,10 +92,6 @@ export class LendingPool
       provider,
       this.erc20Service,
       WETH_GATEWAY,
-    );
-    this.liquiditySwapAdapterService = new LiquiditySwapAdapterService(
-      provider,
-      SWAP_COLLATERAL_ADAPTER,
     );
   }
 
@@ -576,150 +518,6 @@ export class LendingPool
       ),
     });
 
-    return txs;
-  }
-
-  @LPSwapCollateralValidator
-  public async swapCollateral(
-    @isEthAddress('user')
-    @isEthAddress('fromAsset')
-    @isEthAddress('fromAToken')
-    @isEthAddress('toAsset')
-    @isEthAddress('onBehalfOf')
-    @isEthAddress('augustus')
-    @isPositiveAmount('fromAmount')
-    @isPositiveAmount('minToAmount')
-    {
-      user,
-      flash,
-      fromAsset,
-      fromAToken,
-      toAsset,
-      fromAmount,
-      minToAmount,
-      permitSignature,
-      swapAll,
-      onBehalfOf,
-      referralCode,
-      augustus,
-      swapCallData,
-    }: LPSwapCollateral,
-  ): Promise<EthereumTransactionTypeExtended[]> {
-    const txs: EthereumTransactionTypeExtended[] = [];
-
-    const permitParams = permitSignature ?? {
-      amount: '0',
-      deadline: '0',
-      v: 0,
-      r: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      s: '0x0000000000000000000000000000000000000000000000000000000000000000',
-    };
-
-    const approved: boolean = await this.erc20Service.isApproved({
-      token: fromAToken,
-      user,
-      spender: this.swapCollateralAddress,
-      amount: fromAmount,
-    });
-
-    if (!approved) {
-      const approveTx: EthereumTransactionTypeExtended =
-        this.erc20Service.approve({
-          user,
-          token: fromAToken,
-          spender: this.swapCollateralAddress,
-          amount: constants.MaxUint256.toString(),
-        });
-
-      txs.push(approveTx);
-    }
-
-    const tokenDecimals: number = await this.erc20Service.decimalsOf(fromAsset);
-
-    const convertedAmount: string = valueToWei(fromAmount, tokenDecimals);
-
-    const tokenToDecimals: number = await this.erc20Service.decimalsOf(toAsset);
-
-    const amountSlippageConverted: string = valueToWei(
-      minToAmount,
-      tokenToDecimals,
-    );
-
-    const lendingPoolContract = this.getContractInstance(
-      this.lendingPoolAddress,
-    );
-
-    if (flash) {
-      const params = buildParaSwapLiquiditySwapParams(
-        toAsset,
-        amountSlippageConverted,
-        swapAll
-          ? augustusFromAmountOffsetFromCalldata(swapCallData as string)
-          : 0,
-        swapCallData,
-        augustus,
-        permitParams.amount,
-        permitParams.deadline,
-        permitParams.v,
-        permitParams.r,
-        permitParams.s,
-      );
-
-      const amountWithSurplus: string = (
-        Number(fromAmount) +
-        (Number(fromAmount) * Number(SURPLUS)) / 100
-      ).toString();
-
-      const convertedAmountWithSurplus: string = valueToWei(
-        amountWithSurplus,
-        tokenDecimals,
-      );
-
-      const txCallback: () => Promise<transactionType> =
-        this.generateTxCallback({
-          rawTxMethod: async () =>
-            lendingPoolContract.populateTransaction.flashLoan(
-              this.swapCollateralAddress,
-              [fromAsset],
-              swapAll ? [convertedAmountWithSurplus] : [convertedAmount],
-              [0], // interest rate mode to NONE for flashloan to not open debt
-              onBehalfOf ?? user,
-              params,
-              referralCode ?? '0',
-            ),
-          from: user,
-        });
-
-      txs.push({
-        tx: txCallback,
-        txType: eEthereumTxType.DLP_ACTION,
-        gas: this.generateTxPriceEstimation(
-          txs,
-          txCallback,
-          ProtocolAction.swapCollateral,
-        ),
-      });
-      return txs;
-    }
-
-    // Direct call to swap and deposit
-    const swapAndDepositTx: EthereumTransactionTypeExtended =
-      this.liquiditySwapAdapterService.swapAndDeposit(
-        {
-          user,
-          assetToSwapFrom: fromAsset,
-          assetToSwapTo: toAsset,
-          amountToSwap: convertedAmount,
-          minAmountToReceive: amountSlippageConverted,
-          swapAll,
-          swapCallData,
-          augustus,
-          permitParams,
-        },
-        txs,
-      );
-
-    txs.push(swapAndDepositTx);
     return txs;
   }
 }
