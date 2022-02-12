@@ -8,8 +8,10 @@ public ledger called a blockchain, making them accessible to anyone
 
 Starlay Utilities is a JavaScript SDK for interacting with the Starlay Protocol
 
-The `@starlay/math-utils` package contains methods for formatting raw ([ethers.js](#ethers.js)) or indexed ([subgraph](#subgraph), [caching server](#caching-server)) contract data for usage on a frontend
+The `@starlay-finance/math-utils` package contains methods for formatting raw
+([ethers.js](#ethers.js)) or indexed ([subgraph](#subgraph),
+[caching server](#caching-server)) contract data for usage on a frontend
 
-The `@starlay/contract-helpers` package contains methods for generating trancations
-based on method and parameter inputs. Can be used to read and write data on the
-protocol contracts.
+The `@starlay-finance/contract-helpers` package contains methods for generating
+trancations based on method and parameter inputs. Can be used to read and write
+data on the protocol contracts.
