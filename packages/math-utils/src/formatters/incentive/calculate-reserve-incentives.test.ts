@@ -16,7 +16,7 @@ describe('calculateReserveIncentives', () => {
     it('calculates correct reserve incentives data', () => {
       const reserveIncentiveData = {
         underlyingAsset: '0x0000000000000000000000000000000000000000',
-        aIncentiveData: {
+        lIncentiveData: {
           emissionPerSecond: '198333333333333000',
           incentivesLastUpdateTimestamp: 0,
           tokenIncentivesIndex: '0',
@@ -76,14 +76,14 @@ describe('calculateReserveIncentives', () => {
         priceInMarketReferenceCurrency: '498035657442060',
       });
 
-      expect(result.aIncentivesData.incentiveAPR).toBe(
+      expect(result.lIncentivesData.incentiveAPR).toBe(
         '0.03459120784662872218',
       );
       expect(result.vIncentivesData.incentiveAPR).toBe(
         '0.02311312226442694815',
       );
       expect(result.sIncentivesData.incentiveAPR).toBe('0');
-      expect(result.aIncentivesData.rewardTokenAddress).toBe(
+      expect(result.lIncentivesData.rewardTokenAddress).toBe(
         '0x0000000000000000000000000000000000000001',
       );
       expect(result.vIncentivesData.rewardTokenAddress).toBe(
@@ -95,7 +95,7 @@ describe('calculateReserveIncentives', () => {
     it('calculates correct reserve incentives data', () => {
       const reserveIncentiveUSDC = {
         underlyingAsset: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-        aIncentiveData: {
+        lIncentiveData: {
           emissionPerSecond: '4629629629629629',
           incentivesLastUpdateTimestamp: 1632883598,
           tokenIncentivesIndex: '17165951328937142571968723',
@@ -154,7 +154,7 @@ describe('calculateReserveIncentives', () => {
         decimals: 6,
       });
 
-      expect(result.aIncentivesData.incentiveAPR).toBe(
+      expect(result.lIncentivesData.incentiveAPR).toBe(
         '0.00843060621664143574',
       );
       expect(result.vIncentivesData.incentiveAPR).toBe(
@@ -167,7 +167,7 @@ describe('calculateReserveIncentives', () => {
     it('calculates correct reserve incentives data', () => {
       const reserveIncentiveDAI = {
         underlyingAsset: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-        aIncentiveData: {
+        lIncentiveData: {
           emissionPerSecond: '2314814814814814',
           incentivesLastUpdateTimestamp: 1632885146,
           tokenIncentivesIndex: '19549435160115',
@@ -225,7 +225,7 @@ describe('calculateReserveIncentives', () => {
         decimals: 18,
       });
 
-      expect(result.aIncentivesData.incentiveAPR).toBe(
+      expect(result.lIncentivesData.incentiveAPR).toBe(
         '0.01011349605576554151',
       );
       expect(result.vIncentivesData.incentiveAPR).toBe(

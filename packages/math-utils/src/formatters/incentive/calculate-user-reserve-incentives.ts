@@ -15,7 +15,7 @@ export interface CalculateUserReserveIncentivesRequest {
 }
 
 export interface CalculateUserReserveIncentivesResponse {
-  aIncentives: BigNumber; // deposit incentives
+  lIncentives: BigNumber; // deposit incentives
   vIncentives: BigNumber; // variable debt incentives
   sIncentives: BigNumber; // stable debt incentives
 }
@@ -31,24 +31,24 @@ export function calculateUserReserveIncentives({
     new BigNumber(userReserveData.totalLiquidity),
     new BigNumber(userReserveData.liquidityIndex),
   );
-  const aIncentivesRequest = {
-    principalUserBalance: new BigNumber(userReserveData.scaledATokenBalance),
+  const lIncentivesRequest = {
+    principalUserBalance: new BigNumber(userReserveData.scaledLTokenBalance),
     reserveIndex: new BigNumber(
-      reserveIncentives.aIncentiveData.tokenIncentivesIndex,
+      reserveIncentives.lIncentiveData.tokenIncentivesIndex,
     ),
     userIndex: new BigNumber(
-      userReserveIncentives.aTokenIncentivesUserData.tokenIncentivesUserIndex,
+      userReserveIncentives.lTokenIncentivesUserData.tokenIncentivesUserIndex,
     ),
-    precision: reserveIncentives.aIncentiveData.precision,
-    rewardTokenDecimals: reserveIncentives.aIncentiveData.rewardTokenDecimals,
+    precision: reserveIncentives.lIncentiveData.precision,
+    rewardTokenDecimals: reserveIncentives.lIncentiveData.rewardTokenDecimals,
     reserveIndexTimestamp:
-      reserveIncentives.aIncentiveData.incentivesLastUpdateTimestamp,
+      reserveIncentives.lIncentiveData.incentivesLastUpdateTimestamp,
     emissionPerSecond: new BigNumber(
-      reserveIncentives.aIncentiveData.emissionPerSecond,
+      reserveIncentives.lIncentiveData.emissionPerSecond,
     ),
     totalSupply: totalDeposits,
     currentTimestamp,
-    emissionEndTimestamp: reserveIncentives.aIncentiveData.emissionEndTimestamp,
+    emissionEndTimestamp: reserveIncentives.lIncentiveData.emissionEndTimestamp,
   };
 
   const vIncentivesRequest = {
@@ -91,9 +91,9 @@ export function calculateUserReserveIncentives({
     emissionEndTimestamp: reserveIncentives.sIncentiveData.emissionEndTimestamp,
   };
 
-  const aIncentives = calculateAccruedIncentives(aIncentivesRequest);
+  const lIncentives = calculateAccruedIncentives(lIncentivesRequest);
   const vIncentives = calculateAccruedIncentives(vIncentivesRequest);
   const sIncentives = calculateAccruedIncentives(sIncentivesRequest);
 
-  return { aIncentives, vIncentives, sIncentives };
+  return { lIncentives, vIncentives, sIncentives };
 }

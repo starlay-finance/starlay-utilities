@@ -1,7 +1,7 @@
 import { FormatUserSummaryRequest, RawUserReserveData } from './index';
 
 export const usdcUserReserveEthMarket: RawUserReserveData = {
-  scaledATokenBalance: '2328085146',
+  scaledLTokenBalance: '2328085146',
   usageAsCollateralEnabledOnUser: true,
   scaledVariableDebt: '48856783',
   principalStableDebt: '0',
@@ -34,7 +34,7 @@ export const usdcUserReserveEthMarket: RawUserReserveData = {
 };
 
 export const ethUserReserveEthMarket: RawUserReserveData = {
-  scaledATokenBalance: '11199353924118371338',
+  scaledLTokenBalance: '11199353924118371338',
   usageAsCollateralEnabledOnUser: true,
   scaledVariableDebt: '1761463562232346784',
   principalStableDebt: '0',
@@ -67,7 +67,7 @@ export const ethUserReserveEthMarket: RawUserReserveData = {
 };
 
 export const usdcUserReserveUsdMarket: RawUserReserveData = {
-  scaledATokenBalance: '2328085146',
+  scaledLTokenBalance: '2328085146',
   usageAsCollateralEnabledOnUser: true,
   scaledVariableDebt: '996253',
   principalStableDebt: '0',
@@ -100,7 +100,7 @@ export const usdcUserReserveUsdMarket: RawUserReserveData = {
 };
 
 export const avaxUserReserveUsdMarket: RawUserReserveData = {
-  scaledATokenBalance: '99353924118371338',
+  scaledLTokenBalance: '99353924118371338',
   usageAsCollateralEnabledOnUser: true,
   scaledVariableDebt: '1761463562232346784',
   principalStableDebt: '0',

@@ -1,7 +1,7 @@
 // From UiIncentiveDatProvider
 export interface ReserveIncentiveWithFeedsResponse {
   underlyingAsset: string;
-  aIncentiveData: IncentivesWithFeeds;
+  lIncentiveData: IncentivesWithFeeds;
   vIncentiveData: IncentivesWithFeeds;
   sIncentiveData: IncentivesWithFeeds;
 }
@@ -27,7 +27,7 @@ export interface IncentiveDataHumanized {
 // From UiIncentiveDataProvider
 export interface UserReserveIncentiveDataHumanizedResponse {
   underlyingAsset: string;
-  aTokenIncentivesUserData: IncentiveUserDataHumanized;
+  lTokenIncentivesUserData: IncentiveUserDataHumanized;
   vTokenIncentivesUserData: IncentiveUserDataHumanized;
   sTokenIncentivesUserData: IncentiveUserDataHumanized;
 }
@@ -47,7 +47,7 @@ export interface UserReserveCalculationData {
   liquidityIndex: string;
   totalScaledVariableDebt: string;
   totalPrincipalStableDebt: string;
-  scaledATokenBalance: string;
+  scaledLTokenBalance: string;
   scaledVariableDebt: string;
   principalStableDebt: string;
 }

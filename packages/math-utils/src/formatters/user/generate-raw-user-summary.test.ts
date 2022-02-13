@@ -41,7 +41,7 @@ describe('generateRawUserSummary', () => {
     generateUserReserveSummary({
       userReserve: {
         ...usdcUserReserveEthMarket,
-        scaledATokenBalance: '2528085146',
+        scaledLTokenBalance: '2528085146',
       },
       marketRefPriceInUsd,
       marketRefCurrencyDecimals: 18,

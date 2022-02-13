@@ -12,7 +12,7 @@ describe('calculateAllReserveIncentives', () => {
       reserves: allIncentivesReservesWithRewardReserve,
     });
     expect(
-      result['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'].aIncentives
+      result['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'].lIncentives
         .incentiveAPR,
     ).toBe('0.00244612257400076464');
     expect(
@@ -24,7 +24,7 @@ describe('calculateAllReserveIncentives', () => {
         .incentiveAPR,
     ).toBe('0');
     expect(
-      result['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'].aIncentives
+      result['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'].lIncentives
         .incentiveAPR,
     ).toBe('0.04137490906677563954');
     expect(
@@ -36,7 +36,7 @@ describe('calculateAllReserveIncentives', () => {
         .incentiveAPR,
     ).toBe('0');
     expect(
-      result['0x8798249c2e607446efb7ad49ec89dd1865ff4272'].aIncentives
+      result['0x8798249c2e607446efb7ad49ec89dd1865ff4272'].lIncentives
         .incentiveAPR,
     ).toBe('0.00957231039837386774');
     expect(
@@ -55,7 +55,7 @@ describe('calculateAllReserveIncentives', () => {
       reserves: allIncentivesReserves,
     });
     expect(
-      result['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'].aIncentives
+      result['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'].lIncentives
         .incentiveAPR,
     ).toBe('0.00244612257400076464');
     expect(
@@ -67,7 +67,7 @@ describe('calculateAllReserveIncentives', () => {
         .incentiveAPR,
     ).toBe('0');
     expect(
-      result['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'].aIncentives
+      result['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'].lIncentives
         .incentiveAPR,
     ).toBe('0.04137490906677563954');
     expect(
@@ -79,7 +79,7 @@ describe('calculateAllReserveIncentives', () => {
         .incentiveAPR,
     ).toBe('0');
     expect(
-      result['0x8798249c2e607446efb7ad49ec89dd1865ff4272'].aIncentives
+      result['0x8798249c2e607446efb7ad49ec89dd1865ff4272'].lIncentives
         .incentiveAPR,
     ).toBe('0.00957231039837386774');
     expect(

@@ -57,7 +57,7 @@ export function calculateAllUserIncentives({
         );
       if (reserve) {
         let rewards: CalculateUserReserveIncentivesResponse = {
-          aIncentives: valueToZDBigNumber('0'),
+          lIncentives: valueToZDBigNumber('0'),
           vIncentives: valueToZDBigNumber('0'),
           sIncentives: valueToZDBigNumber('0'),
         };
@@ -73,17 +73,17 @@ export function calculateAllUserIncentives({
         return [
           {
             tokenAddress:
-              userReserveIncentive.aTokenIncentivesUserData.tokenAddress,
+              userReserveIncentive.lTokenIncentivesUserData.tokenAddress,
             incentiveController:
-              userReserveIncentive.aTokenIncentivesUserData
+              userReserveIncentive.lTokenIncentivesUserData
                 .incentiveControllerAddress,
             rewardTokenAddress:
-              userReserveIncentive.aTokenIncentivesUserData.rewardTokenAddress,
+              userReserveIncentive.lTokenIncentivesUserData.rewardTokenAddress,
             rewardTokenDecimals:
-              userReserveIncentive.aTokenIncentivesUserData.rewardTokenDecimals,
-            accruedRewards: new BigNumber(rewards.aIncentives),
+              userReserveIncentive.lTokenIncentivesUserData.rewardTokenDecimals,
+            accruedRewards: new BigNumber(rewards.lIncentives),
             unclaimedRewards: new BigNumber(
-              userReserveIncentive.aTokenIncentivesUserData.userUnclaimedRewards,
+              userReserveIncentive.lTokenIncentivesUserData.userUnclaimedRewards,
             ),
           },
           {
