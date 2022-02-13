@@ -11,9 +11,9 @@ import {
 export type ReserveIncentiveDict = Record<string, ReserveIncentives>;
 
 interface ReserveIncentives {
-  aIncentives: ReserveIncentive;
-  vIncentives: ReserveIncentive;
-  sIncentives: ReserveIncentive;
+  lIncentives: ReserveIncentive;
+  vdIncentives: ReserveIncentive;
+  sdIncentives: ReserveIncentive;
 }
 
 interface ReserveIncentive {
@@ -74,24 +74,24 @@ export function calculateAllReserveIncentives({
           decimals: reserve.decimals,
           aRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
-            reserveIncentive.aIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.aIncentiveData.priceFeed,
+            reserveIncentive.lIncentiveData.rewardTokenAddress.toLowerCase(),
+            reserveIncentive.lIncentiveData.priceFeed,
           ),
           vRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
-            reserveIncentive.vIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.vIncentiveData.priceFeed,
+            reserveIncentive.vdIncentiveData.rewardTokenAddress.toLowerCase(),
+            reserveIncentive.vdIncentiveData.priceFeed,
           ),
           sRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
-            reserveIncentive.sIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.sIncentiveData.priceFeed,
+            reserveIncentive.sdIncentiveData.rewardTokenAddress.toLowerCase(),
+            reserveIncentive.sdIncentiveData.priceFeed,
           ),
         });
       reserveDict[calculatedReserveIncentives.underlyingAsset] = {
-        aIncentives: calculatedReserveIncentives.aIncentivesData,
-        vIncentives: calculatedReserveIncentives.vIncentivesData,
-        sIncentives: calculatedReserveIncentives.sIncentivesData,
+        lIncentives: calculatedReserveIncentives.lIncentivesData,
+        vdIncentives: calculatedReserveIncentives.vdIncentivesData,
+        sdIncentives: calculatedReserveIncentives.sdIncentivesData,
       };
     }
   });

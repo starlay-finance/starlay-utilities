@@ -44,12 +44,12 @@ describe('calculateUserReserveIncentives', () => {
     const result = calculateUserReserveIncentives(
       userETHReserveIncentiveRequest,
     );
-    const total = result.aIncentives
-      .plus(result.vIncentives)
-      .plus(result.sIncentives);
-    expect(normalize(result.aIncentives, 18)).toBe('0.0024573771825653195');
-    expect(normalize(result.vIncentives, 18)).toBe('0');
-    expect(normalize(result.sIncentives, 18)).toBe('0');
+    const total = result.lIncentives
+      .plus(result.vdIncentives)
+      .plus(result.sdIncentives);
+    expect(normalize(result.lIncentives, 18)).toBe('0.0024573771825653195');
+    expect(normalize(result.vdIncentives, 18)).toBe('0');
+    expect(normalize(result.sdIncentives, 18)).toBe('0');
     expect(normalize(total, 18)).toBe('0.0024573771825653195');
   });
 
@@ -57,12 +57,12 @@ describe('calculateUserReserveIncentives', () => {
     const result = calculateUserReserveIncentives(
       userUSDCReserveIncentiveRequest,
     );
-    const total = result.aIncentives
-      .plus(result.vIncentives)
-      .plus(result.sIncentives);
-    expect(normalize(result.aIncentives, 18)).toBe('0.01782455862763241642');
-    expect(normalize(result.vIncentives, 18)).toBe('0.00103772579426512725');
-    expect(result.sIncentives.toFixed()).toBe('0');
+    const total = result.lIncentives
+      .plus(result.vdIncentives)
+      .plus(result.sdIncentives);
+    expect(normalize(result.lIncentives, 18)).toBe('0.01782455862763241642');
+    expect(normalize(result.vdIncentives, 18)).toBe('0.00103772579426512725');
+    expect(result.sdIncentives.toFixed()).toBe('0');
     expect(normalize(total, 18)).toBe('0.01886228442189754366');
   });
 
@@ -70,12 +70,12 @@ describe('calculateUserReserveIncentives', () => {
     const result = calculateUserReserveIncentives(
       userXSUSHIReserveIncentiveRequest,
     );
-    const total = result.aIncentives
-      .plus(result.vIncentives)
-      .plus(result.sIncentives);
-    expect(normalize(result.aIncentives, 18)).toBe('0.02391615196507303165');
-    expect(normalize(result.vIncentives, 18)).toBe('0');
-    expect(normalize(result.sIncentives, 18)).toBe('0');
+    const total = result.lIncentives
+      .plus(result.vdIncentives)
+      .plus(result.sdIncentives);
+    expect(normalize(result.lIncentives, 18)).toBe('0.02391615196507303165');
+    expect(normalize(result.vdIncentives, 18)).toBe('0');
+    expect(normalize(result.sdIncentives, 18)).toBe('0');
     expect(normalize(total, 18)).toBe('0.02391615196507303165');
   });
 });
