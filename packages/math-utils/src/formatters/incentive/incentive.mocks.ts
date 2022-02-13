@@ -23,7 +23,7 @@ export const aETHReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  vIncentiveData: {
+  vdIncentiveData: {
     emissionPerSecond: '104166666666666',
     incentivesLastUpdateTimestamp: 1631587387,
     tokenIncentivesIndex: '26465727412280876',
@@ -37,7 +37,7 @@ export const aETHReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  sIncentiveData: {
+  sdIncentiveData: {
     emissionPerSecond: '0',
     incentivesLastUpdateTimestamp: 0,
     tokenIncentivesIndex: '0',
@@ -69,7 +69,7 @@ export const aUSDCReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  vIncentiveData: {
+  vdIncentiveData: {
     emissionPerSecond: '4629629629629629',
     incentivesLastUpdateTimestamp: 1631586625,
     tokenIncentivesIndex: '21239260963515875537848724',
@@ -83,7 +83,7 @@ export const aUSDCReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  sIncentiveData: {
+  sdIncentiveData: {
     emissionPerSecond: '0',
     incentivesLastUpdateTimestamp: 0,
     tokenIncentivesIndex: '0',
@@ -115,7 +115,7 @@ export const aXSUSHIReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  vIncentiveData: {
+  vdIncentiveData: {
     emissionPerSecond: '0',
     incentivesLastUpdateTimestamp: 1629797428,
     tokenIncentivesIndex: '0',
@@ -129,7 +129,7 @@ export const aXSUSHIReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     priceFeedTimestamp: 1000000000,
     priceFeedDecimals: 8,
   },
-  sIncentiveData: {
+  sdIncentiveData: {
     emissionPerSecond: '0',
     incentivesLastUpdateTimestamp: 0,
     tokenIncentivesIndex: '0',
@@ -158,7 +158,7 @@ export const aETHUserIncentiveData: UserReserveIncentiveDataHumanizedResponse =
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    vTokenIncentivesUserData: {
+    vdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '24934844000963410',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000v',
@@ -166,7 +166,7 @@ export const aETHUserIncentiveData: UserReserveIncentiveDataHumanizedResponse =
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    sTokenIncentivesUserData: {
+    sdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000s',
@@ -187,7 +187,7 @@ export const aUSDCUserIncentiveData: UserReserveIncentiveDataHumanizedResponse =
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    vTokenIncentivesUserData: {
+    vdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000v',
@@ -195,7 +195,7 @@ export const aUSDCUserIncentiveData: UserReserveIncentiveDataHumanizedResponse =
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    sTokenIncentivesUserData: {
+    sdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000s',
@@ -216,7 +216,7 @@ export const aXSUSHIUserIncentiveData: UserReserveIncentiveDataHumanizedResponse
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    vTokenIncentivesUserData: {
+    vdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000v',
@@ -224,7 +224,7 @@ export const aXSUSHIUserIncentiveData: UserReserveIncentiveDataHumanizedResponse
       incentiveControllerAddress: '0x0000000000000000000000000000000000000000',
       rewardTokenDecimals: 18,
     },
-    sTokenIncentivesUserData: {
+    sdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000s',
@@ -245,7 +245,7 @@ export const aUSDCUserIncentiveDataMultiController: UserReserveIncentiveDataHuma
       incentiveControllerAddress: '0x0000000000000000000000000000000000000001',
       rewardTokenDecimals: 18,
     },
-    vTokenIncentivesUserData: {
+    vdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000v',
@@ -253,7 +253,7 @@ export const aUSDCUserIncentiveDataMultiController: UserReserveIncentiveDataHuma
       incentiveControllerAddress: '0x0000000000000000000000000000000000000002',
       rewardTokenDecimals: 18,
     },
-    sTokenIncentivesUserData: {
+    sdTokenIncentivesUserData: {
       tokenIncentivesUserIndex: '0',
       userUnclaimedRewards: '43921819137644870',
       tokenAddress: '0x000000000000000000000000000000000000000s',

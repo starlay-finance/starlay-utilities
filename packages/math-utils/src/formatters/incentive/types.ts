@@ -2,8 +2,8 @@
 export interface ReserveIncentiveWithFeedsResponse {
   underlyingAsset: string;
   lIncentiveData: IncentivesWithFeeds;
-  vIncentiveData: IncentivesWithFeeds;
-  sIncentiveData: IncentivesWithFeeds;
+  vdIncentiveData: IncentivesWithFeeds;
+  sdIncentiveData: IncentivesWithFeeds;
 }
 
 export interface IncentivesWithFeeds extends IncentiveDataHumanized {
@@ -28,8 +28,8 @@ export interface IncentiveDataHumanized {
 export interface UserReserveIncentiveDataHumanizedResponse {
   underlyingAsset: string;
   lTokenIncentivesUserData: IncentiveUserDataHumanized;
-  vTokenIncentivesUserData: IncentiveUserDataHumanized;
-  sTokenIncentivesUserData: IncentiveUserDataHumanized;
+  vdTokenIncentivesUserData: IncentiveUserDataHumanized;
+  sdTokenIncentivesUserData: IncentiveUserDataHumanized;
 }
 
 export interface IncentiveUserDataHumanized {

@@ -58,8 +58,8 @@ export function calculateAllUserIncentives({
       if (reserve) {
         let rewards: CalculateUserReserveIncentivesResponse = {
           lIncentives: valueToZDBigNumber('0'),
-          vIncentives: valueToZDBigNumber('0'),
-          sIncentives: valueToZDBigNumber('0'),
+          vdIncentives: valueToZDBigNumber('0'),
+          sdIncentives: valueToZDBigNumber('0'),
         };
         if (userReserve) {
           rewards = calculateUserReserveIncentives({
@@ -88,32 +88,34 @@ export function calculateAllUserIncentives({
           },
           {
             tokenAddress:
-              userReserveIncentive.vTokenIncentivesUserData.tokenAddress,
+              userReserveIncentive.vdTokenIncentivesUserData.tokenAddress,
             incentiveController:
-              userReserveIncentive.vTokenIncentivesUserData
+              userReserveIncentive.vdTokenIncentivesUserData
                 .incentiveControllerAddress,
             rewardTokenAddress:
-              userReserveIncentive.vTokenIncentivesUserData.rewardTokenAddress,
+              userReserveIncentive.vdTokenIncentivesUserData.rewardTokenAddress,
             rewardTokenDecimals:
-              userReserveIncentive.vTokenIncentivesUserData.rewardTokenDecimals,
-            accruedRewards: new BigNumber(rewards.vIncentives),
+              userReserveIncentive.vdTokenIncentivesUserData
+                .rewardTokenDecimals,
+            accruedRewards: new BigNumber(rewards.vdIncentives),
             unclaimedRewards: new BigNumber(
-              userReserveIncentive.vTokenIncentivesUserData.userUnclaimedRewards,
+              userReserveIncentive.vdTokenIncentivesUserData.userUnclaimedRewards,
             ),
           },
           {
             tokenAddress:
-              userReserveIncentive.sTokenIncentivesUserData.tokenAddress,
+              userReserveIncentive.sdTokenIncentivesUserData.tokenAddress,
             incentiveController:
-              userReserveIncentive.sTokenIncentivesUserData
+              userReserveIncentive.sdTokenIncentivesUserData
                 .incentiveControllerAddress,
             rewardTokenAddress:
-              userReserveIncentive.sTokenIncentivesUserData.rewardTokenAddress,
+              userReserveIncentive.sdTokenIncentivesUserData.rewardTokenAddress,
             rewardTokenDecimals:
-              userReserveIncentive.sTokenIncentivesUserData.rewardTokenDecimals,
-            accruedRewards: new BigNumber(rewards.sIncentives),
+              userReserveIncentive.sdTokenIncentivesUserData
+                .rewardTokenDecimals,
+            accruedRewards: new BigNumber(rewards.sdIncentives),
             unclaimedRewards: new BigNumber(
-              userReserveIncentive.sTokenIncentivesUserData.userUnclaimedRewards,
+              userReserveIncentive.sdTokenIncentivesUserData.userUnclaimedRewards,
             ),
           },
         ];

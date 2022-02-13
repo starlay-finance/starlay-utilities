@@ -12,8 +12,8 @@ export type ReserveIncentiveDict = Record<string, ReserveIncentives>;
 
 interface ReserveIncentives {
   lIncentives: ReserveIncentive;
-  vIncentives: ReserveIncentive;
-  sIncentives: ReserveIncentive;
+  vdIncentives: ReserveIncentive;
+  sdIncentives: ReserveIncentive;
 }
 
 interface ReserveIncentive {
@@ -79,19 +79,19 @@ export function calculateAllReserveIncentives({
           ),
           vRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
-            reserveIncentive.vIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.vIncentiveData.priceFeed,
+            reserveIncentive.vdIncentiveData.rewardTokenAddress.toLowerCase(),
+            reserveIncentive.vdIncentiveData.priceFeed,
           ),
           sRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
-            reserveIncentive.sIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.sIncentiveData.priceFeed,
+            reserveIncentive.sdIncentiveData.rewardTokenAddress.toLowerCase(),
+            reserveIncentive.sdIncentiveData.priceFeed,
           ),
         });
       reserveDict[calculatedReserveIncentives.underlyingAsset] = {
         lIncentives: calculatedReserveIncentives.lIncentivesData,
-        vIncentives: calculatedReserveIncentives.vIncentivesData,
-        sIncentives: calculatedReserveIncentives.sIncentivesData,
+        vdIncentives: calculatedReserveIncentives.vdIncentivesData,
+        sdIncentives: calculatedReserveIncentives.sdIncentivesData,
       };
     }
   });
