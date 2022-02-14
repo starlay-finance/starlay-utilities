@@ -1,11 +1,11 @@
+import { BigNumber } from 'bignumber.js';
 import { providers } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import {
-  ChainlinkFeedsRegistry,
-  ChainlinkFeedsRegistryInterface,
-  PriceFeed,
-} from '../cl-feed-registry/index';
-import { Denominations } from '../cl-feed-registry/types/ChainlinkFeedsRegistryTypes';
+  PriceFeedAggregatorAdapter,
+  PriceFeedAggregatorAdapterInterface,
+} from '../price-aggregator-adapter';
+
 import { UiIncentiveDataProvider as UiIncentiveDataProviderContract } from './typechain/UiIncentiveDataProvider';
 import { UiIncentiveDataProviderFactory } from './typechain/UiIncentiveDataProviderFactory';
 import {
@@ -48,20 +48,18 @@ export interface UiIncentiveDataProviderInterface {
 }
 export interface UiIncentiveDataProviderContext {
   incentiveDataProviderAddress: string;
+  priceAggregatorAdapterAddress: string;
   provider: providers.Provider;
 }
 
 export interface FeedResultSuccessful {
   rewardTokenAddress: string;
-  answer: string;
-  updatedAt: number;
-  decimals: number;
+  price: BigNumber;
 }
 
 export interface GetIncentivesDataWithPriceType {
   lendingPoolAddressProvider: string;
-  chainlinkFeedsRegistry?: string;
-  quote?: Denominations;
+  tokenAddress?: string;
 }
 
 export class UiIncentiveDataProvider
@@ -69,12 +67,7 @@ export class UiIncentiveDataProvider
 {
   public readonly _contract: UiIncentiveDataProviderContract;
 
-  private readonly _chainlinkFeedsRegistries: Record<
-    string,
-    ChainlinkFeedsRegistryInterface
-  >;
-
-  private readonly _context: UiIncentiveDataProviderContext;
+  private readonly _chainlinkFeedsRegistries: PriceFeedAggregatorAdapterInterface;
 
   /**
    * Constructor
@@ -85,9 +78,14 @@ export class UiIncentiveDataProvider
       throw new Error('contract address is not valid');
     }
 
-    this._context = context;
+    if (!isAddress(context.priceAggregatorAdapterAddress)) {
+      throw new Error('price aggregator address is not valid');
+    }
 
-    this._chainlinkFeedsRegistries = {};
+    this._chainlinkFeedsRegistries = new PriceFeedAggregatorAdapter({
+      provider: context.provider,
+      contractAddress: context.priceAggregatorAdapterAddress,
+    });
 
     this._contract = UiIncentiveDataProviderFactory.connect(
       context.incentiveDataProviderAddress,
@@ -192,8 +190,7 @@ export class UiIncentiveDataProvider
 
   public async getIncentivesDataWithPrice({
     lendingPoolAddressProvider,
-    chainlinkFeedsRegistry,
-    quote = Denominations.eth,
+    tokenAddress,
   }: GetIncentivesDataWithPriceType): Promise<
     ReserveIncentiveWithFeedsResponse[]
   > {
@@ -201,15 +198,7 @@ export class UiIncentiveDataProvider
       await this.getReservesIncentivesDataHumanized(lendingPoolAddressProvider);
     const feeds: FeedResultSuccessful[] = [];
 
-    if (chainlinkFeedsRegistry && isAddress(chainlinkFeedsRegistry)) {
-      if (!this._chainlinkFeedsRegistries[chainlinkFeedsRegistry]) {
-        this._chainlinkFeedsRegistries[chainlinkFeedsRegistry] =
-          new ChainlinkFeedsRegistry({
-            provider: this._context.provider,
-            chainlinkFeedsRegistry,
-          });
-      }
-
+    if (tokenAddress && isAddress(tokenAddress)) {
       const allIncentiveRewardTokens: Set<string> = new Set();
 
       incentives.forEach(incentive => {
@@ -230,7 +219,7 @@ export class UiIncentiveDataProvider
 
       // eslint-disable-next-line @typescript-eslint/promise-function-async
       const rewardFeedPromises = incentiveRewardTokens.map(rewardToken =>
-        this._getFeed(rewardToken, chainlinkFeedsRegistry, quote),
+        this._getFeed(rewardToken),
       );
 
       const feedResults = await Promise.allSettled(rewardFeedPromises);
@@ -262,21 +251,18 @@ export class UiIncentiveDataProvider
           underlyingAsset: incentive.underlyingAsset,
           lIncentiveData: {
             ...incentive.lIncentiveData,
-            priceFeed: lFeed ? lFeed.answer : '0',
-            priceFeedTimestamp: lFeed ? lFeed.updatedAt : 0,
-            priceFeedDecimals: lFeed ? lFeed.decimals : 0,
+            priceFeed: lFeed ? lFeed.price.toFixed() : '0',
+            priceFeedDecimals: lFeed ? 18 : 0,
           },
           vdIncentiveData: {
             ...incentive.vdIncentiveData,
-            priceFeed: vdFeed ? vdFeed.answer : '0',
-            priceFeedTimestamp: vdFeed ? vdFeed.updatedAt : 0,
-            priceFeedDecimals: vdFeed ? vdFeed.decimals : 0,
+            priceFeed: vdFeed ? vdFeed.price.toFixed() : '0',
+            priceFeedDecimals: vdFeed ? 18 : 0,
           },
           sdIncentiveData: {
             ...incentive.sdIncentiveData,
-            priceFeed: sdFeed ? sdFeed.answer : '0',
-            priceFeedTimestamp: sdFeed ? sdFeed.updatedAt : 0,
-            priceFeedDecimals: sdFeed ? sdFeed.decimals : 0,
+            priceFeed: sdFeed ? sdFeed.price.toFixed() : '0',
+            priceFeedDecimals: sdFeed ? 18 : 0,
           },
         };
       },
@@ -285,15 +271,11 @@ export class UiIncentiveDataProvider
 
   private readonly _getFeed = async (
     rewardToken: string,
-    chainlinkFeedsRegistry: string,
-    quote: Denominations,
   ): Promise<FeedResultSuccessful> => {
-    const feed: PriceFeed = await this._chainlinkFeedsRegistries[
-      chainlinkFeedsRegistry
-    ].getPriceFeed(rewardToken, quote);
+    const feed = await this._chainlinkFeedsRegistries.currentPrice(rewardToken);
 
     return {
-      ...feed,
+      price: new BigNumber(feed.price.toNumber()),
       rewardTokenAddress: rewardToken,
     };
   };
