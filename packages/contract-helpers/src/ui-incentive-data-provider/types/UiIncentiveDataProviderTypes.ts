@@ -35,8 +35,6 @@ export interface IncentiveDataHumanized {
 
 export interface IncentivesWithFeeds extends IncentiveDataHumanized {
   priceFeed: string;
-  priceFeedTimestamp: number;
-  priceFeedDecimals: number;
 }
 
 export interface IncentiveUserData {
