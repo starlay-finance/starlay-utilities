@@ -554,14 +554,16 @@ describe('UiIncentiveDataProvider', () => {
         },
       ]);
     });
-    it('should work with no feed', async () => {
+    it('should work with no feed and decimal', async () => {
       const adapterInstance = new PriceFeedAggregatorAdapter({
         contractAddress: mockValidEthereumAddress,
         provider: new providers.JsonRpcProvider(),
       });
+      const erc20Service = new ERC20Service(new providers.JsonRpcProvider());
       const instance = createValidInstance();
 
       mocked(adapterInstance).currentPrice.mockReturnValue(Promise.reject());
+      mocked(erc20Service).decimalsOf.mockReturnValue(Promise.reject());
 
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
@@ -588,7 +590,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -602,7 +604,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -616,7 +618,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
         },
         {
@@ -633,7 +635,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -647,7 +649,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -661,7 +663,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 18,
+            priceFeedDecimals: 0,
           },
         },
       ]);
@@ -671,10 +673,11 @@ describe('UiIncentiveDataProvider', () => {
         contractAddress: mockValidEthereumAddress,
         provider: new providers.JsonRpcProvider(),
       });
+      const erc20Service = new ERC20Service(new providers.JsonRpcProvider());
 
       const instance = createValidInstance();
-
       mocked(adapterInstance).currentPrice.mockReturnValue(Promise.reject());
+      mocked(erc20Service).decimalsOf.mockReturnValue(Promise.resolve(18));
 
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
