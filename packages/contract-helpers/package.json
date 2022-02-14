@@ -15,7 +15,8 @@
     "prepublishOnly": "yarn build"
   },
   "peerDependencies": {
-    "ethers": "~5.4.7"
+    "ethers": "~5.4.7",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "ethers": "5.5.4",

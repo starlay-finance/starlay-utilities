@@ -614,7 +614,7 @@ describe('WethGatewayService', () => {
   describe('repayETH', () => {
     const user = '0x0000000000000000000000000000000000000003';
     const onBehalfOf = '0x0000000000000000000000000000000000000004';
-    const aTokenAddress = '0x0000000000000000000000000000000000000005';
+    const lTokenAddress = '0x0000000000000000000000000000000000000005';
     const amount = '123.456';
     const provider: providers.Provider = new providers.JsonRpcProvider();
     jest
@@ -650,7 +650,7 @@ describe('WethGatewayService', () => {
         user,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(isApprovedSpy).toHaveBeenCalled();
@@ -694,7 +694,7 @@ describe('WethGatewayService', () => {
         user,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(isApprovedSpy).toHaveBeenCalled();
@@ -736,7 +736,7 @@ describe('WethGatewayService', () => {
         lendingPool,
         user,
         amount,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(isApprovedSpy).toHaveBeenCalled();
@@ -770,7 +770,7 @@ describe('WethGatewayService', () => {
         lendingPool,
         user,
         amount,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(txObj.length).toEqual(0);
@@ -787,7 +787,7 @@ describe('WethGatewayService', () => {
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
         `Address: ${user} is not a valid ethereum Address`,
@@ -805,7 +805,7 @@ describe('WethGatewayService', () => {
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
         `Address: ${lendingPool} is not a valid ethereum Address`,
@@ -823,7 +823,7 @@ describe('WethGatewayService', () => {
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(`Amount: ${amount} needs to be greater than 0`);
     });
@@ -839,26 +839,26 @@ describe('WethGatewayService', () => {
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(`Amount: ${amount} needs to be greater than 0`);
     });
-    it('Expects to fail when aTokenAddress is not address', async () => {
+    it('Expects to fail when lTokenAddress is not address', async () => {
       const weth = new WETHGatewayService(
         provider,
         erc20Service,
         wethGatewayAddress,
       );
-      const aTokenAddress = 'asdf';
+      const lTokenAddress = 'asdf';
       await expect(async () =>
         weth.withdrawETH({
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
-        `Address: ${aTokenAddress} is not a valid ethereum Address`,
+        `Address: ${lTokenAddress} is not a valid ethereum Address`,
       );
     });
     it('Expects to fail when onBehalfOf is not address', async () => {
@@ -873,7 +873,7 @@ describe('WethGatewayService', () => {
           lendingPool,
           user,
           amount,
-          aTokenAddress,
+          lTokenAddress,
           onBehalfOf,
         }),
       ).rejects.toThrowError(

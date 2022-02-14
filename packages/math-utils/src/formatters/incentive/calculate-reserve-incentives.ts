@@ -3,9 +3,9 @@ import { ReserveIncentiveWithFeedsResponse } from './types';
 
 export interface CalculateReserveIncentivesRequest {
   reserveIncentiveData: ReserveIncentiveWithFeedsResponse;
-  aRewardTokenPriceInMarketReferenceCurrency: string; // Can be priced in ETH or USD depending on market
-  vRewardTokenPriceInMarketReferenceCurrency: string;
-  sRewardTokenPriceInMarketReferenceCurrency: string;
+  lRewardTokenPriceInMarketReferenceCurrency: string; // Can be priced in ETH or USD depending on market
+  vdRewardTokenPriceInMarketReferenceCurrency: string;
+  sdRewardTokenPriceInMarketReferenceCurrency: string;
   totalLiquidity: string;
   totalVariableDebt: string;
   totalStableDebt: string;
@@ -19,72 +19,72 @@ interface ReserveIncentiveResponse {
 }
 export interface CalculateReserveIncentivesResponse {
   underlyingAsset: string;
-  aIncentivesData: ReserveIncentiveResponse;
-  vIncentivesData: ReserveIncentiveResponse;
-  sIncentivesData: ReserveIncentiveResponse;
+  lIncentivesData: ReserveIncentiveResponse;
+  vdIncentivesData: ReserveIncentiveResponse;
+  sdIncentivesData: ReserveIncentiveResponse;
 }
 
 // Calculate deposit, variableBorrow, and stableBorrow incentives APR for a reserve asset
 export function calculateReserveIncentives({
   reserveIncentiveData,
-  aRewardTokenPriceInMarketReferenceCurrency,
-  vRewardTokenPriceInMarketReferenceCurrency,
-  sRewardTokenPriceInMarketReferenceCurrency,
+  lRewardTokenPriceInMarketReferenceCurrency,
+  vdRewardTokenPriceInMarketReferenceCurrency,
+  sdRewardTokenPriceInMarketReferenceCurrency,
   totalLiquidity,
   totalVariableDebt,
   totalStableDebt,
   decimals,
   priceInMarketReferenceCurrency,
 }: CalculateReserveIncentivesRequest): CalculateReserveIncentivesResponse {
-  const aIncentivesAPR = calculateIncentiveAPR({
-    emissionPerSecond: reserveIncentiveData.aIncentiveData.emissionPerSecond,
+  const lIncentivesAPR = calculateIncentiveAPR({
+    emissionPerSecond: reserveIncentiveData.lIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      aRewardTokenPriceInMarketReferenceCurrency,
+      lRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalLiquidity,
     decimals,
     rewardTokenDecimals:
-      reserveIncentiveData.aIncentiveData.rewardTokenDecimals,
+      reserveIncentiveData.lIncentiveData.rewardTokenDecimals,
   });
 
-  const vIncentivesAPR = calculateIncentiveAPR({
-    emissionPerSecond: reserveIncentiveData.vIncentiveData.emissionPerSecond,
+  const vdIncentivesAPR = calculateIncentiveAPR({
+    emissionPerSecond: reserveIncentiveData.vdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      vRewardTokenPriceInMarketReferenceCurrency,
+      vdRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalVariableDebt,
     decimals,
     rewardTokenDecimals:
-      reserveIncentiveData.aIncentiveData.rewardTokenDecimals,
+      reserveIncentiveData.lIncentiveData.rewardTokenDecimals,
   });
 
-  const sIncentivesAPR = calculateIncentiveAPR({
-    emissionPerSecond: reserveIncentiveData.sIncentiveData.emissionPerSecond,
+  const sdIncentivesAPR = calculateIncentiveAPR({
+    emissionPerSecond: reserveIncentiveData.sdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      sRewardTokenPriceInMarketReferenceCurrency,
+      sdRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalStableDebt,
     decimals,
     rewardTokenDecimals:
-      reserveIncentiveData.aIncentiveData.rewardTokenDecimals,
+      reserveIncentiveData.lIncentiveData.rewardTokenDecimals,
   });
 
   return {
     underlyingAsset: reserveIncentiveData.underlyingAsset,
-    aIncentivesData: {
-      incentiveAPR: aIncentivesAPR,
+    lIncentivesData: {
+      incentiveAPR: lIncentivesAPR,
       rewardTokenAddress:
-        reserveIncentiveData.aIncentiveData.rewardTokenAddress,
+        reserveIncentiveData.lIncentiveData.rewardTokenAddress,
     },
-    vIncentivesData: {
-      incentiveAPR: vIncentivesAPR,
+    vdIncentivesData: {
+      incentiveAPR: vdIncentivesAPR,
       rewardTokenAddress:
-        reserveIncentiveData.vIncentiveData.rewardTokenAddress,
+        reserveIncentiveData.vdIncentiveData.rewardTokenAddress,
     },
-    sIncentivesData: {
-      incentiveAPR: sIncentivesAPR,
+    sdIncentivesData: {
+      incentiveAPR: sdIncentivesAPR,
       rewardTokenAddress:
-        reserveIncentiveData.sIncentiveData.rewardTokenAddress,
+        reserveIncentiveData.sdIncentiveData.rewardTokenAddress,
     },
   };
 }
