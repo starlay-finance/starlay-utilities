@@ -63,7 +63,7 @@ describe('UiIncentiveDataProvider', () => {
             priceAggregatorAdapterAddress: mockInvalidEthereumAddress,
             provider: new providers.JsonRpcProvider(),
           }),
-      ).toThrowError('contract address is not valid');
+      ).toThrowError('price aggregator address is not valid');
     });
     // it('should throw an error if the lendingPoolAddress is not valid', () => {
     //   expect(
