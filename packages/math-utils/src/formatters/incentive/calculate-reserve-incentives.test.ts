@@ -65,9 +65,9 @@ describe('calculateReserveIncentives', () => {
 
       const result = calculateReserveIncentives({
         reserveIncentiveData,
-        aRewardTokenPriceInMarketReferenceCurrency: '498035657442060',
-        vRewardTokenPriceInMarketReferenceCurrency: '500000000000000',
-        sRewardTokenPriceInMarketReferenceCurrency: '498035657442060',
+        lRewardTokenPriceInMarketReferenceCurrency: '498035657442060',
+        vdRewardTokenPriceInMarketReferenceCurrency: '500000000000000',
+        sdRewardTokenPriceInMarketReferenceCurrency: '498035657442060',
         totalLiquidity: totalLiquidity.toString(),
         totalVariableDebt:
           calculateReserveDebtResult.totalVariableDebt.toString(),
@@ -144,9 +144,9 @@ describe('calculateReserveIncentives', () => {
 
       const result = calculateReserveIncentives({
         reserveIncentiveData: reserveIncentiveUSDC,
-        aRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
-        sRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
-        vRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        lRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        sdRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        vdRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
         totalLiquidity: '4689276757732258',
         totalVariableDebt: '3891257648076622',
         totalStableDebt: '41801112749722',
@@ -215,9 +215,9 @@ describe('calculateReserveIncentives', () => {
       };
       const result = calculateReserveIncentives({
         reserveIncentiveData: reserveIncentiveDAI,
-        aRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
-        vRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
-        sRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        lRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        vdRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
+        sdRewardTokenPriceInMarketReferenceCurrency: '94170917437245430',
         totalLiquidity: '1937317748307449835437672174',
         totalVariableDebt: '1440029626743923505023111127',
         totalStableDebt: '9751179387008545009745124',

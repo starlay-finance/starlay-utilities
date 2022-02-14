@@ -72,21 +72,23 @@ export function calculateAllReserveIncentives({
           priceInMarketReferenceCurrency:
             reserve.priceInMarketReferenceCurrency,
           decimals: reserve.decimals,
-          aRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
+          lRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
             reserves,
             reserveIncentive.lIncentiveData.rewardTokenAddress.toLowerCase(),
             reserveIncentive.lIncentiveData.priceFeed,
           ),
-          vRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
-            reserves,
-            reserveIncentive.vdIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.vdIncentiveData.priceFeed,
-          ),
-          sRewardTokenPriceInMarketReferenceCurrency: calculateRewardTokenPrice(
-            reserves,
-            reserveIncentive.sdIncentiveData.rewardTokenAddress.toLowerCase(),
-            reserveIncentive.sdIncentiveData.priceFeed,
-          ),
+          vdRewardTokenPriceInMarketReferenceCurrency:
+            calculateRewardTokenPrice(
+              reserves,
+              reserveIncentive.vdIncentiveData.rewardTokenAddress.toLowerCase(),
+              reserveIncentive.vdIncentiveData.priceFeed,
+            ),
+          sdRewardTokenPriceInMarketReferenceCurrency:
+            calculateRewardTokenPrice(
+              reserves,
+              reserveIncentive.sdIncentiveData.rewardTokenAddress.toLowerCase(),
+              reserveIncentive.sdIncentiveData.priceFeed,
+            ),
         });
       reserveDict[calculatedReserveIncentives.underlyingAsset] = {
         lIncentives: calculatedReserveIncentives.lIncentivesData,

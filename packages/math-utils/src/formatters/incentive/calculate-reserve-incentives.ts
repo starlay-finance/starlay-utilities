@@ -3,9 +3,9 @@ import { ReserveIncentiveWithFeedsResponse } from './types';
 
 export interface CalculateReserveIncentivesRequest {
   reserveIncentiveData: ReserveIncentiveWithFeedsResponse;
-  aRewardTokenPriceInMarketReferenceCurrency: string; // Can be priced in ETH or USD depending on market
-  vRewardTokenPriceInMarketReferenceCurrency: string;
-  sRewardTokenPriceInMarketReferenceCurrency: string;
+  lRewardTokenPriceInMarketReferenceCurrency: string; // Can be priced in ETH or USD depending on market
+  vdRewardTokenPriceInMarketReferenceCurrency: string;
+  sdRewardTokenPriceInMarketReferenceCurrency: string;
   totalLiquidity: string;
   totalVariableDebt: string;
   totalStableDebt: string;
@@ -27,9 +27,9 @@ export interface CalculateReserveIncentivesResponse {
 // Calculate deposit, variableBorrow, and stableBorrow incentives APR for a reserve asset
 export function calculateReserveIncentives({
   reserveIncentiveData,
-  aRewardTokenPriceInMarketReferenceCurrency,
-  vRewardTokenPriceInMarketReferenceCurrency,
-  sRewardTokenPriceInMarketReferenceCurrency,
+  lRewardTokenPriceInMarketReferenceCurrency,
+  vdRewardTokenPriceInMarketReferenceCurrency,
+  sdRewardTokenPriceInMarketReferenceCurrency,
   totalLiquidity,
   totalVariableDebt,
   totalStableDebt,
@@ -39,7 +39,7 @@ export function calculateReserveIncentives({
   const lIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.lIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      aRewardTokenPriceInMarketReferenceCurrency,
+      lRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalLiquidity,
     decimals,
@@ -50,7 +50,7 @@ export function calculateReserveIncentives({
   const vdIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.vdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      vRewardTokenPriceInMarketReferenceCurrency,
+      vdRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalVariableDebt,
     decimals,
@@ -61,7 +61,7 @@ export function calculateReserveIncentives({
   const sdIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.sdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
-      sRewardTokenPriceInMarketReferenceCurrency,
+      sdRewardTokenPriceInMarketReferenceCurrency,
     priceInMarketReferenceCurrency,
     totalTokenSupply: totalStableDebt,
     decimals,
