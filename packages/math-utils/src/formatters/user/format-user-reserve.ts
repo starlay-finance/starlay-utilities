@@ -47,7 +47,7 @@ export function formatUserReserve({
         LTV_PRECISION,
       ),
     },
-    scaledATokenBalance: normalizeWithReserve(userReserve.scaledATokenBalance),
+    scaledLTokenBalance: normalizeWithReserve(userReserve.scaledLTokenBalance),
     underlyingBalance: normalize(_reserve.underlyingBalance, reserveDecimals),
     underlyingBalanceMarketReferenceCurrency: normalize(
       _reserve.underlyingBalanceMarketReferenceCurrency,

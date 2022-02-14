@@ -125,7 +125,7 @@ export class ILendingPool extends Contract {
     }>;
 
     borrow(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -134,7 +134,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     'borrow(address,uint256,uint256,uint16,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -143,7 +143,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     deposit(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -151,7 +151,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     'deposit(address,uint256,address,uint16)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -159,7 +159,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     flashLoan(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -170,7 +170,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     'flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)'(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -181,25 +181,25 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     liquidationCall(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     'liquidationCall(address,address,address,uint256,bool)'(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     repay(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -207,7 +207,7 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     'repay(address,uint256,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -215,38 +215,38 @@ export class ILendingPool extends Contract {
     ): Promise<ContractTransaction>;
 
     setUserUseReserveAsCollateral(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     'setUserUseReserveAsCollateral(address,bool)'(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     swapBorrowRateMode(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     'swapBorrowRateMode(address,uint256)'(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     withdraw(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
     'withdraw(address,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,
@@ -258,7 +258,7 @@ export class ILendingPool extends Contract {
   'FLASHLOAN_PREMIUM_TOTAL()'(overrides?: CallOverrides): Promise<BigNumber>;
 
   borrow(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     interestRateMode: BigNumberish,
     referralCode: BigNumberish,
@@ -267,7 +267,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   'borrow(address,uint256,uint256,uint16,address)'(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     interestRateMode: BigNumberish,
     referralCode: BigNumberish,
@@ -276,7 +276,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   deposit(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     onBehalfOf: string,
     referralCode: BigNumberish,
@@ -284,7 +284,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   'deposit(address,uint256,address,uint16)'(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     onBehalfOf: string,
     referralCode: BigNumberish,
@@ -292,7 +292,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   flashLoan(
-    receiver: string,
+    receiverAddress: string,
     assets: string[],
     amounts: BigNumberish[],
     modes: BigNumberish[],
@@ -303,7 +303,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   'flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)'(
-    receiver: string,
+    receiverAddress: string,
     assets: string[],
     amounts: BigNumberish[],
     modes: BigNumberish[],
@@ -314,25 +314,25 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   liquidationCall(
-    collateral: string,
-    reserve: string,
+    collateralAsset: string,
+    debtAsset: string,
     user: string,
-    purchaseAmount: BigNumberish,
-    receiveAToken: boolean,
+    debtToCover: BigNumberish,
+    receiveLToken: boolean,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   'liquidationCall(address,address,address,uint256,bool)'(
-    collateral: string,
-    reserve: string,
+    collateralAsset: string,
+    debtAsset: string,
     user: string,
-    purchaseAmount: BigNumberish,
-    receiveAToken: boolean,
+    debtToCover: BigNumberish,
+    receiveLToken: boolean,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   repay(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     rateMode: BigNumberish,
     onBehalfOf: string,
@@ -340,7 +340,7 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   'repay(address,uint256,uint256,address)'(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     rateMode: BigNumberish,
     onBehalfOf: string,
@@ -348,38 +348,38 @@ export class ILendingPool extends Contract {
   ): Promise<ContractTransaction>;
 
   setUserUseReserveAsCollateral(
-    reserve: string,
+    asset: string,
     useAsCollateral: boolean,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   'setUserUseReserveAsCollateral(address,bool)'(
-    reserve: string,
+    asset: string,
     useAsCollateral: boolean,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   swapBorrowRateMode(
-    reserve: string,
+    asset: string,
     rateMode: BigNumberish,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   'swapBorrowRateMode(address,uint256)'(
-    reserve: string,
+    asset: string,
     rateMode: BigNumberish,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   withdraw(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     to: string,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
   'withdraw(address,uint256,address)'(
-    reserve: string,
+    asset: string,
     amount: BigNumberish,
     to: string,
     overrides?: Overrides,
@@ -391,7 +391,7 @@ export class ILendingPool extends Contract {
     'FLASHLOAN_PREMIUM_TOTAL()'(overrides?: CallOverrides): Promise<BigNumber>;
 
     borrow(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -400,7 +400,7 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     'borrow(address,uint256,uint256,uint16,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -409,7 +409,7 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     deposit(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -417,7 +417,7 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     'deposit(address,uint256,address,uint16)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -425,7 +425,7 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     flashLoan(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -436,7 +436,7 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     'flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)'(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -447,76 +447,76 @@ export class ILendingPool extends Contract {
     ): Promise<void>;
 
     liquidationCall(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     'liquidationCall(address,address,address,uint256,bool)'(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     repay(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     'repay(address,uint256,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     setUserUseReserveAsCollateral(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     'setUserUseReserveAsCollateral(address,bool)'(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     swapBorrowRateMode(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     'swapBorrowRateMode(address,uint256)'(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<void>;
 
     withdraw(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     'withdraw(address,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<BigNumber>;
   };
 
   filters: {};
@@ -527,7 +527,7 @@ export class ILendingPool extends Contract {
     'FLASHLOAN_PREMIUM_TOTAL()'(overrides?: CallOverrides): Promise<BigNumber>;
 
     borrow(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -536,7 +536,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     'borrow(address,uint256,uint256,uint16,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -545,7 +545,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     deposit(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -553,7 +553,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     'deposit(address,uint256,address,uint16)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -561,7 +561,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     flashLoan(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -572,7 +572,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     'flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)'(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -583,25 +583,25 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     liquidationCall(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     'liquidationCall(address,address,address,uint256,bool)'(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     repay(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -609,7 +609,7 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     'repay(address,uint256,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -617,38 +617,38 @@ export class ILendingPool extends Contract {
     ): Promise<BigNumber>;
 
     setUserUseReserveAsCollateral(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     'setUserUseReserveAsCollateral(address,bool)'(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     swapBorrowRateMode(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     'swapBorrowRateMode(address,uint256)'(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     withdraw(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
     'withdraw(address,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,
@@ -665,7 +665,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     borrow(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -674,7 +674,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     'borrow(address,uint256,uint256,uint16,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
       referralCode: BigNumberish,
@@ -683,7 +683,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     deposit(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -691,7 +691,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     'deposit(address,uint256,address,uint16)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       onBehalfOf: string,
       referralCode: BigNumberish,
@@ -699,7 +699,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     flashLoan(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -710,7 +710,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     'flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)'(
-      receiver: string,
+      receiverAddress: string,
       assets: string[],
       amounts: BigNumberish[],
       modes: BigNumberish[],
@@ -721,25 +721,25 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     liquidationCall(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     'liquidationCall(address,address,address,uint256,bool)'(
-      collateral: string,
-      reserve: string,
+      collateralAsset: string,
+      debtAsset: string,
       user: string,
-      purchaseAmount: BigNumberish,
-      receiveAToken: boolean,
+      debtToCover: BigNumberish,
+      receiveLToken: boolean,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     repay(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -747,7 +747,7 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     'repay(address,uint256,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       rateMode: BigNumberish,
       onBehalfOf: string,
@@ -755,38 +755,38 @@ export class ILendingPool extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setUserUseReserveAsCollateral(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     'setUserUseReserveAsCollateral(address,bool)'(
-      reserve: string,
+      asset: string,
       useAsCollateral: boolean,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     swapBorrowRateMode(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     'swapBorrowRateMode(address,uint256)'(
-      reserve: string,
+      asset: string,
       rateMode: BigNumberish,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
     'withdraw(address,uint256,address)'(
-      reserve: string,
+      asset: string,
       amount: BigNumberish,
       to: string,
       overrides?: Overrides,

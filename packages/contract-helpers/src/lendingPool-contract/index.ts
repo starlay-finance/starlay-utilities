@@ -181,11 +181,11 @@ export class LendingPool
     @isEthAddress('reserve')
     @isPositiveOrMinusOneAmount('amount')
     @isEthAddress('onBehalfOf')
-    @isEthAddress('aTokenAddress')
-    { user, reserve, amount, onBehalfOf, aTokenAddress }: LPWithdrawParamsType,
+    @isEthAddress('lTokenAddress')
+    { user, reserve, amount, onBehalfOf, lTokenAddress }: LPWithdrawParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     if (reserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()) {
-      if (!aTokenAddress) {
+      if (!lTokenAddress) {
         throw new Error(
           'To withdraw ETH you need to pass the aWETH token address',
         );
@@ -196,7 +196,7 @@ export class LendingPool
         user,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
     }
 
@@ -459,7 +459,7 @@ export class LendingPool
       debtReserve,
       collateralReserve,
       purchaseAmount,
-      getAToken,
+      getLToken,
       liquidateAll,
     }: LPLiquidationCall,
   ): Promise<EthereumTransactionTypeExtended[]> {
@@ -502,7 +502,7 @@ export class LendingPool
           debtReserve,
           liquidatedUser,
           convertedAmount,
-          getAToken ?? false,
+          getLToken ?? false,
         ),
       from: liquidator,
       value: getTxValue(debtReserve, convertedAmount),

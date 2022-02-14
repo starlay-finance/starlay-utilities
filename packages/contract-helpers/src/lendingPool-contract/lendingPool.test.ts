@@ -392,7 +392,7 @@ describe('LendingPool', () => {
     const user = '0x0000000000000000000000000000000000000006';
     const reserve = '0x0000000000000000000000000000000000000007';
     const onBehalfOf = '0x0000000000000000000000000000000000000008';
-    const aTokenAddress = '0x0000000000000000000000000000000000000009';
+    const lTokenAddress = '0x0000000000000000000000000000000000000009';
     const amount = '123.456';
     const decimals = 18;
 
@@ -413,7 +413,7 @@ describe('LendingPool', () => {
         reserve,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
       expect(withdrawEthSpy).toHaveBeenCalled();
     });
@@ -427,7 +427,7 @@ describe('LendingPool', () => {
         user,
         reserve,
         amount,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(decimalsSpy).toHaveBeenCalled();
@@ -473,7 +473,7 @@ describe('LendingPool', () => {
         reserve,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
 
       expect(decimalsSpy).toHaveBeenCalled();
@@ -508,7 +508,7 @@ describe('LendingPool', () => {
       );
       expect(gasPrice?.gasPrice).toEqual('1');
     });
-    it('Expects to fail for eth withdraw if not aTokenAddress is passed', async () => {
+    it('Expects to fail for eth withdraw if not lTokenAddress is passed', async () => {
       const reserve = API_ETH_MOCK_ADDRESS;
       const lendingPoolInstance = new LendingPool(provider, config);
 
@@ -530,7 +530,7 @@ describe('LendingPool', () => {
         reserve,
         amount,
         onBehalfOf,
-        aTokenAddress,
+        lTokenAddress,
       });
       expect(txObj).toEqual([]);
     });
@@ -543,7 +543,7 @@ describe('LendingPool', () => {
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
         `Address: ${user} is not a valid ethereum Address`,
@@ -558,7 +558,7 @@ describe('LendingPool', () => {
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
         `Address: ${reserve} is not a valid ethereum Address`,
@@ -573,25 +573,25 @@ describe('LendingPool', () => {
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
         `Address: ${onBehalfOf} is not a valid ethereum Address`,
       );
     });
-    it('Expects to fail when aTokenAddress not and eth address', async () => {
+    it('Expects to fail when lTokenAddress not and eth address', async () => {
       const lendingPoolInstance = new LendingPool(provider, config);
-      const aTokenAddress = 'asdf';
+      const lTokenAddress = 'asdf';
       await expect(async () =>
         lendingPoolInstance.withdraw({
           user,
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(
-        `Address: ${aTokenAddress} is not a valid ethereum Address`,
+        `Address: ${lTokenAddress} is not a valid ethereum Address`,
       );
     });
     it('Expects to fail when amount not positive', async () => {
@@ -603,7 +603,7 @@ describe('LendingPool', () => {
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(`Amount: ${amount} needs to be greater than 0`);
     });
@@ -616,7 +616,7 @@ describe('LendingPool', () => {
           reserve,
           amount,
           onBehalfOf,
-          aTokenAddress,
+          lTokenAddress,
         }),
       ).rejects.toThrowError(`Amount: ${amount} needs to be greater than 0`);
     });
@@ -1484,7 +1484,7 @@ describe('LendingPool', () => {
     const debtReserve = '0x0000000000000000000000000000000000000008';
     const collateralReserve = '0x0000000000000000000000000000000000000009';
     const purchaseAmount = '123.456';
-    const getAToken = true;
+    const getLToken = true;
     const liquidateAll = true;
     const decimals = 18;
 
@@ -1505,7 +1505,7 @@ describe('LendingPool', () => {
         debtReserve,
         collateralReserve,
         purchaseAmount,
-        getAToken,
+        getLToken,
         liquidateAll,
       });
 
@@ -1530,7 +1530,7 @@ describe('LendingPool', () => {
       expect(decoded[1]).toEqual(debtReserve);
       expect(decoded[2]).toEqual(liquidatedUser);
       expect(decoded[3]).toEqual(constants.MaxUint256);
-      expect(decoded[4]).toEqual(getAToken);
+      expect(decoded[4]).toEqual(getLToken);
 
       // gas price
       const gasPrice: GasType | null = await txObj.gas();
@@ -1538,7 +1538,7 @@ describe('LendingPool', () => {
       expect(gasPrice?.gasLimit).toEqual('1');
       expect(gasPrice?.gasPrice).toEqual('1');
     });
-    it('Expects the tx object passing all params but not passing getAToken and no approval needed', async () => {
+    it('Expects the tx object passing all params but not passing getLToken and no approval needed', async () => {
       const lendingPoolInstance = new LendingPool(provider, config);
       const isApprovedSpy = jest
         .spyOn(lendingPoolInstance.erc20Service, 'isApproved')
@@ -1607,7 +1607,7 @@ describe('LendingPool', () => {
         debtReserve,
         collateralReserve,
         purchaseAmount,
-        getAToken,
+        getLToken,
       });
 
       expect(approveSpy).toHaveBeenCalled();
@@ -1635,7 +1635,7 @@ describe('LendingPool', () => {
       expect(decoded[3]).toEqual(
         BigNumber.from(valueToWei(purchaseAmount, decimals)),
       );
-      expect(decoded[4]).toEqual(getAToken);
+      expect(decoded[4]).toEqual(getLToken);
 
       // gas price
       const gasPrice: GasType | null = await txObj.gas();
@@ -1653,7 +1653,7 @@ describe('LendingPool', () => {
         debtReserve,
         collateralReserve,
         purchaseAmount,
-        getAToken,
+        getLToken,
         liquidateAll,
       });
       expect(txObj).toEqual([]);
@@ -1668,7 +1668,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
@@ -1685,7 +1685,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
@@ -1702,7 +1702,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
@@ -1719,7 +1719,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
@@ -1736,7 +1736,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
@@ -1753,7 +1753,7 @@ describe('LendingPool', () => {
           debtReserve,
           collateralReserve,
           purchaseAmount,
-          getAToken,
+          getLToken,
           liquidateAll,
         }),
       ).rejects.toThrowError(
