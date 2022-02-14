@@ -36,7 +36,7 @@ export function calculateReserveIncentives({
   decimals,
   priceInMarketReferenceCurrency,
 }: CalculateReserveIncentivesRequest): CalculateReserveIncentivesResponse {
-  const aIncentivesAPR = calculateIncentiveAPR({
+  const lIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.lIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
       lRewardTokenPriceInMarketReferenceCurrency,
@@ -47,7 +47,7 @@ export function calculateReserveIncentives({
       reserveIncentiveData.lIncentiveData.rewardTokenDecimals,
   });
 
-  const vIncentivesAPR = calculateIncentiveAPR({
+  const vdIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.vdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
       vdRewardTokenPriceInMarketReferenceCurrency,
@@ -58,7 +58,7 @@ export function calculateReserveIncentives({
       reserveIncentiveData.lIncentiveData.rewardTokenDecimals,
   });
 
-  const sIncentivesAPR = calculateIncentiveAPR({
+  const sdIncentivesAPR = calculateIncentiveAPR({
     emissionPerSecond: reserveIncentiveData.sdIncentiveData.emissionPerSecond,
     rewardTokenPriceInMarketReferenceCurrency:
       sdRewardTokenPriceInMarketReferenceCurrency,
@@ -72,17 +72,17 @@ export function calculateReserveIncentives({
   return {
     underlyingAsset: reserveIncentiveData.underlyingAsset,
     lIncentivesData: {
-      incentiveAPR: aIncentivesAPR,
+      incentiveAPR: lIncentivesAPR,
       rewardTokenAddress:
         reserveIncentiveData.lIncentiveData.rewardTokenAddress,
     },
     vdIncentivesData: {
-      incentiveAPR: vIncentivesAPR,
+      incentiveAPR: vdIncentivesAPR,
       rewardTokenAddress:
         reserveIncentiveData.vdIncentiveData.rewardTokenAddress,
     },
     sdIncentivesData: {
-      incentiveAPR: sIncentivesAPR,
+      incentiveAPR: sdIncentivesAPR,
       rewardTokenAddress:
         reserveIncentiveData.sdIncentiveData.rewardTokenAddress,
     },

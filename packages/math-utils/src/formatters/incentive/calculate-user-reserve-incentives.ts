@@ -31,7 +31,7 @@ export function calculateUserReserveIncentives({
     new BigNumber(userReserveData.totalLiquidity),
     new BigNumber(userReserveData.liquidityIndex),
   );
-  const aIncentivesRequest = {
+  const lIncentivesRequest = {
     principalUserBalance: new BigNumber(userReserveData.scaledLTokenBalance),
     reserveIndex: new BigNumber(
       reserveIncentives.lIncentiveData.tokenIncentivesIndex,
@@ -51,7 +51,7 @@ export function calculateUserReserveIncentives({
     emissionEndTimestamp: reserveIncentives.lIncentiveData.emissionEndTimestamp,
   };
 
-  const vIncentivesRequest = {
+  const vdIncentivesRequest = {
     principalUserBalance: new BigNumber(userReserveData.scaledVariableDebt),
     reserveIndex: new BigNumber(
       reserveIncentives.vdIncentiveData.tokenIncentivesIndex,
@@ -72,7 +72,7 @@ export function calculateUserReserveIncentives({
       reserveIncentives.vdIncentiveData.emissionEndTimestamp,
   };
 
-  const sIncentivesRequest = {
+  const sdIncentivesRequest = {
     principalUserBalance: new BigNumber(userReserveData.principalStableDebt),
     reserveIndex: new BigNumber(
       reserveIncentives.sdIncentiveData.tokenIncentivesIndex,
@@ -93,13 +93,9 @@ export function calculateUserReserveIncentives({
       reserveIncentives.sdIncentiveData.emissionEndTimestamp,
   };
 
-  const aIncentives = calculateAccruedIncentives(aIncentivesRequest);
-  const vIncentives = calculateAccruedIncentives(vIncentivesRequest);
-  const sIncentives = calculateAccruedIncentives(sIncentivesRequest);
+  const lIncentives = calculateAccruedIncentives(lIncentivesRequest);
+  const vdIncentives = calculateAccruedIncentives(vdIncentivesRequest);
+  const sdIncentives = calculateAccruedIncentives(sdIncentivesRequest);
 
-  return {
-    lIncentives: aIncentives,
-    vdIncentives: vIncentives,
-    sdIncentives: sIncentives,
-  };
+  return { lIncentives, vdIncentives, sdIncentives };
 }
