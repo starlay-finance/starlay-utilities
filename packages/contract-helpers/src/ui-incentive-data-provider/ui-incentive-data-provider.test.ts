@@ -1,5 +1,6 @@
 import { BigNumber, providers } from 'ethers';
 import { mocked } from 'ts-jest/utils';
+import { ERC20Service } from '../erc20-contract';
 import { PriceFeedAggregatorAdapter } from '../price-aggregator-adapter';
 import {
   getReservesIncentivesDataMock,
@@ -12,6 +13,12 @@ jest.mock('../price-aggregator-adapter/index', () => {
   const adapterInstance = { currentPrice: jest.fn() };
   const ad = jest.fn(() => adapterInstance);
   return { PriceFeedAggregatorAdapter: ad };
+});
+
+jest.mock('../erc20-contract/index', () => {
+  const erc20ContractInstance = { decimalsOf: jest.fn() };
+  const ad = jest.fn(() => erc20ContractInstance);
+  return { ERC20Service: ad };
 });
 
 describe('UiIncentiveDataProvider', () => {
@@ -196,6 +203,7 @@ describe('UiIncentiveDataProvider', () => {
         contractAddress: mockValidEthereumAddress,
         provider: new providers.JsonRpcProvider(),
       });
+      const erc20Instance = new ERC20Service(new providers.JsonRpcProvider());
       const instance = createValidInstance();
 
       mocked(adapterInstance).currentPrice.mockReturnValueOnce(
@@ -207,13 +215,14 @@ describe('UiIncentiveDataProvider', () => {
           price: BigNumber.from('2'),
         }),
       );
+      mocked(erc20Instance).decimalsOf.mockReturnValue(Promise.resolve(18));
 
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
           lendingPoolAddressProvider: mockValidEthereumAddress,
           tokenAddress: mockValidEthereumAddress,
         });
-
+      expect(erc20Instance.decimalsOf).toBeCalled();
       expect(adapterInstance.currentPrice).toBeCalled();
       expect(typeof result[0].lIncentiveData.emissionEndTimestamp).toEqual(
         typeof 1,
@@ -233,7 +242,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -278,7 +287,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -316,6 +325,7 @@ describe('UiIncentiveDataProvider', () => {
         contractAddress: mockValidEthereumAddress,
         provider: new providers.JsonRpcProvider(),
       });
+      const erc20Instance = new ERC20Service(new providers.JsonRpcProvider());
       const instance = createValidInstance();
 
       mocked(adapterInstance).currentPrice.mockReturnValue(
@@ -323,6 +333,7 @@ describe('UiIncentiveDataProvider', () => {
           price: BigNumber.from('2'),
         }),
       );
+      mocked(erc20Instance).decimalsOf.mockReturnValue(Promise.resolve(18));
 
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
@@ -577,7 +588,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -591,7 +602,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -605,7 +616,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -622,7 +633,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -636,7 +647,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -650,7 +661,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);
@@ -695,7 +706,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -709,7 +720,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -723,7 +734,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -740,7 +751,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -754,7 +765,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -768,7 +779,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);
@@ -787,7 +798,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -801,7 +812,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -815,7 +826,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -832,7 +843,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -846,7 +857,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -860,12 +871,12 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);
     });
-    it('should work with chainlinkRegistry address incorrect', async () => {
+    it('should work with token address incorrect', async () => {
       const instance = createValidInstance();
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
@@ -888,7 +899,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -902,7 +913,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -916,7 +927,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -933,7 +944,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -947,7 +958,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -961,12 +972,12 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);
     });
-    it('should work with no chainlinkRegistry address no quote ', async () => {
+    it('should work with no token address no quote ', async () => {
       const instance = createValidInstance();
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
@@ -988,7 +999,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -1002,7 +1013,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1016,7 +1027,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -1033,7 +1044,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -1047,7 +1058,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1061,12 +1072,12 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);
     });
-    it('should work with no chainlinkregistry address and quote ', async () => {
+    it('should work with no tokenAddress address and quote ', async () => {
       const instance = createValidInstance();
       const result: ReserveIncentiveWithFeedsResponse[] =
         await instance.getIncentivesDataWithPrice({
@@ -1088,7 +1099,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -1102,7 +1113,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1116,7 +1127,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
         {
@@ -1133,7 +1144,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '43565143328112327495233486',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           vdIncentiveData: {
             tokenAddress: '0x531842cEbbdD378f8ee36D171d6cC9C4fcf475Ec',
@@ -1147,7 +1158,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '57970476598005880594044681',
             emissionEndTimestamp: 1637573428,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
           sdIncentiveData: {
             tokenAddress: '0x0000000000000000000000000000000000000000',
@@ -1161,7 +1172,7 @@ describe('UiIncentiveDataProvider', () => {
             tokenIncentivesIndex: '0',
             emissionEndTimestamp: 0,
             priceFeed: '0',
-            priceFeedDecimals: 0,
+            priceFeedDecimals: 18,
           },
         },
       ]);

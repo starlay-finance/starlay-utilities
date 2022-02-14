@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { providers } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
+import { ERC20Service } from '..';
 import {
   PriceFeedAggregatorAdapter,
   PriceFeedAggregatorAdapterInterface,
@@ -62,6 +63,11 @@ export interface GetIncentivesDataWithPriceType {
   tokenAddress?: string;
 }
 
+interface DecimalResultSuccessful {
+  tokenAddress: string;
+  decimal: number;
+}
+
 export class UiIncentiveDataProvider
   implements UiIncentiveDataProviderInterface
 {
@@ -69,6 +75,7 @@ export class UiIncentiveDataProvider
 
   private readonly _chainlinkFeedsRegistries: PriceFeedAggregatorAdapterInterface;
 
+  private readonly _erc20Service: ERC20Service;
   /**
    * Constructor
    * @param context The ui incentive data provider context
@@ -91,6 +98,8 @@ export class UiIncentiveDataProvider
       context.incentiveDataProviderAddress,
       context.provider,
     );
+
+    this._erc20Service = new ERC20Service(context.provider);
   }
 
   /**
@@ -190,44 +199,50 @@ export class UiIncentiveDataProvider
 
   public async getIncentivesDataWithPrice({
     lendingPoolAddressProvider,
-    tokenAddress,
   }: GetIncentivesDataWithPriceType): Promise<
     ReserveIncentiveWithFeedsResponse[]
   > {
     const incentives: ReserveIncentiveDataHumanizedResponse[] =
       await this.getReservesIncentivesDataHumanized(lendingPoolAddressProvider);
     const feeds: FeedResultSuccessful[] = [];
+    const decimals: Map<string, number> = new Map();
+    const allIncentiveRewardTokens: Set<string> = new Set();
 
-    if (tokenAddress && isAddress(tokenAddress)) {
-      const allIncentiveRewardTokens: Set<string> = new Set();
-
-      incentives.forEach(incentive => {
-        allIncentiveRewardTokens.add(
-          incentive.lIncentiveData.rewardTokenAddress,
-        );
-        allIncentiveRewardTokens.add(
-          incentive.vdIncentiveData.rewardTokenAddress,
-        );
-        allIncentiveRewardTokens.add(
-          incentive.sdIncentiveData.rewardTokenAddress,
-        );
-      });
-
-      const incentiveRewardTokens: string[] = Array.from(
-        allIncentiveRewardTokens,
+    incentives.forEach(incentive => {
+      allIncentiveRewardTokens.add(incentive.lIncentiveData.rewardTokenAddress);
+      allIncentiveRewardTokens.add(
+        incentive.vdIncentiveData.rewardTokenAddress,
       );
-
-      // eslint-disable-next-line @typescript-eslint/promise-function-async
-      const rewardFeedPromises = incentiveRewardTokens.map(rewardToken =>
-        this._getFeed(rewardToken),
+      allIncentiveRewardTokens.add(
+        incentive.sdIncentiveData.rewardTokenAddress,
       );
+    });
 
-      const feedResults = await Promise.allSettled(rewardFeedPromises);
+    const incentiveRewardTokens: string[] = Array.from(
+      allIncentiveRewardTokens,
+    );
 
-      feedResults.forEach(feedResult => {
-        if (feedResult.status === 'fulfilled') feeds.push(feedResult.value);
-      });
-    }
+    // eslint-disable-next-line @typescript-eslint/promise-function-async
+    const rewardFeedPromises = incentiveRewardTokens.map(rewardToken =>
+      this._getFeed(rewardToken),
+    );
+
+    // eslint-disable-next-line @typescript-eslint/promise-function-async
+    const decimalsPromises = incentiveRewardTokens.map(rewardToken =>
+      this._getTokenDecimals(rewardToken),
+    );
+
+    const feedResults = await Promise.allSettled(rewardFeedPromises);
+    const decimalsResults = await Promise.allSettled(decimalsPromises);
+
+    feedResults.forEach(feedResult => {
+      if (feedResult.status === 'fulfilled')
+        feeds.push({ ...feedResult.value });
+    });
+    decimalsResults.forEach(result => {
+      if (result.status === 'fulfilled')
+        decimals.set(result.value.tokenAddress, result.value.decimal);
+    });
 
     return incentives.map(
       (incentive: ReserveIncentiveDataHumanizedResponse) => {
@@ -246,23 +261,30 @@ export class UiIncentiveDataProvider
             feed.rewardTokenAddress ===
             incentive.sdIncentiveData.rewardTokenAddress,
         );
+        const lDec = decimals.get(incentive.lIncentiveData.rewardTokenAddress);
+        const vdDec = decimals.get(
+          incentive.vdIncentiveData.rewardTokenAddress,
+        );
+        const sdDec = decimals.get(
+          incentive.sdIncentiveData.rewardTokenAddress,
+        );
 
         return {
           underlyingAsset: incentive.underlyingAsset,
           lIncentiveData: {
             ...incentive.lIncentiveData,
             priceFeed: lFeed ? lFeed.price.toFixed() : '0',
-            priceFeedDecimals: lFeed ? 18 : 0,
+            priceFeedDecimals: lDec ? lDec : 0,
           },
           vdIncentiveData: {
             ...incentive.vdIncentiveData,
             priceFeed: vdFeed ? vdFeed.price.toFixed() : '0',
-            priceFeedDecimals: vdFeed ? 18 : 0,
+            priceFeedDecimals: vdDec ? vdDec : 0,
           },
           sdIncentiveData: {
             ...incentive.sdIncentiveData,
             priceFeed: sdFeed ? sdFeed.price.toFixed() : '0',
-            priceFeedDecimals: sdFeed ? 18 : 0,
+            priceFeedDecimals: sdDec ? sdDec : 0,
           },
         };
       },
@@ -277,6 +299,16 @@ export class UiIncentiveDataProvider
     return {
       price: new BigNumber(feed.price.toNumber()),
       rewardTokenAddress: rewardToken,
+    };
+  };
+
+  private readonly _getTokenDecimals = async (
+    tokenAddress: string,
+  ): Promise<DecimalResultSuccessful> => {
+    const decimal = await this._erc20Service.decimalsOf(tokenAddress);
+    return {
+      tokenAddress,
+      decimal,
     };
   };
 
