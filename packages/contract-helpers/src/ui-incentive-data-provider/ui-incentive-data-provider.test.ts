@@ -55,7 +55,16 @@ describe('UiIncentiveDataProvider', () => {
           }),
       ).toThrowError('contract address is not valid');
     });
-
+    it('should throw an error if the adapterAddres is not valid', () => {
+      expect(
+        () =>
+          new UiIncentiveDataProvider({
+            incentiveDataProviderAddress: mockValidEthereumAddress,
+            priceAggregatorAdapterAddress: mockInvalidEthereumAddress,
+            provider: new providers.JsonRpcProvider(),
+          }),
+      ).toThrowError('contract address is not valid');
+    });
     // it('should throw an error if the lendingPoolAddress is not valid', () => {
     //   expect(
     //     () =>
