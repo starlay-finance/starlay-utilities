@@ -24,6 +24,7 @@ interface ReserveIncentive {
 export interface CalculateAllReserveIncentivesRequest {
   reserveIncentives: ReserveIncentiveWithFeedsResponse[];
   reserves: ReserveCalculationData[];
+  underlyingAsserDict?: Record<string, string>
 }
 
 // Calculate incentive token price from reserves data or priceFeed from UiIncentiveDataProvider
@@ -32,15 +33,12 @@ function calculateRewardTokenPrice(
   reserves: ReserveCalculationData[],
   address: string,
   priceFeed: string,
+  underlyingAssetDict?: Record<string, string>
 ): string {
-  address = address.toLowerCase();
-  // For stkAave incentives, use Aave price feed
-  if (address.toLowerCase() === '0x4da27a545c0c5b758a6ba100e3a049001de870f5') {
-    address = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
-  }
-
+  const addressLowerCase = address.toLowerCase()
+  const underlyingAssetAddress = underlyingAssetDict && underlyingAssetDict[addressLowerCase] || addressLowerCase
   const rewardReserve = reserves.find(
-    reserve => reserve.underlyingAsset.toLowerCase() === address,
+    reserve => reserve.underlyingAsset.toLowerCase() === underlyingAssetAddress,
   );
   if (rewardReserve) {
     return rewardReserve.priceInMarketReferenceCurrency;
@@ -52,6 +50,7 @@ function calculateRewardTokenPrice(
 export function calculateAllReserveIncentives({
   reserveIncentives,
   reserves,
+  underlyingAsserDict,
 }: CalculateAllReserveIncentivesRequest): ReserveIncentiveDict {
   const reserveDict: ReserveIncentiveDict = {};
   // calculate incentive per reserve token
@@ -76,18 +75,21 @@ export function calculateAllReserveIncentives({
             reserves,
             reserveIncentive.lIncentiveData.rewardTokenAddress.toLowerCase(),
             reserveIncentive.lIncentiveData.priceFeed,
+            underlyingAsserDict,
           ),
           vdRewardTokenPriceInMarketReferenceCurrency:
             calculateRewardTokenPrice(
               reserves,
               reserveIncentive.vdIncentiveData.rewardTokenAddress.toLowerCase(),
               reserveIncentive.vdIncentiveData.priceFeed,
+              underlyingAsserDict,
             ),
           sdRewardTokenPriceInMarketReferenceCurrency:
             calculateRewardTokenPrice(
               reserves,
               reserveIncentive.sdIncentiveData.rewardTokenAddress.toLowerCase(),
               reserveIncentive.sdIncentiveData.priceFeed,
+              underlyingAsserDict,
             ),
         });
       reserveDict[calculatedReserveIncentives.underlyingAsset] = {
