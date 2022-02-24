@@ -28,8 +28,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         vdIncentiveData: {
           emissionPerSecond: '22037037037037000',
@@ -43,8 +41,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         sdIncentiveData: {
           emissionPerSecond: '0',
@@ -58,8 +54,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
       };
 
@@ -107,8 +101,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         vdIncentiveData: {
           emissionPerSecond: '4629629629629629',
@@ -122,8 +114,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         sdIncentiveData: {
           emissionPerSecond: '0',
@@ -137,8 +127,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 0,
           precision: 0,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
       };
 
@@ -179,8 +167,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         vdIncentiveData: {
           emissionPerSecond: '2314814814814814',
@@ -194,8 +180,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 18,
           precision: 18,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
         sdIncentiveData: {
           emissionPerSecond: '0',
@@ -209,8 +193,6 @@ describe('calculateReserveIncentives', () => {
           rewardTokenDecimals: 0,
           precision: 0,
           priceFeed: '',
-          priceFeedDecimals: 18,
-          priceFeedTimestamp: 1,
         },
       };
       const result = calculateReserveIncentives({

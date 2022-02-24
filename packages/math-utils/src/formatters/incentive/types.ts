@@ -8,8 +8,6 @@ export interface ReserveIncentiveWithFeedsResponse {
 
 export interface IncentivesWithFeeds extends IncentiveDataHumanized {
   priceFeed: string;
-  priceFeedTimestamp: number;
-  priceFeedDecimals: number;
 }
 
 export interface IncentiveDataHumanized {

@@ -20,8 +20,6 @@ export const aETHReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   vdIncentiveData: {
     emissionPerSecond: '104166666666666',
@@ -34,8 +32,6 @@ export const aETHReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   sdIncentiveData: {
     emissionPerSecond: '0',
@@ -48,8 +44,6 @@ export const aETHReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
 };
 
@@ -66,8 +60,6 @@ export const aUSDCReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   vdIncentiveData: {
     emissionPerSecond: '4629629629629629',
@@ -80,8 +72,6 @@ export const aUSDCReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   sdIncentiveData: {
     emissionPerSecond: '0',
@@ -94,8 +84,6 @@ export const aUSDCReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
 };
 
@@ -112,8 +100,6 @@ export const aXSUSHIReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   vdIncentiveData: {
     emissionPerSecond: '0',
@@ -126,8 +112,6 @@ export const aXSUSHIReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
   sdIncentiveData: {
     emissionPerSecond: '0',
@@ -140,8 +124,6 @@ export const aXSUSHIReserveIncentiveData: ReserveIncentiveWithFeedsResponse = {
     rewardTokenDecimals: 18,
     precision: 18,
     priceFeed: '78530386771994300',
-    priceFeedTimestamp: 1000000000,
-    priceFeedDecimals: 8,
   },
 };
 
