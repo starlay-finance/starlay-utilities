@@ -24,7 +24,7 @@ interface ReserveIncentive {
 export interface CalculateAllReserveIncentivesRequest {
   reserveIncentives: ReserveIncentiveWithFeedsResponse[];
   reserves: ReserveCalculationData[];
-  underlyingAsserDict?: Record<string, string>
+  underlyingAsserDict?: Record<string, string>;
 }
 
 // Calculate incentive token price from reserves data or priceFeed from UiIncentiveDataProvider
@@ -33,10 +33,11 @@ function calculateRewardTokenPrice(
   reserves: ReserveCalculationData[],
   address: string,
   priceFeed: string,
-  underlyingAssetDict?: Record<string, string>
+  underlyingAssetDict?: Record<string, string>,
 ): string {
-  const addressLowerCase = address.toLowerCase()
-  const underlyingAssetAddress = underlyingAssetDict && underlyingAssetDict[addressLowerCase] || addressLowerCase
+  const addressLowerCase = address.toLowerCase();
+  const underlyingAssetAddress =
+    underlyingAssetDict?.[addressLowerCase] ?? addressLowerCase;
   const rewardReserve = reserves.find(
     reserve => reserve.underlyingAsset.toLowerCase() === underlyingAssetAddress,
   );

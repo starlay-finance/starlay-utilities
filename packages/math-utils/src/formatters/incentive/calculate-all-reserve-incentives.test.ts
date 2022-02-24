@@ -109,26 +109,35 @@ describe('calculateAllReserveIncentives', () => {
           ...aETHReserveIncentiveData,
           lIncentiveData: {
             ...aETHReserveIncentiveData.lIncentiveData,
-            priceFeed: "0",
+            priceFeed: '0',
           },
           vdIncentiveData: {
             ...aETHReserveIncentiveData.vdIncentiveData,
-            priceFeed: "0",
+            priceFeed: '0',
           },
           sdIncentiveData: {
             ...aETHReserveIncentiveData.sdIncentiveData,
-            priceFeed: "0",
+            priceFeed: '0',
           },
-        }
+        },
       ],
       reserves: allIncentivesReservesWithRewardReserve,
       underlyingAsserDict: {
-        '0x4da27a545c0c5b758a6ba100e3a049001de870f5': '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9'
-      }
+        '0x4da27a545c0c5b758a6ba100e3a049001de870f5':
+          '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+      },
     });
-    expect(result[aETHReserveIncentiveData.underlyingAsset].lIncentives.incentiveAPR).not.toBe("0");
-    expect(result[aETHReserveIncentiveData.underlyingAsset].vdIncentives.incentiveAPR).not.toBe("0");
+    expect(
+      result[aETHReserveIncentiveData.underlyingAsset].lIncentives.incentiveAPR,
+    ).not.toBe('0');
+    expect(
+      result[aETHReserveIncentiveData.underlyingAsset].vdIncentives
+        .incentiveAPR,
+    ).not.toBe('0');
     // because emissionPerSecond === '0'
-    expect(result[aETHReserveIncentiveData.underlyingAsset].sdIncentives.incentiveAPR).toBe("0");
+    expect(
+      result[aETHReserveIncentiveData.underlyingAsset].sdIncentives
+        .incentiveAPR,
+    ).toBe('0');
   });
 });
