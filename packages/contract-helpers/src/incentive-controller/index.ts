@@ -19,10 +19,17 @@ export type ClaimRewardsMethodType = {
   to?: string;
   incentivesControllerAddress: string;
 };
+export type GetUserUnclaimedRewardsMethodType = {
+  user: string;
+  incentivesControllerAddress: string;
+};
 
 export interface IncentivesControllerInterface {
   claimRewards: (
     args: ClaimRewardsMethodType,
+  ) => EthereumTransactionTypeExtended[];
+  getUserUnclaimedRewards: (
+    args: GetUserUnclaimedRewardsMethodType,
   ) => EthereumTransactionTypeExtended[];
 }
 
@@ -52,6 +59,29 @@ export class IncentivesController
           constants.MaxUint256.toString(),
           to ?? user,
         ),
+      from: user,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.REWARD_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  @IncentivesValidator
+  public getUserUnclaimedRewards(
+    @isEthAddress('user')
+    { user, incentivesControllerAddress }: GetUserUnclaimedRewardsMethodType,
+  ): EthereumTransactionTypeExtended[] {
+    const incentivesContract: IIncentivesController = this.getContractInstance(
+      incentivesControllerAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        incentivesContract.populateTransaction.getUserUnclaimedRewards(user),
       from: user,
     });
 

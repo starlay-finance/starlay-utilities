@@ -207,4 +207,19 @@ describe('IncentiveController', () => {
       );
     });
   });
+
+  describe('getUserUnclaimedRewards', () => {
+    const incentivesInstance = new IncentivesController(correctProvider);
+    const user = '0x0000000000000000000000000000000000000001';
+    const incentivesControllerAddress =
+      '0x0000000000000000000000000000000000000005';
+
+    it('should not throw error if passed valid addresses', async () => {
+      const [tx] = incentivesInstance.getUserUnclaimedRewards({
+        user,
+        incentivesControllerAddress,
+      });
+      expect(async () => tx.tx()).not.toThrow();
+    });
+  });
 });
