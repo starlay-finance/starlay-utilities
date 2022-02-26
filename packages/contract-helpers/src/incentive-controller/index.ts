@@ -10,8 +10,8 @@ import {
   isEthAddress,
   isEthAddressArray,
 } from '../commons/validators/paramValidators';
-import { IStarlayIncentivesController } from './typechain/IStarlayIncentivesController';
-import { IStarlayIncentivesController__factory } from './typechain/IStarlayIncentivesController__factory';
+import { IIncentivesController } from './typechain/IIncentivesController';
+import { IIncentivesController__factory } from './typechain/IIncentivesController__factory';
 
 export type ClaimRewardsMethodType = {
   user: string;
@@ -27,11 +27,11 @@ export interface IncentivesControllerInterface {
 }
 
 export class IncentivesController
-  extends BaseService<IStarlayIncentivesController>
+  extends BaseService<IIncentivesController>
   implements IncentivesControllerInterface
 {
   constructor(provider: providers.Provider) {
-    super(provider, IStarlayIncentivesController__factory);
+    super(provider, IIncentivesController__factory);
   }
 
   @IncentivesValidator
@@ -42,8 +42,9 @@ export class IncentivesController
     @isEthAddressArray('assets')
     { user, assets, to, incentivesControllerAddress }: ClaimRewardsMethodType,
   ): EthereumTransactionTypeExtended[] {
-    const incentivesContract: IStarlayIncentivesController =
-      this.getContractInstance(incentivesControllerAddress);
+    const incentivesContract: IIncentivesController = this.getContractInstance(
+      incentivesControllerAddress,
+    );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
         incentivesContract.populateTransaction.claimRewards(
