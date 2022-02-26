@@ -72,7 +72,7 @@ interface GetComputedReserveFieldsResponse {
 /**
  * @description accrues interest and adds computed fields
  */
-function getComputedReserveFields({
+export function getComputedReserveFields({
   reserve,
   currentTimestamp,
 }: FormatReserveRequest): GetComputedReserveFieldsResponse {
@@ -130,7 +130,7 @@ interface FormatEnhancedReserveRequest {
 /**
  * @description normalizes reserve values & computed fields
  */
-function formatEnhancedReserve({
+export function formatEnhancedReserve({
   reserve,
 }: FormatEnhancedReserveRequest): FormatReserveResponse {
   const normalizeWithReserve = (n: BigNumberValue) =>
