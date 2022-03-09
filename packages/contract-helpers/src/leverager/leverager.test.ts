@@ -44,10 +44,10 @@ describe('Leverager', () => {
     const reserve = '0x0000000000000000000000000000000000000007';
     const debtToken = '0x0000000000000000000000000000000000000008';
     const onBehalfOf = '0x0000000000000000000000000000000000000009';
-    const amount = '123.456';
+    const amount = '1';
     const borrowRatio = '0.8';
     const borrowRatioAdjusted = '8000';
-    const loopCount = '40';
+    const loopCount = '27';
     const interestRateMode = InterestRate.Variable;
 
     const defaultDecimals = 18;

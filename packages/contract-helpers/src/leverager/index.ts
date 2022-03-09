@@ -27,6 +27,7 @@ import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { Leverager as LeveragerContract } from './typechain/Leverager';
 import { Leverager__factory } from './typechain/Leverager__factory';
 import { LoopParamsType } from './types';
+import { calcTotalBorrowingAmount } from './utils';
 
 const BORROW_RATIO_DECIMALS = 4;
 
@@ -83,18 +84,24 @@ export class Leverager
     const txs: EthereumTransactionTypeExtended[] = [];
     const reserveDecimals: number = await decimalsOf(reserve);
     const convertedAmount: string = valueToWei(amount, reserveDecimals);
+    const totalBorrowingAmount: string = calcTotalBorrowingAmount(
+      new BigNumberJs(convertedAmount),
+      new BigNumberJs(borrowRatio),
+      new BigNumberJs(loopCount),
+    ).toString();
 
+    console.log(totalBorrowingAmount);
     const approved = await isApproved({
       token: reserve,
       user,
       spender: this.leveragerAddress,
-      amount,
+      amount: convertedAmount,
     });
     const delegated = await isDelegated({
       token: debtToken,
       user,
       delegatee: this.leveragerAddress,
-      amount,
+      amount: totalBorrowingAmount,
     });
 
     if (!approved) {
@@ -112,7 +119,7 @@ export class Leverager
         user,
         token: debtToken,
         delegatee: this.leveragerAddress,
-        amount,
+        amount: totalBorrowingAmount,
       });
       txs.push(delegateTx);
     }
