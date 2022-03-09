@@ -110,7 +110,7 @@ describe('Leverager', () => {
       expect(decimalsSpy).toHaveBeenCalled();
       expect(txs).toHaveLength(3);
       expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
-      expect(txs[1].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(txs[1].txType).toBe(eEthereumTxType.DEBTERC20_APPROVAL);
       expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
 
       const tx: transactionType = await dlpTx.tx();

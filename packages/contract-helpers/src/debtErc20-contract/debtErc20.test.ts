@@ -54,7 +54,7 @@ describe('DebtERC20Service', () => {
           amount,
         });
 
-      expect(txObj.txType).toEqual(eEthereumTxType.ERC20_APPROVAL);
+      expect(txObj.txType).toEqual(eEthereumTxType.DEBTERC20_APPROVAL);
 
       const tx: transactionType = await txObj.tx();
       expect(tx.to).toEqual(token);

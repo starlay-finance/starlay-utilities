@@ -61,7 +61,7 @@ export class DebtERC20Service
     });
     return {
       tx: txCallback,
-      txType: eEthereumTxType.ERC20_APPROVAL,
+      txType: eEthereumTxType.DEBTERC20_APPROVAL,
       gas: this.generateTxPriceEstimation([], txCallback),
     };
   }
