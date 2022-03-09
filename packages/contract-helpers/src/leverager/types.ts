@@ -7,6 +7,6 @@ export type LoopParamsType = {
   amount: string;
   interestRateMode: BigNumberish;
   onBehalfOf?: string;
-  borrowRatio: string;
-  loopCount: BigNumberish;
+  borrowRatio: string | number;
+  loopCount: string | number;
 };
