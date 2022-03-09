@@ -6,6 +6,7 @@ import {
   EthereumTransactionTypeExtended,
   ProtocolAction,
   transactionType,
+  InterestRate,
 } from '../commons/types';
 import {
   getTxValue,
@@ -123,7 +124,7 @@ export class Leverager
         leveragerContract.populateTransaction.loop(
           reserve,
           convertedAmount,
-          interestRateMode,
+          interestRateMode === InterestRate.Variable ? 2 : 1,
           onBehalfOf ?? user,
           new BigNumberJs(borrowRatio)
             .shiftedBy(BORROW_RATIO_DECIMALS)

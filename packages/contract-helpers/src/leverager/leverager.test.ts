@@ -2,6 +2,7 @@ import { BigNumber, providers, utils } from 'ethers';
 import {
   eEthereumTxType,
   GasType,
+  InterestRate,
   ProtocolAction,
   transactionType,
 } from '../commons/types';
@@ -47,7 +48,7 @@ describe('Leverager', () => {
     const borrowRatio = '0.8';
     const borrowRatioAdjusted = '8000';
     const loopCount = '40';
-    const interestRateMode = '0';
+    const interestRateMode = InterestRate.Variable;
 
     const defaultDecimals = 18;
 
@@ -127,7 +128,8 @@ describe('Leverager', () => {
       expect(decoded[1]).toEqual(
         BigNumber.from(valueToWei(amount, defaultDecimals)),
       );
-      expect(decoded[2]).toEqual(BigNumber.from(interestRateMode));
+      // InterestRate.Variable
+      expect(decoded[2]).toEqual(BigNumber.from('2'));
       expect(decoded[3]).toEqual(onBehalfOf);
       expect(decoded[4]).toEqual(BigNumber.from(borrowRatioAdjusted));
       expect(decoded[5]).toEqual(BigNumber.from(loopCount));
@@ -156,6 +158,36 @@ describe('Leverager', () => {
       expect(decimalsSpy).toHaveBeenCalled();
       expect(txs).toHaveLength(1);
       expect(txs[0].txType).toBe(eEthereumTxType.DLP_ACTION);
+    });
+
+    it('if interestRade != Variable, coverted to 1 ', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } = setup(
+        leveragerInstance,
+        { isApproved: true, isDelegated: true },
+      );
+
+      const txs = await leveragerInstance.loop({
+        ...validArgs,
+        interestRateMode: InterestRate.None,
+      });
+      const dlpTx = txs[0];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(txs).toHaveLength(1);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx = await dlpTx.tx();
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+      // InterestRate is not Variable
+      expect(decoded[2]).toEqual(BigNumber.from('1'));
     });
 
     it('Expects the dlp tx object passing all parameters and not needing apporval nor delegation ', async () => {
