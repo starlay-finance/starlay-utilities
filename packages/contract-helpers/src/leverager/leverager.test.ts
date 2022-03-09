@@ -44,7 +44,8 @@ describe('Leverager', () => {
     const debtToken = '0x0000000000000000000000000000000000000008';
     const onBehalfOf = '0x0000000000000000000000000000000000000009';
     const amount = '123.456';
-    const borrowRatio = '8000';
+    const borrowRatio = '0.8';
+    const borrowRatioAdjusted = '8000';
     const loopCount = '40';
     const interestRateMode = '0';
 
@@ -128,7 +129,7 @@ describe('Leverager', () => {
       );
       expect(decoded[2]).toEqual(BigNumber.from(interestRateMode));
       expect(decoded[3]).toEqual(onBehalfOf);
-      expect(decoded[4]).toEqual(BigNumber.from(borrowRatio));
+      expect(decoded[4]).toEqual(BigNumber.from(borrowRatioAdjusted));
       expect(decoded[5]).toEqual(BigNumber.from(loopCount));
 
       // gas price

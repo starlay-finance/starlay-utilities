@@ -1,3 +1,4 @@
+import { BigNumber as BigNumberJs } from 'bignumber.js';
 import { providers } from 'ethers';
 import BaseService from '../commons/BaseService';
 import {
@@ -25,6 +26,8 @@ import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { Leverager as LeveragerContract } from './typechain/Leverager';
 import { Leverager__factory } from './typechain/Leverager__factory';
 import { LoopParamsType } from './types';
+
+const BORROW_RATIO_DECIMALS = 4;
 
 export interface LeverageInterface {
   loop: (args: LoopParamsType) => Promise<EthereumTransactionTypeExtended[]>;
@@ -122,7 +125,9 @@ export class Leverager
           convertedAmount,
           interestRateMode,
           onBehalfOf ?? user,
-          borrowRatio,
+          new BigNumberJs(borrowRatio)
+            .shiftedBy(BORROW_RATIO_DECIMALS)
+            .toFixed(),
           loopCount,
         ),
       from: user,
