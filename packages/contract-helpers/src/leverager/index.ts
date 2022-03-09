@@ -90,7 +90,6 @@ export class Leverager
       new BigNumberJs(loopCount),
     ).toString();
 
-    console.log(totalBorrowingAmount);
     const approved = await isApproved({
       token: reserve,
       user,
