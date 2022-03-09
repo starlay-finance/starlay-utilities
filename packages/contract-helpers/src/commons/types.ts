@@ -48,6 +48,7 @@ export type MigratorConfig = {
 
 export type LendingPoolMarketConfig = {
   LENDING_POOL: tEthereumAddress;
+  LEVERAGER_ADDRESS?: tEthereumAddress;
   WETH_GATEWAY?: tEthereumAddress;
 };
 
@@ -71,6 +72,7 @@ export enum ProtocolAction {
   default = 'default',
   withdraw = 'withdraw',
   deposit = 'deposit',
+  loop = 'loop',
   liquidationCall = 'liquidationCall',
   liquidationFlash = 'liquidationFlash',
   repay = 'repay',
