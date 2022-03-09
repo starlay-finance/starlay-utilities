@@ -85,7 +85,7 @@ export class Leverager
     const reserveDecimals: number = await decimalsOf(reserve);
     const convertedAmount: string = valueToWei(amount, reserveDecimals);
     const totalBorrowingAmount: string = calcTotalBorrowingAmount(
-      new BigNumberJs(convertedAmount),
+      new BigNumberJs(amount),
       new BigNumberJs(borrowRatio),
       new BigNumberJs(loopCount),
     ).toString();
@@ -118,7 +118,7 @@ export class Leverager
         user,
         token: debtToken,
         delegatee: this.leveragerAddress,
-        amount: totalBorrowingAmount,
+        amount: valueToWei(totalBorrowingAmount, reserveDecimals),
       });
       txs.push(delegateTx);
     }
