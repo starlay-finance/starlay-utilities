@@ -83,18 +83,18 @@ export class Leverager
       this.debtErc20Service;
     const txs: EthereumTransactionTypeExtended[] = [];
     const reserveDecimals: number = await decimalsOf(reserve);
-    const convertedAmount: string = valueToWei(amount, reserveDecimals);
     const totalBorrowingAmount: string = calcTotalBorrowingAmount(
       new BigNumberJs(amount),
       new BigNumberJs(borrowRatio),
       new BigNumberJs(loopCount),
     ).toString();
+    const convertedAmount: string = valueToWei(amount, reserveDecimals);
 
     const approved = await isApproved({
       token: reserve,
       user,
       spender: this.leveragerAddress,
-      amount: convertedAmount,
+      amount,
     });
     const delegated = await isDelegated({
       token: debtToken,
@@ -118,7 +118,7 @@ export class Leverager
         user,
         token: debtToken,
         delegatee: this.leveragerAddress,
-        amount: valueToWei(totalBorrowingAmount, reserveDecimals),
+        amount: DEFAULT_APPROVE_AMOUNT,
       });
       txs.push(delegateTx);
     }
