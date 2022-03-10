@@ -67,8 +67,8 @@ export const gasLimitRecommendations: GasRecommendationType = {
     recommended: '640000',
   },
   [ProtocolAction.loop]: {
-    limit: '640000',
-    recommended: '640000',
+    limit: '4500000',
+    recommended: '4500000',
   },
 };
 
