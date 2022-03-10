@@ -9,6 +9,7 @@ import {
   InterestRate,
 } from '../commons/types';
 import {
+  gasLimitRecommendations,
   getTxValue,
   valueToWei,
   API_ETH_MOCK_ADDRESS,
@@ -144,7 +145,10 @@ export class Leverager
     txs.push({
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
-      gas: this.generateTxPriceEstimation(txs, txCallback, ProtocolAction.loop),
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.loop].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
     });
 
     return txs;
