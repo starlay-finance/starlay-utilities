@@ -186,6 +186,7 @@ export type TransactionGenerationMethod = {
   value?: string;
   gasSurplus?: number;
   action?: ProtocolAction;
+  skipEstimation?: boolean;
 };
 
 export type TransactionGasGenerationMethod = {

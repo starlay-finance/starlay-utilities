@@ -117,7 +117,11 @@ describe('Leverager', () => {
       const tx: transactionType = await dlpTx.tx();
       expect(tx.to).toEqual(LEVERAGER);
       expect(tx.from).toEqual(user);
-      expect(tx.gasLimit).toEqual(BigNumber.from(1));
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.loop].recommended,
+        ),
+      );
 
       const decoded = utils.defaultAbiCoder.decode(
         ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
@@ -209,7 +213,11 @@ describe('Leverager', () => {
       const tx: transactionType = await dlpTx.tx();
       expect(tx.to).toEqual(LEVERAGER);
       expect(tx.from).toEqual(user);
-      expect(tx.gasLimit).toEqual(BigNumber.from(1));
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.loop].recommended,
+        ),
+      );
 
       const decoded = utils.defaultAbiCoder.decode(
         ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],

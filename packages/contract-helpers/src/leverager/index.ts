@@ -138,8 +138,10 @@ export class Leverager
             .toFixed(),
           loopCount,
         ),
+      action: ProtocolAction.loop,
       from: user,
       value: getTxValue(reserve, convertedAmount),
+      skipEstimation: true,
     });
 
     txs.push({
