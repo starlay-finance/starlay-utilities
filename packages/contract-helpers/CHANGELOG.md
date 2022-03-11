@@ -1,5 +1,58 @@
 # Change Log
 
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 0.0.11 (2022-03-11)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.10 (2022-02-26)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.9 (2022-02-24)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.8 (2022-02-15)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.7 (2022-02-14)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+## 0.0.6 (2022-02-12)
+
+**Note:** Version bump only for package @starlay-finance/contract-helpers
+
+
+
+
+
+# Change Log
+
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
