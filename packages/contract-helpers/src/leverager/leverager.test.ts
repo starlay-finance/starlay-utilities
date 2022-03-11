@@ -43,7 +43,6 @@ describe('Leverager', () => {
     const user = '0x0000000000000000000000000000000000000006';
     const reserve = '0x0000000000000000000000000000000000000007';
     const debtToken = '0x0000000000000000000000000000000000000008';
-    const onBehalfOf = '0x0000000000000000000000000000000000000009';
     const amount = '1';
     const borrowRatio = '0.8';
     const borrowRatioAdjusted = '8000';
@@ -57,7 +56,6 @@ describe('Leverager', () => {
       reserve,
       debtToken,
       amount,
-      onBehalfOf,
       borrowRatio,
       loopCount,
       interestRateMode,
@@ -124,7 +122,7 @@ describe('Leverager', () => {
       );
 
       const decoded = utils.defaultAbiCoder.decode(
-        ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
+        ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
         utils.hexDataSlice(tx.data ?? '', 4),
       );
 
@@ -134,9 +132,8 @@ describe('Leverager', () => {
       );
       // InterestRate.Variable
       expect(decoded[2]).toEqual(BigNumber.from('2'));
-      expect(decoded[3]).toEqual(onBehalfOf);
-      expect(decoded[4]).toEqual(BigNumber.from(borrowRatioAdjusted));
-      expect(decoded[5]).toEqual(BigNumber.from(loopCount));
+      expect(decoded[3]).toEqual(BigNumber.from(borrowRatioAdjusted));
+      expect(decoded[4]).toEqual(BigNumber.from(loopCount));
 
       // gas price
       const gasPrice: GasType | null = await dlpTx.gas();
@@ -145,23 +142,6 @@ describe('Leverager', () => {
         gasLimitRecommendations[ProtocolAction.loop].recommended,
       );
       expect(gasPrice?.gasPrice).toEqual('1');
-    });
-
-    it('If omit onBehalfOf, the user is used as onBehalfOf', async () => {
-      const leveragerInstance = newLeveragerInstance();
-
-      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } = setup(
-        leveragerInstance,
-        { isApproved: true, isDelegated: true },
-      );
-
-      const txs = await leveragerInstance.loop(validArgs);
-
-      expect(isApprovedSpy).toHaveBeenCalled();
-      expect(isDelegatedSpy).toHaveBeenCalled();
-      expect(decimalsSpy).toHaveBeenCalled();
-      expect(txs).toHaveLength(1);
-      expect(txs[0].txType).toBe(eEthereumTxType.DLP_ACTION);
     });
 
     it('if interestRade != Variable, coverted to 1 ', async () => {
@@ -187,7 +167,7 @@ describe('Leverager', () => {
       const tx = await dlpTx.tx();
 
       const decoded = utils.defaultAbiCoder.decode(
-        ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
+        ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
         utils.hexDataSlice(tx.data ?? '', 4),
       );
       // InterestRate is not Variable
@@ -202,7 +182,6 @@ describe('Leverager', () => {
 
       const txs = await leveragerInstance.loop({
         ...validArgs,
-        onBehalfOf: undefined,
       });
       const dlpTx = txs[2];
 
@@ -218,12 +197,6 @@ describe('Leverager', () => {
           gasLimitRecommendations[ProtocolAction.loop].recommended,
         ),
       );
-
-      const decoded = utils.defaultAbiCoder.decode(
-        ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
-        utils.hexDataSlice(tx.data ?? '', 4),
-      );
-      expect(decoded[3]).toEqual(user);
     });
 
     it('throw error if invalid user', async () => {
@@ -270,17 +243,6 @@ describe('Leverager', () => {
         `Amount: ${invalidAmount} needs to be greater than 0`,
       );
     });
-    it('throw error if invalid onBehalfOf', async () => {
-      const leveragerInstance = newLeveragerInstance();
-      await expect(async () =>
-        leveragerInstance.loop({
-          ...validArgs,
-          onBehalfOf: invalidAddress,
-        }),
-      ).rejects.toThrowError(
-        `Address: ${invalidAddress} is not a valid ethereum Address`,
-      );
-    });
     it('throw error if borrowRatio lte 0', async () => {
       const leveragerInstance = newLeveragerInstance();
       await expect(async () =>
@@ -312,7 +274,6 @@ describe('Leverager', () => {
           reserve,
           debtToken,
           amount,
-          onBehalfOf,
           borrowRatio,
           loopCount,
           interestRateMode,
@@ -330,7 +291,6 @@ describe('Leverager', () => {
           reserve,
           debtToken,
           amount,
-          onBehalfOf,
           borrowRatio,
           loopCount,
           interestRateMode,

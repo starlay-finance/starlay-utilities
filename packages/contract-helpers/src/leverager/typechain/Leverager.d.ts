@@ -22,7 +22,7 @@ interface LeveragerInterface extends ethers.utils.Interface {
   functions: {
     'getConfiguration(address)': FunctionFragment;
     'lendingPool()': FunctionFragment;
-    'loop(address,uint256,uint256,address,uint256,uint256)': FunctionFragment;
+    'loop(address,uint256,uint256,uint256,uint256)': FunctionFragment;
     'ltv(address)': FunctionFragment;
   };
 
@@ -36,14 +36,7 @@ interface LeveragerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: 'loop',
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-    ],
+    values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(functionFragment: 'ltv', values: [string]): string;
 
@@ -112,16 +105,27 @@ export class Leverager extends BaseContract {
 
     lendingPool(overrides?: CallOverrides): Promise<[string]>;
 
+    /**
+     * Loop the depositing and borrowing
+     * @param amount The total deposit amount
+     * @param asset The address of the target token
+     * @param borrowRatio the percentage of the usage of the borrowed amount                        e.g. 80% -> 8000
+     * @param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
+     * @param loopCount The looping count how many times to deposit
+     */
     loop(
       asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
-      onBehalfOf: string,
       borrowRatio: BigNumberish,
       loopCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    /**
+     * Get Loan to value of the asset.
+     * @param asset address of the target token
+     */
     ltv(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
@@ -132,16 +136,27 @@ export class Leverager extends BaseContract {
 
   lendingPool(overrides?: CallOverrides): Promise<string>;
 
+  /**
+   * Loop the depositing and borrowing
+   * @param amount The total deposit amount
+   * @param asset The address of the target token
+   * @param borrowRatio the percentage of the usage of the borrowed amount                        e.g. 80% -> 8000
+   * @param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
+   * @param loopCount The looping count how many times to deposit
+   */
   loop(
     asset: string,
     amount: BigNumberish,
     interestRateMode: BigNumberish,
-    onBehalfOf: string,
     borrowRatio: BigNumberish,
     loopCount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  /**
+   * Get Loan to value of the asset.
+   * @param asset address of the target token
+   */
   ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
@@ -152,16 +167,27 @@ export class Leverager extends BaseContract {
 
     lendingPool(overrides?: CallOverrides): Promise<string>;
 
+    /**
+     * Loop the depositing and borrowing
+     * @param amount The total deposit amount
+     * @param asset The address of the target token
+     * @param borrowRatio the percentage of the usage of the borrowed amount                        e.g. 80% -> 8000
+     * @param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
+     * @param loopCount The looping count how many times to deposit
+     */
     loop(
       asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
-      onBehalfOf: string,
       borrowRatio: BigNumberish,
       loopCount: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<void>;
 
+    /**
+     * Get Loan to value of the asset.
+     * @param asset address of the target token
+     */
     ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -175,16 +201,27 @@ export class Leverager extends BaseContract {
 
     lendingPool(overrides?: CallOverrides): Promise<BigNumber>;
 
+    /**
+     * Loop the depositing and borrowing
+     * @param amount The total deposit amount
+     * @param asset The address of the target token
+     * @param borrowRatio the percentage of the usage of the borrowed amount                        e.g. 80% -> 8000
+     * @param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
+     * @param loopCount The looping count how many times to deposit
+     */
     loop(
       asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
-      onBehalfOf: string,
       borrowRatio: BigNumberish,
       loopCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    /**
+     * Get Loan to value of the asset.
+     * @param asset address of the target token
+     */
     ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -196,16 +233,27 @@ export class Leverager extends BaseContract {
 
     lendingPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    /**
+     * Loop the depositing and borrowing
+     * @param amount The total deposit amount
+     * @param asset The address of the target token
+     * @param borrowRatio the percentage of the usage of the borrowed amount                        e.g. 80% -> 8000
+     * @param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
+     * @param loopCount The looping count how many times to deposit
+     */
     loop(
       asset: string,
       amount: BigNumberish,
       interestRateMode: BigNumberish,
-      onBehalfOf: string,
       borrowRatio: BigNumberish,
       loopCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Get Loan to value of the asset.
+     * @param asset address of the target token
+     */
     ltv(
       asset: string,
       overrides?: CallOverrides,

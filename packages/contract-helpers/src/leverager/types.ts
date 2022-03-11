@@ -6,7 +6,6 @@ export type LoopParamsType = {
   debtToken: string;
   amount: string;
   interestRateMode: InterestRate;
-  onBehalfOf?: string;
   borrowRatio: string | number;
   loopCount: string | number;
 };

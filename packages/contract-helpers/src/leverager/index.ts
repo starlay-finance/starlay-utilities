@@ -60,7 +60,6 @@ export class Leverager
     @isEthAddress('reserve')
     @isEthAddress('debtToken')
     @isPositiveAmount('amount')
-    @isEthAddress('onBehalfOf')
     @isPositiveAmount('borrowRatio')
     @isPositiveAmount('loopCount')
     {
@@ -68,7 +67,6 @@ export class Leverager
       reserve,
       debtToken,
       amount,
-      onBehalfOf,
       interestRateMode,
       borrowRatio,
       loopCount,
@@ -132,7 +130,6 @@ export class Leverager
           reserve,
           convertedAmount,
           interestRateMode === InterestRate.Variable ? 2 : 1,
-          onBehalfOf ?? user,
           new BigNumberJs(borrowRatio)
             .shiftedBy(BORROW_RATIO_DECIMALS)
             .toFixed(),

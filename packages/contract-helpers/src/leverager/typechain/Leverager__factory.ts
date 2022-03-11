@@ -67,11 +67,6 @@ const _abi = [
         type: 'uint256',
       },
       {
-        internalType: 'address',
-        name: 'onBehalfOf',
-        type: 'address',
-      },
-      {
         internalType: 'uint256',
         name: 'borrowRatio',
         type: 'uint256',
