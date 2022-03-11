@@ -12,6 +12,7 @@ export * from './stake-ui-helper';
 export * from './incentive-controller';
 export * from './erc20-contract';
 export * from './lendingPool-contract';
+export * from './leverager';
 export * from './faucet-contract';
 export * from './staking-contract';
 export * from './governance-contract';

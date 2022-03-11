@@ -48,6 +48,7 @@ export type MigratorConfig = {
 
 export type LendingPoolMarketConfig = {
   LENDING_POOL: tEthereumAddress;
+  LEVERAGER_ADDRESS?: tEthereumAddress;
   WETH_GATEWAY?: tEthereumAddress;
 };
 
@@ -58,6 +59,7 @@ export type LendingPoolConfig = Record<
 
 export enum eEthereumTxType {
   ERC20_APPROVAL = 'ERC20_APPROVAL',
+  DEBTERC20_APPROVAL = 'DEBTERC20_APPROVAL',
   DLP_ACTION = 'DLP_ACTION',
   GOVERNANCE_ACTION = 'GOVERNANCE_ACTION',
   GOV_DELEGATION_ACTION = 'GOV_DELEGATION_ACTION',
@@ -71,6 +73,7 @@ export enum ProtocolAction {
   default = 'default',
   withdraw = 'withdraw',
   deposit = 'deposit',
+  loop = 'loop',
   liquidationCall = 'liquidationCall',
   liquidationFlash = 'liquidationFlash',
   repay = 'repay',
@@ -183,6 +186,7 @@ export type TransactionGenerationMethod = {
   value?: string;
   gasSurplus?: number;
   action?: ProtocolAction;
+  skipEstimation?: boolean;
 };
 
 export type TransactionGasGenerationMethod = {
