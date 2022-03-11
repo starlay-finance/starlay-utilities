@@ -53,6 +53,7 @@ export default class BaseService<T extends Contract> {
       value,
       gasSurplus,
       action,
+      skipEstimation,
     }: TransactionGenerationMethod): (() => Promise<transactionType>) =>
     async () => {
       const txRaw: PopulatedTransaction = await rawTxMethod();
@@ -63,17 +64,16 @@ export default class BaseService<T extends Contract> {
         value: value ?? DEFAULT_NULL_VALUE_ON_TX,
       };
 
-      tx.gasLimit = await estimateGasByNetwork(tx, this.provider, gasSurplus);
+      tx.gasLimit = skipEstimation
+        ? BigNumber.from('2')
+        : await estimateGasByNetwork(tx, this.provider, gasSurplus);
 
+      const gasRecommendation = action && gasLimitRecommendations[action];
       if (
-        action &&
-        gasLimitRecommendations[action] &&
-        tx.gasLimit.lte(BigNumber.from(gasLimitRecommendations[action].limit))
-      ) {
-        tx.gasLimit = BigNumber.from(
-          gasLimitRecommendations[action].recommended,
-        );
-      }
+        gasRecommendation &&
+        tx.gasLimit.lte(BigNumber.from(gasRecommendation.limit))
+      )
+        tx.gasLimit = BigNumber.from(gasRecommendation.recommended);
 
       return tx;
     };
