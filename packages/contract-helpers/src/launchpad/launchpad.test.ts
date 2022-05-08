@@ -47,6 +47,23 @@ describe('Leverager', () => {
   const invalidAmount = '0';
   const invalidPriceCap = '-1';
 
+  const setup = (
+    instance: Launchpad,
+    params: {
+      decimals?: number;
+      isApproved?: boolean;
+    } = {},
+  ) => {
+    const { decimals = defaultDecimals, isApproved = false } = params || {};
+    const decimalsSpy = jest
+      .spyOn(instance.erc20Service, 'decimalsOf')
+      .mockReturnValueOnce(Promise.resolve(decimals));
+    const isApprovedSpy = jest
+      .spyOn(instance.erc20Service, 'isApproved')
+      .mockImplementationOnce(async () => Promise.resolve(isApproved));
+    return { decimalsSpy, isApprovedSpy };
+  };
+
   describe('bid', () => {
     const validArgs: BidParamsType = {
       user,
@@ -58,22 +75,6 @@ describe('Leverager', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
-    const setup = (
-      instance: Launchpad,
-      params: {
-        decimals?: number;
-        isApproved?: boolean;
-      } = {},
-    ) => {
-      const { decimals = defaultDecimals, isApproved = false } = params || {};
-      const decimalsSpy = jest
-        .spyOn(instance.erc20Service, 'decimalsOf')
-        .mockReturnValueOnce(Promise.resolve(decimals));
-      const isApprovedSpy = jest
-        .spyOn(instance.erc20Service, 'isApproved')
-        .mockImplementationOnce(async () => Promise.resolve(isApproved));
-      return { decimalsSpy, isApprovedSpy };
-    };
 
     it('Expects the 2 tx objects passing all parameters and needing approval', async () => {
       const launchpadInstance = newLaunchPadInstance();
@@ -198,22 +199,6 @@ describe('Leverager', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
-    const setup = (
-      instance: Launchpad,
-      params: {
-        decimals?: number;
-        isApproved?: boolean;
-      } = {},
-    ) => {
-      const { decimals = defaultDecimals, isApproved = false } = params || {};
-      const decimalsSpy = jest
-        .spyOn(instance.erc20Service, 'decimalsOf')
-        .mockReturnValueOnce(Promise.resolve(decimals));
-      const isApprovedSpy = jest
-        .spyOn(instance.erc20Service, 'isApproved')
-        .mockImplementationOnce(async () => Promise.resolve(isApproved));
-      return { decimalsSpy, isApprovedSpy };
-    };
 
     it('Expects the 2 tx objects passing all parameters and needing approval', async () => {
       const launchpadInstance = newLaunchPadInstance();
@@ -347,7 +332,9 @@ describe('Leverager', () => {
       expect(tx.to).toEqual(LAUNCHPAD);
       expect(tx.from).toEqual(user);
       expect(tx.gasLimit).toEqual(
-        BigNumber.from(gasLimitRecommendations[ProtocolAction.bid].recommended),
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.refundBid].recommended,
+        ),
       );
 
       const decoded = utils.defaultAbiCoder.decode(
@@ -380,6 +367,132 @@ describe('Leverager', () => {
     it('return empty array if launchpad address invalid', async () => {
       const launchpadInstance = new Launchpad(provider, invalidAddress);
       expect(launchpadInstance.cancel(validArgs)).toHaveLength(0);
+    });
+  });
+
+  describe('participant', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const mockParticipantOutput = {
+      amount: { paid: BigNumber.from('0') },
+      cap: { price: BigNumber.from('0') },
+    };
+    const mockParticipant = (instance: Launchpad, paid: BigNumber) => {
+      const getContractInstanceMock = jest.fn();
+      const participantMock = jest.fn();
+      participantMock.mockReturnValue({
+        ...mockParticipantOutput,
+        amount: { paid },
+      });
+      getContractInstanceMock.mockReturnValue({ participant: participantMock });
+      instance.getContractInstance = getContractInstanceMock;
+
+      return participantMock;
+    };
+
+    it('return bid if amount is not 0', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      const participantMock = mockParticipant(
+        launchpadInstance,
+        BigNumber.from('1'),
+      );
+      const bid = await launchpadInstance.participant(user);
+      expect(participantMock).toHaveBeenCalled();
+      expect(bid?.paid).not.toBeUndefined();
+    });
+
+    it('return bid if amount is 0', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      const participantMock = mockParticipant(
+        launchpadInstance,
+        BigNumber.from('0'),
+      );
+      const bid = await launchpadInstance.participant(user);
+      expect(participantMock).toHaveBeenCalled();
+      expect(bid).toBeUndefined();
+    });
+
+    it('throw error if invalid user', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      await expect(async () =>
+        launchpadInstance.participant(invalidAddress),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+    it('return empty array if launchpad address invalid', async () => {
+      const launchpadInstance = new Launchpad(provider, invalidAddress);
+      expect(launchpadInstance.participant(user)).toHaveLength(0);
+    });
+  });
+
+  describe('price', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const mockPrice = (instance: Launchpad, price: BigNumber) => {
+      const getContractInstanceMock = jest.fn();
+      const priceMock = jest.fn();
+      priceMock.mockReturnValue(price);
+      getContractInstanceMock.mockReturnValue({ price: priceMock });
+      instance.getContractInstance = getContractInstanceMock;
+
+      return priceMock;
+    };
+
+    it('return price', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      const priceMock = mockPrice(launchpadInstance, BigNumber.from('1'));
+      const price = await launchpadInstance.price();
+      expect(priceMock).toHaveBeenCalled();
+      expect(price.toString()).toBe('1');
+    });
+    it('return empty array if launchpad address invalid', async () => {
+      const launchpadInstance = new Launchpad(provider, invalidAddress);
+      expect(launchpadInstance.price()).toHaveLength(0);
+    });
+  });
+
+  describe('claimable', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const mockClaimable = (instance: Launchpad, cancelable: BigNumber) => {
+      const getContractInstanceMock = jest.fn();
+      const claimableMock = jest.fn();
+      claimableMock.mockReturnValue(cancelable);
+      getContractInstanceMock.mockReturnValue({ claimable: claimableMock });
+      instance.getContractInstance = getContractInstanceMock;
+
+      return claimableMock;
+    };
+
+    it('return claimable', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      const claimableMock = mockClaimable(
+        launchpadInstance,
+        BigNumber.from('1'),
+      );
+      const claimable = await launchpadInstance.claimable(user);
+      expect(claimableMock).toHaveBeenCalled();
+      expect(claimable.toString()).toBe('1');
+    });
+
+    it('throw error if invalid user', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+      await expect(async () =>
+        launchpadInstance.claimable(invalidAddress),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+    it('return empty array if launchpad address invalid', async () => {
+      const launchpadInstance = new Launchpad(provider, invalidAddress);
+      expect(launchpadInstance.claimable(user)).toHaveLength(0);
     });
   });
 });

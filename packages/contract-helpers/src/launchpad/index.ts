@@ -1,9 +1,10 @@
-import { providers } from 'ethers';
+import { BigNumber, providers } from 'ethers';
 import BaseService from '../commons/BaseService';
 import {
   eEthereumTxType,
   EthereumTransactionTypeExtended,
   ProtocolAction,
+  tEthereumAddress,
   transactionType,
 } from '../commons/types';
 import {
@@ -21,7 +22,12 @@ import {
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { Launchpad as LaunchpadContract } from './typechain/Launchpad';
 import { Launchpad__factory } from './typechain/Launchpad__factory';
-import { BidParamsType, CancelParamsType, UpdateParamsType } from './types';
+import {
+  Bid,
+  BidParamsType,
+  CancelParamsType,
+  UpdateParamsType,
+} from './types';
 
 export interface LaunchpadInterface {
   bid: (args: BidParamsType) => Promise<EthereumTransactionTypeExtended[]>;
@@ -31,6 +37,9 @@ export interface LaunchpadInterface {
   cancel: (
     args: CancelParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
+  participant: (user: tEthereumAddress) => Promise<Bid | undefined>;
+  price: () => Promise<BigNumber>;
+  claimable: (user: tEthereumAddress) => Promise<BigNumber>;
 }
 
 export class Launchpad
@@ -190,5 +199,33 @@ export class Launchpad
     });
 
     return txs;
+  }
+
+  @LaunchpadValidator
+  public async participant(
+    @isEthAddress() user: tEthereumAddress,
+  ): Promise<Bid | undefined> {
+    const bid = await this.getContractInstance(
+      this.launchpadAddress,
+    ).participant(user);
+    if (bid.amount.paid.isZero()) return;
+    return {
+      paid: bid.amount.paid,
+      multiplied: bid.amount.multiplied,
+      priceCap: bid.cap.price,
+      cancelable: bid.cancelable,
+    };
+  }
+
+  @LaunchpadValidator
+  public async price(): Promise<BigNumber> {
+    return this.getContractInstance(this.launchpadAddress).price();
+  }
+
+  @LaunchpadValidator
+  public async claimable(
+    @isEthAddress() user: tEthereumAddress,
+  ): Promise<BigNumber> {
+    return this.getContractInstance(this.launchpadAddress).claimable(user);
   }
 }

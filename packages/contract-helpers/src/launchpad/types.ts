@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { tEthereumAddress } from '../commons/types';
 
 export type BidParamsType = {
@@ -17,4 +18,11 @@ export type UpdateParamsType = {
 
 export type CancelParamsType = {
   user: tEthereumAddress;
+};
+
+export type Bid = {
+  paid: BigNumber;
+  multiplied: BigNumber;
+  priceCap: BigNumber;
+  cancelable: boolean;
 };
