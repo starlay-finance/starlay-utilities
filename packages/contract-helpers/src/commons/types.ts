@@ -77,6 +77,7 @@ export enum ProtocolAction {
   bid = 'bid',
   updateBid = 'updateBid',
   cancelBid = 'cancelBid',
+  refundBid = 'refundBid',
   liquidationCall = 'liquidationCall',
   liquidationFlash = 'liquidationFlash',
   repay = 'repay',

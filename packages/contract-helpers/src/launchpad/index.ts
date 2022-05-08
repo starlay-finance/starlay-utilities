@@ -26,6 +26,7 @@ import {
   Bid,
   BidParamsType,
   CancelParamsType,
+  RefundParamsType,
   UpdateParamsType,
 } from './types';
 
@@ -37,9 +38,13 @@ export interface LaunchpadInterface {
   cancel: (
     args: CancelParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
+  refund: (
+    args: RefundParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
   participant: (user: tEthereumAddress) => Promise<Bid | undefined>;
   price: () => Promise<BigNumber>;
   claimable: (user: tEthereumAddress) => Promise<BigNumber>;
+  refundable: (user: tEthereumAddress) => Promise<BigNumber>;
 }
 
 export class Launchpad
@@ -202,6 +207,34 @@ export class Launchpad
   }
 
   @LaunchpadValidator
+  public async refund(
+    @isEthAddress('user')
+    { user }: CancelParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const txs: EthereumTransactionTypeExtended[] = [];
+
+    const LaunchpadContract = this.getContractInstance(this.launchpadAddress);
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () => LaunchpadContract.populateTransaction.refund(),
+      action: ProtocolAction.refundBid,
+      from: user,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.refundBid].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LaunchpadValidator
   public async participant(
     @isEthAddress() user: tEthereumAddress,
   ): Promise<Bid | undefined> {
@@ -227,5 +260,12 @@ export class Launchpad
     @isEthAddress() user: tEthereumAddress,
   ): Promise<BigNumber> {
     return this.getContractInstance(this.launchpadAddress).claimable(user);
+  }
+
+  @LaunchpadValidator
+  public async refundable(
+    @isEthAddress() user: tEthereumAddress,
+  ): Promise<BigNumber> {
+    return this.getContractInstance(this.launchpadAddress).refundable(user);
   }
 }

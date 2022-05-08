@@ -20,6 +20,10 @@ export type CancelParamsType = {
   user: tEthereumAddress;
 };
 
+export type RefundParamsType = {
+  user: tEthereumAddress;
+};
+
 export type Bid = {
   paid: BigNumber;
   multiplied: BigNumber;
