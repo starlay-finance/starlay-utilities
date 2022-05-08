@@ -1,18 +1,20 @@
+import { tEthereumAddress } from '../commons/types';
+
 export type BidParamsType = {
-  user: string;
-  reserve: string;
+  user: tEthereumAddress;
+  reserve: tEthereumAddress;
   amount: string;
   priceCap: string;
   cancelable: boolean;
 };
 
 export type UpdateParamsType = {
-  user: string;
-  reserve: string;
+  user: tEthereumAddress;
+  reserve: tEthereumAddress;
   amount: string;
   priceCap: string;
 };
 
 export type CancelParamsType = {
-  user: string;
+  user: tEthereumAddress;
 };
