@@ -61,6 +61,29 @@ export function LeveragerValidator(
   };
 }
 
+export function LaunchpadValidator(
+  target: any,
+  propertyName: string,
+  descriptor: TypedPropertyDescriptor<any>,
+): any {
+  const method = descriptor.value;
+  descriptor.value = function () {
+    // @ts-expect-error todo: check why this ignore is needed
+    if (!utils.isAddress(this.launchpadAddress)) {
+      console.error(`[LaunchpadValidator] You need to pass valid addresses`);
+      return [];
+    }
+
+    isEthAddressValidator(target, propertyName, arguments);
+
+    amountGtThan0Validator(target, propertyName, arguments);
+
+    amount0OrPositiveValidator(target, propertyName, arguments);
+
+    return method.apply(this, arguments);
+  };
+}
+
 // export function LTAMigratorValidator(
 //   target: any,
 //   propertyName: string,
