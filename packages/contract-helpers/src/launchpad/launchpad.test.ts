@@ -19,7 +19,7 @@ jest.mock('../commons/gasStation', () => {
   };
 });
 
-describe('Leverager', () => {
+describe('Launchpad', () => {
   const provider = new providers.JsonRpcProvider();
   jest
     .spyOn(provider, 'getGasPrice')

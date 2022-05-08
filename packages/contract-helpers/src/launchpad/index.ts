@@ -155,7 +155,7 @@ export class Launchpad
           convertedAmount,
           convertedPriceCap,
         ),
-      action: ProtocolAction.bid,
+      action: ProtocolAction.updateBid,
       from: user,
       value: getTxValue(reserve, convertedAmount),
       skipEstimation: true,
@@ -165,7 +165,7 @@ export class Launchpad
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.bid].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.updateBid].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
@@ -184,7 +184,7 @@ export class Launchpad
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () => LaunchpadContract.populateTransaction.cancel(),
-      action: ProtocolAction.bid,
+      action: ProtocolAction.cancelBid,
       from: user,
       skipEstimation: true,
     });
@@ -193,7 +193,7 @@ export class Launchpad
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.bid].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.cancelBid].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
