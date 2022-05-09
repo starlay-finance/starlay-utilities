@@ -72,16 +72,14 @@ export class Leverager
       loopCount,
     }: LoopParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
-    if (reserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()) {
-      throw new Error(`Looping native asset has not been supported yet.`);
-    }
+    const isETH = reserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
 
     const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
       this.erc20Service;
     const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
       this.debtErc20Service;
     const txs: EthereumTransactionTypeExtended[] = [];
-    const reserveDecimals: number = await decimalsOf(reserve);
+    const reserveDecimals: number = isETH ? 18 : await decimalsOf(reserve);
     const totalBorrowingAmount: string = calcTotalBorrowingAmount(
       new BigNumberJs(amount),
       new BigNumberJs(borrowRatio),
@@ -89,12 +87,14 @@ export class Leverager
     ).toString();
     const convertedAmount: string = valueToWei(amount, reserveDecimals);
 
-    const approved = await isApproved({
-      token: reserve,
-      user,
-      spender: this.leveragerAddress,
-      amount,
-    });
+    const approved =
+      isETH ||
+      (await isApproved({
+        token: reserve,
+        user,
+        spender: this.leveragerAddress,
+        amount,
+      }));
     const delegated = await isDelegated({
       token: debtToken,
       user,
@@ -126,15 +126,23 @@ export class Leverager
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        leveragerContract.populateTransaction.loop(
-          reserve,
-          convertedAmount,
-          interestRateMode === InterestRate.Variable ? 2 : 1,
-          new BigNumberJs(borrowRatio)
-            .shiftedBy(BORROW_RATIO_DECIMALS)
-            .toFixed(),
-          loopCount,
-        ),
+        isETH
+          ? leveragerContract.populateTransaction.loopASTR(
+              interestRateMode === InterestRate.Variable ? 2 : 1,
+              new BigNumberJs(borrowRatio)
+                .shiftedBy(BORROW_RATIO_DECIMALS)
+                .toFixed(),
+              loopCount,
+            )
+          : leveragerContract.populateTransaction.loop(
+              reserve,
+              convertedAmount,
+              interestRateMode === InterestRate.Variable ? 2 : 1,
+              new BigNumberJs(borrowRatio)
+                .shiftedBy(BORROW_RATIO_DECIMALS)
+                .toFixed(),
+              loopCount,
+            ),
       action: ProtocolAction.loop,
       from: user,
       value: getTxValue(reserve, convertedAmount),
