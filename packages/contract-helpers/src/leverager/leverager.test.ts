@@ -199,6 +199,60 @@ describe('Leverager', () => {
       );
     });
 
+    it('Call loopASTR on eth loop', async () => {
+      const reserve = API_ETH_MOCK_ADDRESS;
+      const leveragerInstance = newLeveragerInstance();
+
+      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } =
+        setup(leveragerInstance);
+
+      const txs = await leveragerInstance.loop({
+        ...validArgs,
+        reserve,
+      });
+
+      const dlpTx = txs[1];
+
+      expect(isApprovedSpy).not.toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).not.toHaveBeenCalled();
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.value).toEqual(
+        utils.parseUnits(validArgs.amount, 'ether').toString(),
+      );
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.loop].recommended,
+        ),
+      );
+    });
+
+    it('if interestRade != Variable, coverted to 1  on eth loop', async () => {
+      const reserve = API_ETH_MOCK_ADDRESS;
+      const leveragerInstance = newLeveragerInstance();
+
+      setup(leveragerInstance, { isApproved: true, isDelegated: true });
+
+      const txs = await leveragerInstance.loop({
+        ...validArgs,
+        reserve,
+        interestRateMode: InterestRate.None,
+      });
+      const dlpTx = txs[0];
+
+      const tx = await dlpTx.tx();
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['uint256', 'uint256', 'uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+      // InterestRate is not Variable
+      expect(decoded[0]).toEqual(BigNumber.from('1'));
+    });
+
     it('throw error if invalid user', async () => {
       const leveragerInstance = newLeveragerInstance();
       await expect(async () =>
@@ -263,23 +317,6 @@ describe('Leverager', () => {
         }),
       ).rejects.toThrowError(
         `Amount: ${invalidAmount} needs to be greater than 0`,
-      );
-    });
-    it('throw error on eth loop', async () => {
-      const reserve = API_ETH_MOCK_ADDRESS;
-      const leveragerInstance = newLeveragerInstance();
-      await expect(
-        leveragerInstance.loop({
-          user,
-          reserve,
-          debtToken,
-          amount,
-          borrowRatio,
-          loopCount,
-          interestRateMode,
-        }),
-      ).rejects.toThrowError(
-        `Looping native asset has not been supported yet.`,
       );
     });
     it('return empty array if leverager address invalid', async () => {
