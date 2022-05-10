@@ -27,13 +27,21 @@ import {
   BidParamsType,
   CancelParamsType,
   RefundParamsType,
+  UpdateAmountParamsType,
   UpdateParamsType,
+  UpdatePriceCapParamsType,
 } from './types';
 
 export interface LaunchpadInterface {
   bid: (args: BidParamsType) => Promise<EthereumTransactionTypeExtended[]>;
   update: (
     args: UpdateParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
+  updateAmount: (
+    args: UpdateAmountParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
+  updatePriceCap: (
+    args: UpdatePriceCapParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
   cancel: (
     args: CancelParamsType,
@@ -163,6 +171,93 @@ export class Launchpad
       action: ProtocolAction.updateBid,
       from: user,
       value: getTxValue(reserve, convertedAmount),
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.updateBid].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LaunchpadValidator
+  public async updateAmount(
+    @isEthAddress('user')
+    @isEthAddress('reserve')
+    @isPositiveAmount('amount')
+    { user, reserve, amount }: UpdateAmountParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
+      this.erc20Service;
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const reserveDecimals: number = await decimalsOf(reserve);
+    const convertedAmount: string = valueToWei(amount, reserveDecimals);
+
+    const approved = await isApproved({
+      token: reserve,
+      user,
+      spender: this.launchpadAddress,
+      amount,
+    });
+
+    if (!approved) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: reserve,
+        spender: this.launchpadAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    const LaunchpadContract = this.getContractInstance(this.launchpadAddress);
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        LaunchpadContract.populateTransaction.addBidding(convertedAmount),
+      action: ProtocolAction.updateBid,
+      from: user,
+      value: getTxValue(reserve, convertedAmount),
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.updateBid].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LaunchpadValidator
+  public async updatePriceCap(
+    @isEthAddress('user')
+    @isEthAddress('reserve')
+    @is0OrPositiveAmount('priceCap')
+    { user, reserve, priceCap }: UpdatePriceCapParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const reserveDecimals: number = await decimalsOf(reserve);
+    const convertedPriceCap: string = valueToWei(priceCap, reserveDecimals);
+
+    const LaunchpadContract = this.getContractInstance(this.launchpadAddress);
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        LaunchpadContract.populateTransaction.updateCap(convertedPriceCap),
+      action: ProtocolAction.updateBid,
+      from: user,
       skipEstimation: true,
     });
 

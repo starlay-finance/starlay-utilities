@@ -16,6 +16,18 @@ export type UpdateParamsType = {
   priceCap: string;
 };
 
+export type UpdateAmountParamsType = {
+  user: tEthereumAddress;
+  reserve: tEthereumAddress;
+  amount: string;
+};
+
+export type UpdatePriceCapParamsType = {
+  user: tEthereumAddress;
+  reserve: tEthereumAddress;
+  priceCap: string;
+};
+
 export type CancelParamsType = {
   user: tEthereumAddress;
 };

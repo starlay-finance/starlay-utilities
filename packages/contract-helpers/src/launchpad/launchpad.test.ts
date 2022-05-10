@@ -6,7 +6,13 @@ import {
   transactionType,
 } from '../commons/types';
 import { gasLimitRecommendations, valueToWei } from '../commons/utils';
-import { BidParamsType, CancelParamsType, UpdateParamsType } from './types';
+import {
+  BidParamsType,
+  CancelParamsType,
+  UpdateAmountParamsType,
+  UpdateParamsType,
+  UpdatePriceCapParamsType,
+} from './types';
 import { Launchpad } from './index';
 
 jest.mock('../commons/gasStation', () => {
@@ -309,6 +315,106 @@ describe('Launchpad', () => {
     it('return empty array if launchpad address invalid', async () => {
       const launchpadInstance = new Launchpad(provider, invalidAddress);
       expect(launchpadInstance.update(validArgs)).toHaveLength(0);
+    });
+  });
+
+  describe('updateAmount', () => {
+    const validArgs: UpdateAmountParamsType = {
+      user,
+      reserve,
+      amount,
+    };
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expects the 2 tx objects passing all parameters and needing approval', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+
+      const { decimalsSpy, isApprovedSpy } = setup(launchpadInstance);
+
+      const txs = await launchpadInstance.updateAmount(validArgs);
+
+      const dlpTx = txs[1];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(txs).toHaveLength(2);
+      expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LAUNCHPAD);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(gasLimitRecommendations[ProtocolAction.bid].recommended),
+      );
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+
+      expect(decoded[0]).toEqual(
+        BigNumber.from(valueToWei(amount, defaultDecimals)),
+      );
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.updateBid].recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
+    });
+  });
+
+  describe('updatePriceCap', () => {
+    const validArgs: UpdatePriceCapParamsType = {
+      user,
+      reserve,
+      priceCap,
+    };
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expects the 1 tx objects passing all parameters', async () => {
+      const launchpadInstance = newLaunchPadInstance();
+
+      const { decimalsSpy } = setup(launchpadInstance);
+
+      const txs = await launchpadInstance.updatePriceCap(validArgs);
+
+      const dlpTx = txs[0];
+
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(txs).toHaveLength(1);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LAUNCHPAD);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(gasLimitRecommendations[ProtocolAction.bid].recommended),
+      );
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+
+      expect(decoded[0]).toEqual(
+        BigNumber.from(valueToWei(priceCap, defaultDecimals)),
+      );
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.updateBid].recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
     });
   });
 
