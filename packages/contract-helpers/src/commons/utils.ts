@@ -70,6 +70,22 @@ export const gasLimitRecommendations: GasRecommendationType = {
     limit: '4500000',
     recommended: '4500000',
   },
+  [ProtocolAction.bid]: {
+    limit: '4500000',
+    recommended: '4500000',
+  },
+  [ProtocolAction.updateBid]: {
+    limit: '4500000',
+    recommended: '4500000',
+  },
+  [ProtocolAction.cancelBid]: {
+    limit: '4500000',
+    recommended: '4500000',
+  },
+  [ProtocolAction.refundBid]: {
+    limit: '4500000',
+    recommended: '4500000',
+  },
 };
 
 export const mintAmountsPerToken: Record<string, string> = {
