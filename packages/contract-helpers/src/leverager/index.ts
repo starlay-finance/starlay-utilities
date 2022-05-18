@@ -175,7 +175,7 @@ export class Leverager
       token: lToken,
       user,
       spender: this.leveragerAddress,
-      amount: DEFAULT_APPROVE_AMOUNT,
+      amount: '-1',
     });
 
     if (!approved) {
