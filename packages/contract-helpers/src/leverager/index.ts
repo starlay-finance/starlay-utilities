@@ -27,13 +27,14 @@ import {
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { Leverager as LeveragerContract } from './typechain/Leverager';
 import { Leverager__factory } from './typechain/Leverager__factory';
-import { LoopParamsType } from './types';
+import { CloseParamsType, LoopParamsType } from './types';
 import { calcTotalBorrowingAmount } from './utils';
 
 const BORROW_RATIO_DECIMALS = 4;
 
 export interface LeverageInterface {
   loop: (args: LoopParamsType) => Promise<EthereumTransactionTypeExtended[]>;
+  close: (args: CloseParamsType) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
 export class Leverager
@@ -154,6 +155,54 @@ export class Leverager
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
         gasLimit: gasLimitRecommendations[ProtocolAction.loop].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LeveragerValidator
+  public async close(
+    @isEthAddress('user')
+    @isEthAddress('reserve')
+    @isEthAddress('lToken')
+    { user, reserve, lToken }: CloseParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const { isApproved, approve }: IERC20ServiceInterface = this.erc20Service;
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const approved = await isApproved({
+      token: lToken,
+      user,
+      spender: this.leveragerAddress,
+      amount: DEFAULT_APPROVE_AMOUNT,
+    });
+
+    if (!approved) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: lToken,
+        spender: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        leveragerContract.populateTransaction.close(reserve),
+      action: ProtocolAction.close,
+      from: user,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.close].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });

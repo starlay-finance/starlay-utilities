@@ -22,16 +22,16 @@ export interface LeveragerInterface extends utils.Interface {
     'close(address)': FunctionFragment;
     'getAvailableBorrows(address)': FunctionFragment;
     'getConfiguration(address)': FunctionFragment;
+    'getHealthFactor(address,address,uint256)': FunctionFragment;
     'getLToken(address)': FunctionFragment;
     'getVDToken(address)': FunctionFragment;
     'lendingPool()': FunctionFragment;
     'loop(address,uint256,uint256,uint256,uint256)': FunctionFragment;
     'loopASTR(uint256,uint256,uint256)': FunctionFragment;
+    'lt(address)': FunctionFragment;
     'ltv(address)': FunctionFragment;
-    'reverseLoop(address,address,uint256,uint256,uint256)': FunctionFragment;
-    'reverseLoopASTR(address,uint256,uint256)': FunctionFragment;
     'wastr()': FunctionFragment;
-    'withdrawable(address)': FunctionFragment;
+    'withdrawable(address,address)': FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: 'close', values: [string]): string;
@@ -42,6 +42,10 @@ export interface LeveragerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: 'getConfiguration',
     values: [string],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'getHealthFactor',
+    values: [string, string, BigNumberish],
   ): string;
   encodeFunctionData(functionFragment: 'getLToken', values: [string]): string;
   encodeFunctionData(functionFragment: 'getVDToken', values: [string]): string;
@@ -57,19 +61,12 @@ export interface LeveragerInterface extends utils.Interface {
     functionFragment: 'loopASTR',
     values: [BigNumberish, BigNumberish, BigNumberish],
   ): string;
+  encodeFunctionData(functionFragment: 'lt', values: [string]): string;
   encodeFunctionData(functionFragment: 'ltv', values: [string]): string;
-  encodeFunctionData(
-    functionFragment: 'reverseLoop',
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish],
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'reverseLoopASTR',
-    values: [string, BigNumberish, BigNumberish],
-  ): string;
   encodeFunctionData(functionFragment: 'wastr', values?: undefined): string;
   encodeFunctionData(
     functionFragment: 'withdrawable',
-    values: [string],
+    values: [string, string],
   ): string;
 
   decodeFunctionResult(functionFragment: 'close', data: BytesLike): Result;
@@ -81,6 +78,10 @@ export interface LeveragerInterface extends utils.Interface {
     functionFragment: 'getConfiguration',
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(
+    functionFragment: 'getHealthFactor',
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(functionFragment: 'getLToken', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'getVDToken', data: BytesLike): Result;
   decodeFunctionResult(
@@ -89,15 +90,8 @@ export interface LeveragerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: 'loop', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'loopASTR', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lt', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'ltv', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'reverseLoop',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'reverseLoopASTR',
-    data: BytesLike,
-  ): Result;
   decodeFunctionResult(functionFragment: 'wastr', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'withdrawable',
@@ -140,6 +134,13 @@ export interface Leverager extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<[BigNumber] & { data: BigNumber }>;
 
+    getHealthFactor(
+      account: string,
+      asset: string,
+      withdrawAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber] & { healthFactor: BigNumber }>;
+
     getLToken(asset: string, overrides?: CallOverrides): Promise<[string]>;
 
     getVDToken(asset: string, overrides?: CallOverrides): Promise<[string]>;
@@ -162,46 +163,24 @@ export interface Leverager extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    lt(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
     ltv(asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    reverseLoop(
-      asset: string,
-      ltoken: string,
-      amount: BigNumberish,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
-
-    reverseLoopASTR(
-      lwastr: string,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
 
     wastr(overrides?: CallOverrides): Promise<[string]>;
 
     withdrawable(
       account: string,
+      asset: string,
       overrides?: CallOverrides,
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         totalCollateral: BigNumber;
         totalDebt: BigNumber;
         currentLiquidationThreshold: BigNumber;
-        hf: BigNumber;
-        surplusedHF: BigNumber;
-        limitCollateral: BigNumber;
+        afford: BigNumber;
         withdrawableCollateral: BigNumber;
+        withdrawAmount: BigNumber;
       }
     >;
   };
@@ -230,6 +209,13 @@ export interface Leverager extends BaseContract {
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
+  getHealthFactor(
+    account: string,
+    asset: string,
+    withdrawAmount: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
   getLToken(asset: string, overrides?: CallOverrides): Promise<string>;
 
   getVDToken(asset: string, overrides?: CallOverrides): Promise<string>;
@@ -252,46 +238,24 @@ export interface Leverager extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
   ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  reverseLoop(
-    asset: string,
-    ltoken: string,
-    amount: BigNumberish,
-    interestRateMode: BigNumberish,
-    loopCount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
-
-  reverseLoopASTR(
-    lwastr: string,
-    interestRateMode: BigNumberish,
-    loopCount: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
 
   wastr(overrides?: CallOverrides): Promise<string>;
 
   withdrawable(
     account: string,
+    asset: string,
     overrides?: CallOverrides,
   ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-    ] & {
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       totalCollateral: BigNumber;
       totalDebt: BigNumber;
       currentLiquidationThreshold: BigNumber;
-      hf: BigNumber;
-      surplusedHF: BigNumber;
-      limitCollateral: BigNumber;
+      afford: BigNumber;
       withdrawableCollateral: BigNumber;
+      withdrawAmount: BigNumber;
     }
   >;
 
@@ -317,6 +281,13 @@ export interface Leverager extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
+    getHealthFactor(
+      account: string,
+      asset: string,
+      withdrawAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
     getLToken(asset: string, overrides?: CallOverrides): Promise<string>;
 
     getVDToken(asset: string, overrides?: CallOverrides): Promise<string>;
@@ -339,46 +310,24 @@ export interface Leverager extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
+    lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    reverseLoop(
-      asset: string,
-      ltoken: string,
-      amount: BigNumberish,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>;
-
-    reverseLoopASTR(
-      lwastr: string,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>;
 
     wastr(overrides?: CallOverrides): Promise<string>;
 
     withdrawable(
       account: string,
+      asset: string,
       overrides?: CallOverrides,
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         totalCollateral: BigNumber;
         totalDebt: BigNumber;
         currentLiquidationThreshold: BigNumber;
-        hf: BigNumber;
-        surplusedHF: BigNumber;
-        limitCollateral: BigNumber;
+        afford: BigNumber;
         withdrawableCollateral: BigNumber;
+        withdrawAmount: BigNumber;
       }
     >;
   };
@@ -398,6 +347,13 @@ export interface Leverager extends BaseContract {
 
     getConfiguration(
       asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    getHealthFactor(
+      account: string,
+      asset: string,
+      withdrawAmount: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
@@ -423,28 +379,15 @@ export interface Leverager extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    reverseLoop(
-      asset: string,
-      ltoken: string,
-      amount: BigNumberish,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>;
-
-    reverseLoopASTR(
-      lwastr: string,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>;
 
     wastr(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawable(
       account: string,
+      asset: string,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
@@ -462,6 +405,13 @@ export interface Leverager extends BaseContract {
 
     getConfiguration(
       asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    getHealthFactor(
+      account: string,
+      asset: string,
+      withdrawAmount: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
@@ -493,31 +443,18 @@ export interface Leverager extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
+    lt(asset: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     ltv(
       asset: string,
       overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
-    reverseLoop(
-      asset: string,
-      ltoken: string,
-      amount: BigNumberish,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>;
-
-    reverseLoopASTR(
-      lwastr: string,
-      interestRateMode: BigNumberish,
-      loopCount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     wastr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdrawable(
       account: string,
+      asset: string,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };

@@ -74,6 +74,7 @@ export enum ProtocolAction {
   withdraw = 'withdraw',
   deposit = 'deposit',
   loop = 'loop',
+  close = 'close',
   bid = 'bid',
   updateBid = 'updateBid',
   cancelBid = 'cancelBid',
