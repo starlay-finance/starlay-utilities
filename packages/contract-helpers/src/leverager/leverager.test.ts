@@ -335,7 +335,7 @@ describe('Leverager', () => {
       ).toHaveLength(0);
     });
   });
-  describe('loop', () => {
+  describe('close', () => {
     const user = '0x0000000000000000000000000000000000000009';
     const reserve = '0x0000000000000000000000000000000000000010';
     const lToken = '0x0000000000000000000000000000000000000011';
