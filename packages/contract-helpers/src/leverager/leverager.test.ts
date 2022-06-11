@@ -11,7 +11,7 @@ import {
   gasLimitRecommendations,
   valueToWei,
 } from '../commons/utils';
-import { LoopParamsType } from './types';
+import { CloseParamsType, LoopParamsType } from './types';
 import { Leverager } from './index';
 
 jest.mock('../commons/gasStation', () => {
@@ -333,6 +333,100 @@ describe('Leverager', () => {
           interestRateMode,
         }),
       ).toHaveLength(0);
+    });
+  });
+  describe('close', () => {
+    const user = '0x0000000000000000000000000000000000000009';
+    const reserve = '0x0000000000000000000000000000000000000010';
+    const lToken = '0x0000000000000000000000000000000000000011';
+
+    const validArgs: CloseParamsType = {
+      user,
+      reserve,
+      lToken,
+    };
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    const setup = (
+      instance: Leverager,
+      params: {
+        isApproved?: boolean;
+      } = {},
+    ) => {
+      const isApprovedSpy = jest
+        .spyOn(instance.erc20Service, 'isApproved')
+        .mockImplementationOnce(async () =>
+          Promise.resolve(Boolean(params.isApproved)),
+        );
+      return { isApprovedSpy };
+    };
+
+    it('Expects the 2 tx objects passing all parameters and needing approval and delegation approval', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { isApprovedSpy } = setup(leveragerInstance, {
+        isApproved: false,
+      });
+
+      const txs = await leveragerInstance.close(validArgs);
+
+      const dlpTx = txs[1];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(txs).toHaveLength(2);
+      expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.close].recommended,
+        ),
+      );
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['address'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+
+      expect(decoded[0]).toEqual(reserve);
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.close].recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
+    });
+
+    it('Expects the dlp tx object passing all parameters and not needing apporval nor delegation ', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { isApprovedSpy } = setup(leveragerInstance, { isApproved: true });
+
+      const txs = await leveragerInstance.close(validArgs);
+      const dlpTx = txs[0];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.close].recommended,
+        ),
+      );
+    });
+    it('return empty array if leverager address invalid', async () => {
+      const invalidAddress = '0x0';
+      const leveragerInstance = new Leverager(provider, invalidAddress);
+      expect(leveragerInstance.close(validArgs)).toHaveLength(0);
     });
   });
 });
