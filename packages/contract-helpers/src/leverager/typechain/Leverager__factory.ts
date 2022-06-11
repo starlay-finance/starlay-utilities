@@ -102,6 +102,35 @@ const _abi = [
     inputs: [
       {
         internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'asset',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'withdrawAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'getHealthFactor',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'healthFactor',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
         name: 'asset',
         type: 'address',
       },
@@ -213,7 +242,7 @@ const _abi = [
         type: 'address',
       },
     ],
-    name: 'ltv',
+    name: 'lt',
     outputs: [
       {
         internalType: 'uint256',
@@ -231,53 +260,16 @@ const _abi = [
         name: 'asset',
         type: 'address',
       },
-      {
-        internalType: 'address',
-        name: 'ltoken',
-        type: 'address',
-      },
+    ],
+    name: 'ltv',
+    outputs: [
       {
         internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'interestRateMode',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'loopCount',
+        name: '',
         type: 'uint256',
       },
     ],
-    name: 'reverseLoop',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'lwastr',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'interestRateMode',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'loopCount',
-        type: 'uint256',
-      },
-    ],
-    name: 'reverseLoopASTR',
-    outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -300,6 +292,11 @@ const _abi = [
         name: 'account',
         type: 'address',
       },
+      {
+        internalType: 'address',
+        name: 'asset',
+        type: 'address',
+      },
     ],
     name: 'withdrawable',
     outputs: [
@@ -320,22 +317,17 @@ const _abi = [
       },
       {
         internalType: 'uint256',
-        name: 'hf',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'surplusedHF',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'limitCollateral',
+        name: 'afford',
         type: 'uint256',
       },
       {
         internalType: 'uint256',
         name: 'withdrawableCollateral',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'withdrawAmount',
         type: 'uint256',
       },
     ],
