@@ -22,7 +22,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-
+    "outDir": "./dist",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
