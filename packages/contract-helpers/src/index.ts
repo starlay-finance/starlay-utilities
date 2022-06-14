@@ -14,6 +14,8 @@ export * from './erc20-contract';
 export * from './launchpad';
 export * from './lendingPool-contract';
 export * from './leverager';
+export * from './voting-escrow';
+export * from './voter';
 export * from './faucet-contract';
 export * from './staking-contract';
 export * from './governance-contract';
