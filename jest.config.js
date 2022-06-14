@@ -35,6 +35,7 @@ module.exports = {
     'packages/contract-helpers/src/governance-power-delegation-contract/typechain',
     'packages/contract-helpers/src/voter',
     'packages/contract-helpers/src/voting-escrow',
+    'packages/contract-helpers/src/claimer',
     'packages/contract-helpers/src/multicall',
     'packages/contract-helpers/src/index.ts',
   ],

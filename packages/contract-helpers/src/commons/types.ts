@@ -85,6 +85,7 @@ export enum ProtocolAction {
   withdrawETH = 'withdrawETH',
   borrowETH = 'borrwoETH',
   ve = 've',
+  bulk = 'bulk',
 }
 
 export enum GovernanceVote {
