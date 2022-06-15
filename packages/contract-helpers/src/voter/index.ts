@@ -94,14 +94,18 @@ export class Voter
       (res, token) => ({
         ...res,
         [token.toLowerCase()]: {
-          weight: iContract.decodeFunctionResult(
-            'poolWeights',
-            returnData[cursor++][0],
-          ),
-          lastWeekRevenue: iContract.decodeFunctionResult(
-            'tokensPerWeek',
-            returnData[cursor++][0],
-          ),
+          weight: (
+            iContract.decodeFunctionResult(
+              'poolWeights',
+              returnData[cursor++],
+            ) as [BigNumber]
+          )[0],
+          lastWeekRevenue: (
+            iContract.decodeFunctionResult(
+              'tokensPerWeek',
+              returnData[cursor++],
+            ) as [BigNumber]
+          )[0],
         },
       }),
       {},
@@ -152,14 +156,18 @@ export class Voter
         ...res,
         [token.toLowerCase()]: {
           claimable: (claimables as BigNumber[])[index],
-          weight: iContract.decodeFunctionResult(
-            'weights',
-            userVoteDataRes[cursor++][0],
-          ),
-          vote: iContract.decodeFunctionResult(
-            'votes',
-            userVoteDataRes[cursor++][0],
-          ),
+          weight: (
+            iContract.decodeFunctionResult(
+              'weights',
+              userVoteDataRes[cursor++],
+            ) as [BigNumber]
+          )[0],
+          vote: (
+            iContract.decodeFunctionResult(
+              'votes',
+              userVoteDataRes[cursor++],
+            ) as [BigNumber]
+          )[0],
         },
       }),
       {},
