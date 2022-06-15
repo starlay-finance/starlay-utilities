@@ -16,6 +16,7 @@ export * from './lendingPool-contract';
 export * from './leverager';
 export * from './voting-escrow';
 export * from './voter';
+export * from './claimer';
 export * from './faucet-contract';
 export * from './staking-contract';
 export * from './governance-contract';
