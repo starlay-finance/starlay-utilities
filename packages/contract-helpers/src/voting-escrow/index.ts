@@ -23,9 +23,10 @@ import {
 } from './types';
 
 export interface VotingEscrowInterface {
-  lockData: () => Promise<LockData>;
+  lockData: (args: { timestamp: number }) => Promise<LockData>;
   userLockData: (args: {
     user: tEthereumAddress;
+    timestamp: number;
   }) => Promise<UserLockData | undefined>;
   createLock: (
     args: CreateLockArgs,
@@ -65,9 +66,9 @@ export class VotingEscrow
 
   contract = () => this.getContractInstance(this.votingEscrowAddress);
 
-  lockData: VotingEscrowInterface['lockData'] = async () => {
+  lockData: VotingEscrowInterface['lockData'] = async ({ timestamp }) => {
     const contract = this.contract();
-    const totalVotingPower = await contract.totalSupply();
+    const totalVotingPower = await contract.totalSupplyAtT(timestamp);
     const totalLocked = await contract.supply();
     return {
       totalVotingPower,
@@ -75,13 +76,16 @@ export class VotingEscrow
     };
   };
 
-  userLockData: VotingEscrowInterface['userLockData'] = async ({ user }) => {
+  userLockData: VotingEscrowInterface['userLockData'] = async ({
+    user,
+    timestamp,
+  }) => {
     const contract = this.contract();
     const lockerId = await contract.ownerToId(user);
     if (lockerId.isZero()) return;
     const [locked, votingPower] = await Promise.all([
       contract.locked(lockerId),
-      contract.balanceOfLockerId(lockerId),
+      contract.balanceOfLockerIdAt(lockerId, timestamp),
     ]);
     return {
       lockerId,
