@@ -177,7 +177,7 @@ export class Voter
   vote: VoterInterface['vote'] = async ({ user, weights }) => {
     const contract = this.getContractInstance(this.voterAddress);
     const tokenList = await contract.tokenList();
-    const args = tokenList.map(token => weights[token.toLowerCase()]);
+    const args = tokenList.map(token => weights[token.toLowerCase()] || '0');
 
     const txs: EthereumTransactionTypeExtended[] = [];
 

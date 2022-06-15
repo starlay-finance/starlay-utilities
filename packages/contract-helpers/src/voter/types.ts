@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { tEthereumAddress } from '../commons/types';
 
 export type VoteData = {
@@ -14,5 +14,5 @@ export type UserVoteData = Partial<
 
 export type VoteArgs = {
   user: tEthereumAddress;
-  weights: Record<string, BigNumber>;
+  weights: Record<string, BigNumberish>;
 };
