@@ -185,13 +185,14 @@ export class Voter
       rawTxMethod: async () => contract.populateTransaction.vote(args),
       action: ProtocolAction.ve,
       from: user,
+      skipEstimation: true,
     });
 
     txs.push({
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.ve].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.loop].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
@@ -205,13 +206,14 @@ export class Voter
         .populateTransaction.poke,
       action: ProtocolAction.ve,
       from: user,
+      skipEstimation: true,
     });
 
     txs.push({
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.ve].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.loop].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
@@ -231,7 +233,7 @@ export class Voter
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.ve].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.bulk].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
