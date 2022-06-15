@@ -192,7 +192,26 @@ const _abi = [
         type: 'uint256[]',
       },
     ],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_for',
+        type: 'address',
+      },
+    ],
+    name: 'claimableFor',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: '',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {

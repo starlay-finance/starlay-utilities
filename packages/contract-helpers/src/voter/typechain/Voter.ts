@@ -23,6 +23,7 @@ export interface VoterInterface extends utils.Interface {
     'checkpointToken()': FunctionFragment;
     'claim()': FunctionFragment;
     'claimable()': FunctionFragment;
+    'claimableFor(address)': FunctionFragment;
     'currentTermIndex()': FunctionFragment;
     'currentTermTimestamp()': FunctionFragment;
     'initialize(address)': FunctionFragment;
@@ -66,6 +67,10 @@ export interface VoterInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: 'claim', values?: undefined): string;
   encodeFunctionData(functionFragment: 'claimable', values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: 'claimableFor',
+    values: [string],
+  ): string;
   encodeFunctionData(
     functionFragment: 'currentTermIndex',
     values?: undefined,
@@ -172,6 +177,10 @@ export interface VoterInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: 'claim', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'claimable', data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: 'claimableFor',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
     functionFragment: 'currentTermIndex',
     data: BytesLike,
   ): Result;
@@ -266,6 +275,7 @@ export interface VoterInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: 'PoolUpdated'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Voted'): EventFragment;
 }
+
 export interface Voter extends BaseContract {
   contractName: 'Voter';
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -291,9 +301,12 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
-    claimable(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
+    claimable(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
+    claimableFor(
+      _for: string,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber[]]>;
 
     currentTermIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -432,9 +445,9 @@ export interface Voter extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
-  claimable(
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
+  claimable(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  claimableFor(_for: string, overrides?: CallOverrides): Promise<BigNumber[]>;
 
   currentTermIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -568,6 +581,8 @@ export interface Voter extends BaseContract {
 
     claimable(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    claimableFor(_for: string, overrides?: CallOverrides): Promise<BigNumber[]>;
+
     currentTermIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentTermTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
@@ -696,9 +711,9 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
-    claimable(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>;
+    claimable(overrides?: CallOverrides): Promise<BigNumber>;
+
+    claimableFor(_for: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     currentTermIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -838,8 +853,11 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
-    claimable(
-      overrides?: Overrides & { from?: string | Promise<string> },
+    claimable(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    claimableFor(
+      _for: string,
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     currentTermIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;

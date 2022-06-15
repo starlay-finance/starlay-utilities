@@ -16,6 +16,7 @@ import { UserVoteData, VoteArgs, VoteData } from './types';
 export interface VoterInterface {
   voteData: (args: { timestamp: number }) => Promise<VoteData>;
   userData: (args: {
+    user: tEthereumAddress;
     lockerId: string;
     timestamp: number;
   }) => Promise<UserVoteData>;
@@ -30,8 +31,10 @@ export interface VoterInterface {
 
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
 
-const timestampToTerm = (timestamp: number) =>
-  Math.ceil(timestamp / SECONDS_OF_WEEK) * SECONDS_OF_WEEK;
+const timestampToTerms = (timestamp: number) => {
+  const voteTerm = Math.ceil(timestamp / SECONDS_OF_WEEK) * SECONDS_OF_WEEK;
+  return { voteTerm, claimableTerm: voteTerm - SECONDS_OF_WEEK * 2 };
+};
 
 export class Voter
   extends BaseService<VoterContract>
@@ -52,7 +55,7 @@ export class Voter
   }
 
   voteData: VoterInterface['voteData'] = async ({ timestamp }) => {
-    const term = timestampToTerm(timestamp);
+    const { voteTerm, claimableTerm } = timestampToTerms(timestamp);
     const contract = this.getContractInstance(this.voterAddress);
     const iContract = contract.interface;
 
@@ -60,40 +63,67 @@ export class Voter
     const calls = [
       {
         target: this.voterAddress,
-        callData: iContract.encodeFunctionData('totalWeight', [term]),
+        callData: iContract.encodeFunctionData('totalWeight', [voteTerm]),
       },
-      ...tokenList.map(token => ({
-        target: this.voterAddress,
-        callData: iContract.encodeFunctionData('poolWeights', [token, term]),
-      })),
+      ...tokenList.flatMap((token, index) => [
+        {
+          target: this.voterAddress,
+          callData: iContract.encodeFunctionData('poolWeights', [
+            token,
+            voteTerm,
+          ]),
+        },
+        {
+          target: this.voterAddress,
+          callData: iContract.encodeFunctionData('tokensPerWeek', [
+            index,
+            claimableTerm,
+          ]),
+        },
+      ]),
     ];
     const {
-      returnData: [totalWeightRes, ...poolWeightsRes],
+      returnData: [totalWeightRes, ...returnData],
     } = await this.multicall.callStatic.aggregate(calls);
     const [totalWeight] = iContract.decodeFunctionResult(
       'totalWeight',
       totalWeightRes,
     );
-    const poolWeights = tokenList.reduce(
-      (res, token, index) => ({
+    let cursor = 0;
+    const data = tokenList.reduce(
+      (res, token) => ({
         ...res,
-        [token]: iContract.decodeFunctionResult(
-          'poolWeights',
-          poolWeightsRes[index][0],
-        ),
+        [token.toLowerCase()]: {
+          weight: iContract.decodeFunctionResult(
+            'poolWeights',
+            returnData[cursor++][0],
+          ),
+          lastWeekRevenue: iContract.decodeFunctionResult(
+            'tokensPerWeek',
+            returnData[cursor++][0],
+          ),
+        },
       }),
       {},
     );
-    return { totalWeight: totalWeight as BigNumber, poolWeights };
+    return { totalWeight: totalWeight as BigNumber, data };
   };
 
-  userData: VoterInterface['userData'] = async ({ lockerId, timestamp }) => {
-    const term = timestampToTerm(timestamp);
+  userData: VoterInterface['userData'] = async ({
+    user,
+    lockerId,
+    timestamp,
+  }) => {
+    const { voteTerm } = timestampToTerms(timestamp);
     const contract = this.getContractInstance(this.voterAddress);
     const iContract = contract.interface;
 
     const tokenList = await contract.tokenList();
     const calls = [
+      {
+        target: this.voterAddress,
+        callData: iContract.encodeFunctionData('claimableFor', [user]),
+      },
       ...tokenList.flatMap(token => [
         {
           target: this.voterAddress,
@@ -104,24 +134,31 @@ export class Voter
           callData: iContract.encodeFunctionData('votes', [
             lockerId,
             token,
-            term,
+            voteTerm,
           ]),
         },
       ]),
     ];
-    const { returnData } = await this.multicall.callStatic.aggregate(calls);
+    const {
+      returnData: [claimableRes, ...userVoteDataRes],
+    } = await this.multicall.callStatic.aggregate(calls);
+    const [claimables] = iContract.decodeFunctionResult(
+      'claimableFor',
+      claimableRes,
+    );
     let cursor = 0;
     return tokenList.reduce(
-      (res, token) => ({
+      (res, token, index) => ({
         ...res,
-        [token]: {
+        [token.toLowerCase()]: {
+          claimable: (claimables as BigNumber[])[index],
           weight: iContract.decodeFunctionResult(
             'weights',
-            returnData[cursor++][0],
+            userVoteDataRes[cursor++][0],
           ),
           vote: iContract.decodeFunctionResult(
             'votes',
-            returnData[cursor++][0],
+            userVoteDataRes[cursor++][0],
           ),
         },
       }),

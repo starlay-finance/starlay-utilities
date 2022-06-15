@@ -3,11 +3,13 @@ import { tEthereumAddress } from '../commons/types';
 
 export type VoteData = {
   totalWeight: BigNumber;
-  poolWeights: Partial<Record<string, BigNumber>>;
+  data: Partial<
+    Record<string, { weight: BigNumber; lastWeekRevenue: BigNumber }>
+  >;
 };
 
 export type UserVoteData = Partial<
-  Record<string, { weight: BigNumber; vote: BigNumber }>
+  Record<string, { claimable: BigNumber; weight: BigNumber; vote: BigNumber }>
 >;
 
 export type VoteArgs = {
