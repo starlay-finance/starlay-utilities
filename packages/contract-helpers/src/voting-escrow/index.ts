@@ -9,6 +9,7 @@ import {
 import {
   DEFAULT_APPROVE_AMOUNT,
   gasLimitRecommendations,
+  valueToWei,
 } from '../commons/utils';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { VotingEscrow as VotingEscrowContract } from './typechain/VotingEscrow';
@@ -39,6 +40,8 @@ export interface VotingEscrowInterface {
     args: IncreaseUnlockTimeArgs,
   ) => Promise<EthereumTransactionTypeExtended[]>;
 }
+
+const LAY_DECIMALS = 18;
 
 export class VotingEscrow
   extends BaseService<VotingEscrowContract>
@@ -95,11 +98,12 @@ export class VotingEscrow
   }) => {
     const txs: EthereumTransactionTypeExtended[] = [];
 
+    const convertedAmount = valueToWei(amount, LAY_DECIMALS);
     const approved = await this.erc20Service.isApproved({
       token: this.layAddress,
       user,
       spender: this.votingEscrowAddress,
-      amount,
+      amount: convertedAmount,
     });
 
     if (!approved) {
@@ -115,7 +119,10 @@ export class VotingEscrow
 
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
-        this.contract().populateTransaction.createLock(amount, duration),
+        this.contract().populateTransaction.createLock(
+          convertedAmount,
+          duration,
+        ),
       action: ProtocolAction.ve,
       from: user,
     });
@@ -158,11 +165,12 @@ export class VotingEscrow
   }) => {
     const txs: EthereumTransactionTypeExtended[] = [];
 
+    const convertedAmount = valueToWei(amount, LAY_DECIMALS);
     const approved = await this.erc20Service.isApproved({
       token: this.layAddress,
       user,
       spender: this.votingEscrowAddress,
-      amount,
+      amount: convertedAmount,
     });
 
     if (!approved) {
@@ -178,7 +186,7 @@ export class VotingEscrow
 
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
-        this.contract().populateTransaction.increaseAmount(amount),
+        this.contract().populateTransaction.increaseAmount(convertedAmount),
       action: ProtocolAction.ve,
       from: user,
     });
