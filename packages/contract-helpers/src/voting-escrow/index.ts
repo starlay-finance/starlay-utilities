@@ -1,5 +1,6 @@
 import { providers } from 'ethers';
 import BaseService from '../commons/BaseService';
+import { LAY_DECIMALS } from '../commons/constants';
 import {
   eEthereumTxType,
   EthereumTransactionTypeExtended,
@@ -41,8 +42,6 @@ export interface VotingEscrowInterface {
     args: IncreaseUnlockTimeArgs,
   ) => Promise<EthereumTransactionTypeExtended[]>;
 }
-
-const LAY_DECIMALS = 18;
 
 export class VotingEscrow
   extends BaseService<VotingEscrowContract>
