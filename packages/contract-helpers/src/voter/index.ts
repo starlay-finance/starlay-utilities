@@ -17,12 +17,16 @@ import {
   VoteArgs,
   VoteData,
   VoteDataArgs,
+  VoteUntilArgs,
 } from './types';
 
 export interface VoterInterface {
   voteData: (args: VoteDataArgs) => Promise<VoteData>;
   userData: (args: UserVoteDataArgs) => Promise<UserVoteData>;
   vote: (args: VoteArgs) => Promise<EthereumTransactionTypeExtended[]>;
+  voteUntil: (
+    args: VoteUntilArgs,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
   poke: (args: {
     user: tEthereumAddress;
   }) => Promise<EthereumTransactionTypeExtended[]>;
@@ -186,6 +190,36 @@ export class Voter
 
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () => contract.populateTransaction.vote(args),
+      action: ProtocolAction.ve,
+      from: user,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.loop].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+    return txs;
+  };
+
+  voteUntil: VoterInterface['voteUntil'] = async ({
+    user,
+    weights,
+    endTimestamp,
+  }) => {
+    const contract = this.getContractInstance(this.voterAddress);
+    const tokenList = await contract.tokenList();
+    const args = tokenList.map(token => weights[token.toLowerCase()] || '0');
+
+    const txs: EthereumTransactionTypeExtended[] = [];
+
+    const txCallback = this.generateTxCallback({
+      rawTxMethod: async () =>
+        contract.populateTransaction.voteUntil(args, endTimestamp),
       action: ProtocolAction.ve,
       from: user,
       skipEstimation: true,

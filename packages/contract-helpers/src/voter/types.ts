@@ -26,3 +26,7 @@ export type VoteArgs = {
   user: tEthereumAddress;
   weights: Record<string, BigNumberish>;
 };
+
+export type VoteUntilArgs = VoteArgs & {
+  endTimestamp: number;
+};
