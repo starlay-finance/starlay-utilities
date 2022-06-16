@@ -11,15 +11,17 @@ import { Multicall } from '../multicall/typechain/Multicall';
 import { Multicall__factory } from '../multicall/typechain/Multicall__factory';
 import { Voter as VoterContract } from './typechain/Voter';
 import { Voter__factory } from './typechain/Voter__factory';
-import { UserVoteData, VoteArgs, VoteData } from './types';
+import {
+  UserVoteData,
+  UserVoteDataArgs,
+  VoteArgs,
+  VoteData,
+  VoteDataArgs,
+} from './types';
 
 export interface VoterInterface {
-  voteData: (args: { timestamp: number }) => Promise<VoteData>;
-  userData: (args: {
-    user: tEthereumAddress;
-    lockerId: string;
-    timestamp: number;
-  }) => Promise<UserVoteData>;
+  voteData: (args: VoteDataArgs) => Promise<VoteData>;
+  userData: (args: UserVoteDataArgs) => Promise<UserVoteData>;
   vote: (args: VoteArgs) => Promise<EthereumTransactionTypeExtended[]>;
   poke: (args: {
     user: tEthereumAddress;
@@ -31,9 +33,9 @@ export interface VoterInterface {
 
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
 
-const timestampToTerms = (timestamp: number) => {
-  const voteTerm = Math.ceil(timestamp / SECONDS_OF_WEEK) * SECONDS_OF_WEEK;
-  return { voteTerm, claimableTerm: voteTerm - SECONDS_OF_WEEK * 2 };
+const timestampToTerms = (timestamp: number, termUnit = SECONDS_OF_WEEK) => {
+  const voteTerm = Math.ceil(timestamp / termUnit) * termUnit;
+  return { voteTerm, claimableTerm: voteTerm - termUnit * 2 };
 };
 
 export class Voter
@@ -54,8 +56,8 @@ export class Voter
     this.multicall = Multicall__factory.connect(multicallAdress, provider);
   }
 
-  voteData: VoterInterface['voteData'] = async ({ timestamp }) => {
-    const { voteTerm, claimableTerm } = timestampToTerms(timestamp);
+  voteData: VoterInterface['voteData'] = async ({ timestamp, termUnit }) => {
+    const { voteTerm, claimableTerm } = timestampToTerms(timestamp, termUnit);
     const contract = this.getContractInstance(this.voterAddress);
     const iContract = contract.interface;
 
@@ -117,8 +119,9 @@ export class Voter
     user,
     lockerId,
     timestamp,
+    termUnit,
   }) => {
-    const { voteTerm } = timestampToTerms(timestamp);
+    const { voteTerm } = timestampToTerms(timestamp, termUnit);
     const contract = this.getContractInstance(this.voterAddress);
     const iContract = contract.interface;
 
