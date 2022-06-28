@@ -22,7 +22,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-
+    "outDir": "./dist",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
@@ -34,6 +34,7 @@
   },
   "exclude": [
     "node_modules",
+    "dist",
     "packages/*/dist",
     "packages/*/node_modules",
     "packages/*/src/**/*.test.ts",
