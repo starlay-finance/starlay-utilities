@@ -18,9 +18,10 @@ import { Provider } from '@ethersproject/providers';
 export interface VotingEscrowInterface extends utils.Interface {
   contractName: 'VotingEscrow';
   functions: {
+    '_term()': FunctionFragment;
     'abstain(uint256)': FunctionFragment;
-    'agency()': FunctionFragment;
-    'balanceOf(address)': FunctionFragment;
+    'addAgency(address)': FunctionFragment;
+    'agencies(address)': FunctionFragment;
     'balanceOfAtLockerId(uint256,uint256)': FunctionFragment;
     'balanceOfLockerId(uint256)': FunctionFragment;
     'balanceOfLockerIdAt(uint256,uint256)': FunctionFragment;
@@ -42,7 +43,7 @@ export interface VotingEscrowInterface extends utils.Interface {
     'ownerOf(uint256)': FunctionFragment;
     'ownerToId(address)': FunctionFragment;
     'pointHistory(uint256)': FunctionFragment;
-    'setAgency(address)': FunctionFragment;
+    'removeAgency(address)': FunctionFragment;
     'setVoter(address)': FunctionFragment;
     'slopeChanges(uint256)': FunctionFragment;
     'supply()': FunctionFragment;
@@ -61,12 +62,13 @@ export interface VotingEscrowInterface extends utils.Interface {
     'withdraw()': FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: '_term', values?: undefined): string;
   encodeFunctionData(
     functionFragment: 'abstain',
     values: [BigNumberish],
   ): string;
-  encodeFunctionData(functionFragment: 'agency', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string;
+  encodeFunctionData(functionFragment: 'addAgency', values: [string]): string;
+  encodeFunctionData(functionFragment: 'agencies', values: [string]): string;
   encodeFunctionData(
     functionFragment: 'balanceOfAtLockerId',
     values: [BigNumberish, BigNumberish],
@@ -136,7 +138,10 @@ export interface VotingEscrowInterface extends utils.Interface {
     functionFragment: 'pointHistory',
     values: [BigNumberish],
   ): string;
-  encodeFunctionData(functionFragment: 'setAgency', values: [string]): string;
+  encodeFunctionData(
+    functionFragment: 'removeAgency',
+    values: [string],
+  ): string;
   encodeFunctionData(functionFragment: 'setVoter', values: [string]): string;
   encodeFunctionData(
     functionFragment: 'slopeChanges',
@@ -178,9 +183,10 @@ export interface VotingEscrowInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: 'withdraw', values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: '_term', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'abstain', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'agency', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addAgency', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'agencies', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'balanceOfAtLockerId',
     data: BytesLike,
@@ -226,7 +232,10 @@ export interface VotingEscrowInterface extends utils.Interface {
     functionFragment: 'pointHistory',
     data: BytesLike,
   ): Result;
-  decodeFunctionResult(functionFragment: 'setAgency', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: 'removeAgency',
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(functionFragment: 'setVoter', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'slopeChanges',
@@ -287,14 +296,19 @@ export interface VotingEscrow extends BaseContract {
   interface: VotingEscrowInterface;
 
   functions: {
+    _term(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     abstain(
       _lockerId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
-    agency(overrides?: CallOverrides): Promise<[string]>;
+    addAgency(
+      _agency: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
 
-    balanceOf(_owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    agencies(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     balanceOfAtLockerId(
       _lockerId: BigNumberish,
@@ -402,7 +416,7 @@ export interface VotingEscrow extends BaseContract {
       }
     >;
 
-    setAgency(
+    removeAgency(
       _agency: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
@@ -475,14 +489,19 @@ export interface VotingEscrow extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  _term(overrides?: CallOverrides): Promise<BigNumber>;
+
   abstain(
     _lockerId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
-  agency(overrides?: CallOverrides): Promise<string>;
+  addAgency(
+    _agency: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
 
-  balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+  agencies(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   balanceOfAtLockerId(
     _lockerId: BigNumberish,
@@ -584,7 +603,7 @@ export interface VotingEscrow extends BaseContract {
     }
   >;
 
-  setAgency(
+  removeAgency(
     _agency: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
@@ -657,11 +676,13 @@ export interface VotingEscrow extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _term(overrides?: CallOverrides): Promise<BigNumber>;
+
     abstain(_lockerId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    agency(overrides?: CallOverrides): Promise<string>;
+    addAgency(_agency: string, overrides?: CallOverrides): Promise<void>;
 
-    balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    agencies(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     balanceOfAtLockerId(
       _lockerId: BigNumberish,
@@ -764,7 +785,7 @@ export interface VotingEscrow extends BaseContract {
       }
     >;
 
-    setAgency(_agency: string, overrides?: CallOverrides): Promise<void>;
+    removeAgency(_agency: string, overrides?: CallOverrides): Promise<void>;
 
     setVoter(_voter: string, overrides?: CallOverrides): Promise<void>;
 
@@ -826,15 +847,22 @@ export interface VotingEscrow extends BaseContract {
     withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
+  filters: {};
+
   estimateGas: {
+    _term(overrides?: CallOverrides): Promise<BigNumber>;
+
     abstain(
       _lockerId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
-    agency(overrides?: CallOverrides): Promise<BigNumber>;
+    addAgency(
+      _agency: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
 
-    balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    agencies(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOfAtLockerId(
       _lockerId: BigNumberish,
@@ -932,7 +960,7 @@ export interface VotingEscrow extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    setAgency(
+    removeAgency(
       _agency: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
@@ -999,15 +1027,20 @@ export interface VotingEscrow extends BaseContract {
   };
 
   populateTransaction: {
+    _term(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     abstain(
       _lockerId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
-    agency(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    addAgency(
+      _agency: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
 
-    balanceOf(
-      _owner: string,
+    agencies(
+      arg0: string,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
@@ -1113,7 +1146,7 @@ export interface VotingEscrow extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
-    setAgency(
+    removeAgency(
       _agency: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;

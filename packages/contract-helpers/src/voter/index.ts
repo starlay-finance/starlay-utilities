@@ -36,8 +36,9 @@ export interface VoterInterface {
 }
 
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
+const DEFAULT_TERM_UNIT = SECONDS_OF_WEEK * 2;
 
-const timestampToTerms = (timestamp: number, termUnit = SECONDS_OF_WEEK) => {
+const timestampToTerms = (timestamp: number, termUnit = DEFAULT_TERM_UNIT) => {
   const voteTerm = Math.ceil(timestamp / termUnit) * termUnit;
   return { voteTerm, claimableTerm: voteTerm - termUnit * 2 };
 };
@@ -71,7 +72,7 @@ export class Voter
         target: this.voterAddress,
         callData: iContract.encodeFunctionData('totalWeight', [voteTerm]),
       },
-      ...tokenList.flatMap((token, index) => [
+      ...tokenList.flatMap(token => [
         {
           target: this.voterAddress,
           callData: iContract.encodeFunctionData('poolWeights', [
@@ -82,7 +83,7 @@ export class Voter
         {
           target: this.voterAddress,
           callData: iContract.encodeFunctionData('tokensPerWeek', [
-            index,
+            token,
             claimableTerm,
           ]),
         },
