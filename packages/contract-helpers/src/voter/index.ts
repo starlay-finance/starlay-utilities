@@ -33,6 +33,9 @@ export interface VoterInterface {
   claim: (args: {
     user: tEthereumAddress;
   }) => Promise<EthereumTransactionTypeExtended[]>;
+  reset: (args: {
+    user: tEthereumAddress;
+  }) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
@@ -272,6 +275,26 @@ export class Voter
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
         gasLimit: gasLimitRecommendations[ProtocolAction.bulk].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+    return txs;
+  };
+
+  reset: VoterInterface['reset'] = async ({ user }) => {
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const txCallback = this.generateTxCallback({
+      rawTxMethod: this.getContractInstance(this.voterAddress)
+        .populateTransaction.reset,
+      action: ProtocolAction.ve,
+      from: user,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.ve].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
