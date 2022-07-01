@@ -139,6 +139,10 @@ export class Voter
         target: this.voterAddress,
         callData: iContract.encodeFunctionData('claimableFor', [user]),
       },
+      {
+        target: this.voterAddress,
+        callData: iContract.encodeFunctionData('voteEndTime', [lockerId]),
+      },
       ...tokenList.flatMap(token => [
         {
           target: this.voterAddress,
@@ -155,14 +159,18 @@ export class Voter
       ]),
     ];
     const {
-      returnData: [claimableRes, ...userVoteDataRes],
+      returnData: [claimableRes, voteEndTimeRes, ...userVoteDataRes],
     } = await this.multicall.callStatic.aggregate(calls);
     const [claimables] = iContract.decodeFunctionResult(
       'claimableFor',
       claimableRes,
     );
+    const [voteEndTime] = iContract.decodeFunctionResult(
+      'voteEndTime',
+      voteEndTimeRes,
+    );
     let cursor = 0;
-    return tokenList.reduce(
+    const data = tokenList.reduce(
       (res, token, index) => ({
         ...res,
         [token.toLowerCase()]: {
@@ -183,6 +191,10 @@ export class Voter
       }),
       {},
     );
+    return {
+      expiry: (voteEndTime as BigNumber).toNumber(),
+      data,
+    };
   };
 
   vote: VoterInterface['vote'] = async ({ user, weights }) => {
