@@ -236,7 +236,7 @@ export class Voter
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
         contract.populateTransaction.voteUntil(args, endTimestamp),
-      action: ProtocolAction.ve,
+      action: ProtocolAction.bulk,
       from: user,
       skipEstimation: true,
     });
@@ -280,6 +280,7 @@ export class Voter
         .populateTransaction.claim,
       action: ProtocolAction.ve,
       from: user,
+      skipEstimation: true,
     });
 
     txs.push({
@@ -300,13 +301,14 @@ export class Voter
         .populateTransaction.reset,
       action: ProtocolAction.ve,
       from: user,
+      skipEstimation: true,
     });
 
     txs.push({
       tx: txCallback,
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
-        gasLimit: gasLimitRecommendations[ProtocolAction.ve].recommended,
+        gasLimit: gasLimitRecommendations[ProtocolAction.bulk].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
