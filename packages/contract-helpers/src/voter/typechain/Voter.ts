@@ -18,8 +18,9 @@ import { Provider } from '@ethersproject/providers';
 export interface VoterInterface extends utils.Interface {
   contractName: 'Voter';
   functions: {
+    '_term()': FunctionFragment;
     '_ve()': FunctionFragment;
-    'addPool(address,address)': FunctionFragment;
+    'addToken(address)': FunctionFragment;
     'checkpointToken()': FunctionFragment;
     'claim()': FunctionFragment;
     'claimable()': FunctionFragment;
@@ -27,16 +28,22 @@ export interface VoterInterface extends utils.Interface {
     'currentTermIndex()': FunctionFragment;
     'currentTermTimestamp()': FunctionFragment;
     'initialize(address)': FunctionFragment;
+    'isSuspended(address)': FunctionFragment;
     'isWhitelisted(address)': FunctionFragment;
     'lastClaimTime(uint256)': FunctionFragment;
     'lastTokenTime()': FunctionFragment;
     'lastVoteTime(uint256)': FunctionFragment;
+    'maxVoteDuration()': FunctionFragment;
     'minter()': FunctionFragment;
     'poke()': FunctionFragment;
     'poolWeights(address,uint256)': FunctionFragment;
     'pools(address)': FunctionFragment;
     'reset()': FunctionFragment;
+    'resumeToken(address)': FunctionFragment;
+    'setMinter(address)': FunctionFragment;
     'startTime()': FunctionFragment;
+    'suspendToken(address)': FunctionFragment;
+    'suspendedTokenLastBalance(address)': FunctionFragment;
     'termIndexAt(uint256)': FunctionFragment;
     'termTimestampAtDeployed()': FunctionFragment;
     'termTimestampByIndex(uint256)': FunctionFragment;
@@ -45,9 +52,8 @@ export interface VoterInterface extends utils.Interface {
     'tokenLastBalance(uint256)': FunctionFragment;
     'tokenList()': FunctionFragment;
     'tokens(uint256)': FunctionFragment;
-    'tokensPerWeek(uint256,uint256)': FunctionFragment;
+    'tokensPerWeek(address,uint256)': FunctionFragment;
     'totalWeight(uint256)': FunctionFragment;
-    'updatePool(address,address)': FunctionFragment;
     'vote(uint256[])': FunctionFragment;
     'voteEndTime(uint256)': FunctionFragment;
     'voteUntil(uint256[],uint256)': FunctionFragment;
@@ -56,11 +62,9 @@ export interface VoterInterface extends utils.Interface {
     'weights(uint256,address)': FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: '_term', values?: undefined): string;
   encodeFunctionData(functionFragment: '_ve', values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: 'addPool',
-    values: [string, string],
-  ): string;
+  encodeFunctionData(functionFragment: 'addToken', values: [string]): string;
   encodeFunctionData(
     functionFragment: 'checkpointToken',
     values?: undefined,
@@ -80,6 +84,7 @@ export interface VoterInterface extends utils.Interface {
     values?: undefined,
   ): string;
   encodeFunctionData(functionFragment: 'initialize', values: [string]): string;
+  encodeFunctionData(functionFragment: 'isSuspended', values: [string]): string;
   encodeFunctionData(
     functionFragment: 'isWhitelisted',
     values: [string],
@@ -96,6 +101,10 @@ export interface VoterInterface extends utils.Interface {
     functionFragment: 'lastVoteTime',
     values: [BigNumberish],
   ): string;
+  encodeFunctionData(
+    functionFragment: 'maxVoteDuration',
+    values?: undefined,
+  ): string;
   encodeFunctionData(functionFragment: 'minter', values?: undefined): string;
   encodeFunctionData(functionFragment: 'poke', values?: undefined): string;
   encodeFunctionData(
@@ -104,7 +113,17 @@ export interface VoterInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: 'pools', values: [string]): string;
   encodeFunctionData(functionFragment: 'reset', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'resumeToken', values: [string]): string;
+  encodeFunctionData(functionFragment: 'setMinter', values: [string]): string;
   encodeFunctionData(functionFragment: 'startTime', values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: 'suspendToken',
+    values: [string],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'suspendedTokenLastBalance',
+    values: [string],
+  ): string;
   encodeFunctionData(
     functionFragment: 'termIndexAt',
     values: [BigNumberish],
@@ -133,15 +152,11 @@ export interface VoterInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: 'tokensPerWeek',
-    values: [BigNumberish, BigNumberish],
+    values: [string, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: 'totalWeight',
     values: [BigNumberish],
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'updatePool',
-    values: [string, string],
   ): string;
   encodeFunctionData(
     functionFragment: 'vote',
@@ -168,8 +183,9 @@ export interface VoterInterface extends utils.Interface {
     values: [BigNumberish, string],
   ): string;
 
+  decodeFunctionResult(functionFragment: '_term', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_ve', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'addPool', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addToken', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'checkpointToken',
     data: BytesLike,
@@ -190,6 +206,10 @@ export interface VoterInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: 'isSuspended',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
     functionFragment: 'isWhitelisted',
     data: BytesLike,
   ): Result;
@@ -205,6 +225,10 @@ export interface VoterInterface extends utils.Interface {
     functionFragment: 'lastVoteTime',
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(
+    functionFragment: 'maxVoteDuration',
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(functionFragment: 'minter', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'poke', data: BytesLike): Result;
   decodeFunctionResult(
@@ -213,7 +237,20 @@ export interface VoterInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: 'pools', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'reset', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: 'resumeToken',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(functionFragment: 'setMinter', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'startTime', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: 'suspendToken',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'suspendedTokenLastBalance',
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(
     functionFragment: 'termIndexAt',
     data: BytesLike,
@@ -245,7 +282,6 @@ export interface VoterInterface extends utils.Interface {
     functionFragment: 'totalWeight',
     data: BytesLike,
   ): Result;
-  decodeFunctionResult(functionFragment: 'updatePool', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'vote', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'voteEndTime',
@@ -263,16 +299,14 @@ export interface VoterInterface extends utils.Interface {
     'Abstained(uint256,address,uint256)': EventFragment;
     'Claimed(uint256,uint256[])': EventFragment;
     'Initialized(uint8)': EventFragment;
-    'PoolAdded(address,address)': EventFragment;
-    'PoolUpdated(address,address)': EventFragment;
+    'TokenAdded(address)': EventFragment;
     'Voted(address,uint256,address,uint256)': EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: 'Abstained'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Claimed'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'PoolAdded'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'PoolUpdated'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'TokenAdded'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Voted'): EventFragment;
 }
 
@@ -285,11 +319,12 @@ export interface Voter extends BaseContract {
   interface: VoterInterface;
 
   functions: {
+    _term(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     _ve(overrides?: CallOverrides): Promise<[string]>;
 
-    addPool(
+    addToken(
       _token: string,
-      _pool: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -317,6 +352,8 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    isSuspended(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     lastClaimTime(
@@ -330,6 +367,8 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
+
+    maxVoteDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     minter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -349,7 +388,27 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    resumeToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    setMinter(
+      _minter: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
     startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    suspendToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    suspendedTokenLastBalance(
+      arg0: string,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber]>;
 
     termIndexAt(
       _t: BigNumberish,
@@ -377,7 +436,7 @@ export interface Voter extends BaseContract {
     tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     tokensPerWeek(
-      arg0: BigNumberish,
+      arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
@@ -386,12 +445,6 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
-
-    updatePool(
-      _token: string,
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
 
     vote(
       _weights: BigNumberish[],
@@ -405,7 +458,7 @@ export interface Voter extends BaseContract {
 
     voteUntil(
       _weights: BigNumberish[],
-      _VoteEndTimestamp: BigNumberish,
+      _voteEndTimestamp: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -429,11 +482,12 @@ export interface Voter extends BaseContract {
     ): Promise<[BigNumber]>;
   };
 
+  _term(overrides?: CallOverrides): Promise<BigNumber>;
+
   _ve(overrides?: CallOverrides): Promise<string>;
 
-  addPool(
+  addToken(
     _token: string,
-    _pool: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -458,6 +512,8 @@ export interface Voter extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  isSuspended(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
   isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   lastClaimTime(
@@ -471,6 +527,8 @@ export interface Voter extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
+
+  maxVoteDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
   minter(overrides?: CallOverrides): Promise<string>;
 
@@ -490,7 +548,27 @@ export interface Voter extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  resumeToken(
+    _token: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  setMinter(
+    _minter: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
   startTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+  suspendToken(
+    _token: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  suspendedTokenLastBalance(
+    arg0: string,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
 
   termIndexAt(_t: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -515,7 +593,7 @@ export interface Voter extends BaseContract {
   tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   tokensPerWeek(
-    arg0: BigNumberish,
+    arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
@@ -524,12 +602,6 @@ export interface Voter extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
-
-  updatePool(
-    _token: string,
-    _pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
 
   vote(
     _weights: BigNumberish[],
@@ -543,7 +615,7 @@ export interface Voter extends BaseContract {
 
   voteUntil(
     _weights: BigNumberish[],
-    _VoteEndTimestamp: BigNumberish,
+    _voteEndTimestamp: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -567,13 +639,11 @@ export interface Voter extends BaseContract {
   ): Promise<BigNumber>;
 
   callStatic: {
+    _term(overrides?: CallOverrides): Promise<BigNumber>;
+
     _ve(overrides?: CallOverrides): Promise<string>;
 
-    addPool(
-      _token: string,
-      _pool: string,
-      overrides?: CallOverrides,
-    ): Promise<void>;
+    addToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
     checkpointToken(overrides?: CallOverrides): Promise<void>;
 
@@ -589,6 +659,8 @@ export interface Voter extends BaseContract {
 
     initialize(_votingEscrow: string, overrides?: CallOverrides): Promise<void>;
 
+    isSuspended(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
     isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     lastClaimTime(
@@ -602,6 +674,8 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
+
+    maxVoteDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     minter(overrides?: CallOverrides): Promise<string>;
 
@@ -617,7 +691,18 @@ export interface Voter extends BaseContract {
 
     reset(overrides?: CallOverrides): Promise<void>;
 
+    resumeToken(_token: string, overrides?: CallOverrides): Promise<void>;
+
+    setMinter(_minter: string, overrides?: CallOverrides): Promise<void>;
+
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    suspendToken(_token: string, overrides?: CallOverrides): Promise<void>;
+
+    suspendedTokenLastBalance(
+      arg0: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
 
     termIndexAt(
       _t: BigNumberish,
@@ -645,7 +730,7 @@ export interface Voter extends BaseContract {
     tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     tokensPerWeek(
-      arg0: BigNumberish,
+      arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
@@ -654,12 +739,6 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
-
-    updatePool(
-      _token: string,
-      _pool: string,
-      overrides?: CallOverrides,
-    ): Promise<void>;
 
     vote(_weights: BigNumberish[], overrides?: CallOverrides): Promise<void>;
 
@@ -670,7 +749,7 @@ export interface Voter extends BaseContract {
 
     voteUntil(
       _weights: BigNumberish[],
-      _VoteEndTimestamp: BigNumberish,
+      _voteEndTimestamp: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<void>;
 
@@ -694,12 +773,15 @@ export interface Voter extends BaseContract {
     ): Promise<BigNumber>;
   };
 
+  filters: {};
+
   estimateGas: {
+    _term(overrides?: CallOverrides): Promise<BigNumber>;
+
     _ve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addPool(
+    addToken(
       _token: string,
-      _pool: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -724,6 +806,8 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    isSuspended(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     lastClaimTime(
@@ -737,6 +821,8 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
+
+    maxVoteDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     minter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -756,7 +842,27 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    resumeToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    setMinter(
+      _minter: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    suspendToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    suspendedTokenLastBalance(
+      arg0: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
 
     termIndexAt(
       _t: BigNumberish,
@@ -784,7 +890,7 @@ export interface Voter extends BaseContract {
     tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     tokensPerWeek(
-      arg0: BigNumberish,
+      arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
@@ -792,12 +898,6 @@ export interface Voter extends BaseContract {
     totalWeight(
       arg0: BigNumberish,
       overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
-    updatePool(
-      _token: string,
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     vote(
@@ -812,7 +912,7 @@ export interface Voter extends BaseContract {
 
     voteUntil(
       _weights: BigNumberish[],
-      _VoteEndTimestamp: BigNumberish,
+      _voteEndTimestamp: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -837,11 +937,12 @@ export interface Voter extends BaseContract {
   };
 
   populateTransaction: {
+    _term(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     _ve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addPool(
+    addToken(
       _token: string,
-      _pool: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
@@ -871,6 +972,11 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
+    isSuspended(
+      arg0: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
     isWhitelisted(
       arg0: string,
       overrides?: CallOverrides,
@@ -887,6 +993,8 @@ export interface Voter extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
+
+    maxVoteDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -909,7 +1017,27 @@ export interface Voter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
+    resumeToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    setMinter(
+      _minter: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
     startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    suspendToken(
+      _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    suspendedTokenLastBalance(
+      arg0: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
 
     termIndexAt(
       _t: BigNumberish,
@@ -947,7 +1075,7 @@ export interface Voter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     tokensPerWeek(
-      arg0: BigNumberish,
+      arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
@@ -955,12 +1083,6 @@ export interface Voter extends BaseContract {
     totalWeight(
       arg0: BigNumberish,
       overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
-    updatePool(
-      _token: string,
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     vote(
@@ -975,7 +1097,7 @@ export interface Voter extends BaseContract {
 
     voteUntil(
       _weights: BigNumberish[],
-      _VoteEndTimestamp: BigNumberish,
+      _voteEndTimestamp: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
