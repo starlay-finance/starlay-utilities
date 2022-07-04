@@ -112,6 +112,19 @@ const _abi = [
     type: 'event',
   },
   {
+    inputs: [],
+    name: '_term',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -125,32 +138,32 @@ const _abi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'agency',
-    outputs: [
+    inputs: [
       {
         internalType: 'address',
-        name: '',
+        name: '_agency',
         type: 'address',
       },
     ],
-    stateMutability: 'view',
+    name: 'addAgency',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
       {
         internalType: 'address',
-        name: '_owner',
+        name: '',
         type: 'address',
       },
     ],
-    name: 'balanceOf',
+    name: 'agencies',
     outputs: [
       {
-        internalType: 'uint256',
+        internalType: 'bool',
         name: '',
-        type: 'uint256',
+        type: 'bool',
       },
     ],
     stateMutability: 'view',
@@ -564,7 +577,7 @@ const _abi = [
         type: 'address',
       },
     ],
-    name: 'setAgency',
+    name: 'removeAgency',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

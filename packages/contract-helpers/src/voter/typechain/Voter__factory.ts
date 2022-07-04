@@ -71,33 +71,8 @@ const _abi = [
         name: 'token',
         type: 'address',
       },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'pool',
-        type: 'address',
-      },
     ],
-    name: 'PoolAdded',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'pool',
-        type: 'address',
-      },
-    ],
-    name: 'PoolUpdated',
+    name: 'TokenAdded',
     type: 'event',
   },
   {
@@ -133,6 +108,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: '_term',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: '_ve',
     outputs: [
       {
@@ -151,13 +139,8 @@ const _abi = [
         name: '_token',
         type: 'address',
       },
-      {
-        internalType: 'address',
-        name: '_pool',
-        type: 'address',
-      },
     ],
-    name: 'addPool',
+    name: 'addToken',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -261,6 +244,25 @@ const _abi = [
         type: 'address',
       },
     ],
+    name: 'isSuspended',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     name: 'isWhitelisted',
     outputs: [
       {
@@ -313,6 +315,19 @@ const _abi = [
       },
     ],
     name: 'lastVoteTime',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'maxVoteDuration',
     outputs: [
       {
         internalType: 'uint256',
@@ -394,8 +409,66 @@ const _abi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address',
+      },
+    ],
+    name: 'resumeToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_minter',
+        type: 'address',
+      },
+    ],
+    name: 'setMinter',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'startTime',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address',
+      },
+    ],
+    name: 'suspendToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'suspendedTokenLastBalance',
     outputs: [
       {
         internalType: 'uint256',
@@ -543,9 +616,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
+        internalType: 'address',
         name: '',
-        type: 'uint256',
+        type: 'address',
       },
       {
         internalType: 'uint256',
@@ -581,24 +654,6 @@ const _abi = [
       },
     ],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_token',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_pool',
-        type: 'address',
-      },
-    ],
-    name: 'updatePool',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -642,7 +697,7 @@ const _abi = [
       },
       {
         internalType: 'uint256',
-        name: '_VoteEndTimestamp',
+        name: '_voteEndTimestamp',
         type: 'uint256',
       },
     ],

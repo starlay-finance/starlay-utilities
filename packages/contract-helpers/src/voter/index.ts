@@ -33,11 +33,15 @@ export interface VoterInterface {
   claim: (args: {
     user: tEthereumAddress;
   }) => Promise<EthereumTransactionTypeExtended[]>;
+  reset: (args: {
+    user: tEthereumAddress;
+  }) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
+const DEFAULT_TERM_UNIT = SECONDS_OF_WEEK * 2;
 
-const timestampToTerms = (timestamp: number, termUnit = SECONDS_OF_WEEK) => {
+const timestampToTerms = (timestamp: number, termUnit = DEFAULT_TERM_UNIT) => {
   const voteTerm = Math.ceil(timestamp / termUnit) * termUnit;
   return { voteTerm, claimableTerm: voteTerm - termUnit * 2 };
 };
@@ -71,7 +75,7 @@ export class Voter
         target: this.voterAddress,
         callData: iContract.encodeFunctionData('totalWeight', [voteTerm]),
       },
-      ...tokenList.flatMap((token, index) => [
+      ...tokenList.flatMap(token => [
         {
           target: this.voterAddress,
           callData: iContract.encodeFunctionData('poolWeights', [
@@ -82,7 +86,7 @@ export class Voter
         {
           target: this.voterAddress,
           callData: iContract.encodeFunctionData('tokensPerWeek', [
-            index,
+            token,
             claimableTerm,
           ]),
         },
@@ -135,6 +139,10 @@ export class Voter
         target: this.voterAddress,
         callData: iContract.encodeFunctionData('claimableFor', [user]),
       },
+      {
+        target: this.voterAddress,
+        callData: iContract.encodeFunctionData('voteEndTime', [lockerId]),
+      },
       ...tokenList.flatMap(token => [
         {
           target: this.voterAddress,
@@ -151,14 +159,18 @@ export class Voter
       ]),
     ];
     const {
-      returnData: [claimableRes, ...userVoteDataRes],
+      returnData: [claimableRes, voteEndTimeRes, ...userVoteDataRes],
     } = await this.multicall.callStatic.aggregate(calls);
     const [claimables] = iContract.decodeFunctionResult(
       'claimableFor',
       claimableRes,
     );
+    const [voteEndTime] = iContract.decodeFunctionResult(
+      'voteEndTime',
+      voteEndTimeRes,
+    );
     let cursor = 0;
-    return tokenList.reduce(
+    const data = tokenList.reduce(
       (res, token, index) => ({
         ...res,
         [token.toLowerCase()]: {
@@ -179,6 +191,10 @@ export class Voter
       }),
       {},
     );
+    return {
+      expiry: (voteEndTime as BigNumber).toNumber(),
+      data,
+    };
   };
 
   vote: VoterInterface['vote'] = async ({ user, weights }) => {
@@ -220,7 +236,7 @@ export class Voter
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
         contract.populateTransaction.voteUntil(args, endTimestamp),
-      action: ProtocolAction.ve,
+      action: ProtocolAction.bulk,
       from: user,
       skipEstimation: true,
     });
@@ -264,6 +280,28 @@ export class Voter
         .populateTransaction.claim,
       action: ProtocolAction.ve,
       from: user,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit: gasLimitRecommendations[ProtocolAction.bulk].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+    return txs;
+  };
+
+  reset: VoterInterface['reset'] = async ({ user }) => {
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const txCallback = this.generateTxCallback({
+      rawTxMethod: this.getContractInstance(this.voterAddress)
+        .populateTransaction.reset,
+      action: ProtocolAction.ve,
+      from: user,
+      skipEstimation: true,
     });
 
     txs.push({

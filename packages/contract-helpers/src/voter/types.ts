@@ -8,9 +8,12 @@ export type VoteData = {
   >;
 };
 
-export type UserVoteData = Partial<
-  Record<string, { claimable: BigNumber; weight: BigNumber; vote: BigNumber }>
->;
+export type UserVoteData = {
+  expiry: number;
+  data: Partial<
+    Record<string, { claimable: BigNumber; weight: BigNumber; vote: BigNumber }>
+  >;
+};
 
 export type VoteDataArgs = {
   timestamp: number;
