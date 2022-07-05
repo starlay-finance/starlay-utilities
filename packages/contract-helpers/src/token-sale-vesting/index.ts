@@ -17,12 +17,12 @@ export interface TokenSaleVestingInterface {
   userData: (args: { user: tEthereumAddress }) => Promise<UserData>;
   lock: (args: {
     user: tEthereumAddress;
-    amount: BigNumber;
+    amount: string;
     duration: number;
   }) => Promise<EthereumTransactionTypeExtended[]>;
   deposit: (args: {
     user: tEthereumAddress;
-    amount: BigNumber;
+    amount: string;
   }) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
@@ -51,7 +51,7 @@ export class TokenSaleVesting
     duration,
   }) => {
     const txs: EthereumTransactionTypeExtended[] = [];
-    const convertedAmount = valueToWei(amount.toString(), LAY_DECIMALS);
+    const convertedAmount = valueToWei(amount, LAY_DECIMALS);
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
         this.getContractInstance(this.contractAddress).populateTransaction.lock(
@@ -76,7 +76,7 @@ export class TokenSaleVesting
 
   deposit: TokenSaleVestingInterface['deposit'] = async ({ user, amount }) => {
     const txs: EthereumTransactionTypeExtended[] = [];
-    const convertedAmount = valueToWei(amount.toString(), LAY_DECIMALS);
+    const convertedAmount = valueToWei(amount, LAY_DECIMALS);
     const txCallback = this.generateTxCallback({
       rawTxMethod: async () =>
         this.getContractInstance(
