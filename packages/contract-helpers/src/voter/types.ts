@@ -18,6 +18,7 @@ export type UserVoteData = {
 export type VoteDataArgs = {
   timestamp: number;
   termUnit?: number;
+  revenueTimestamp?: number;
 };
 
 export type UserVoteDataArgs = VoteDataArgs & {
