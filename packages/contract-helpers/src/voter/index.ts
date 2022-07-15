@@ -41,9 +41,16 @@ export interface VoterInterface {
 const SECONDS_OF_WEEK = 60 * 60 * 24 * 7;
 const DEFAULT_TERM_UNIT = SECONDS_OF_WEEK * 2;
 
-const timestampToTerms = (timestamp: number, termUnit = DEFAULT_TERM_UNIT) => {
+const timestampToTerms = (
+  timestamp: number,
+  termUnit = DEFAULT_TERM_UNIT,
+  claimableTimestamp?: number,
+) => {
   const voteTerm = Math.ceil(timestamp / termUnit) * termUnit;
-  return { voteTerm, claimableTerm: voteTerm - termUnit * 2 };
+  const claimableTerm = claimableTimestamp
+    ? Math.ceil(claimableTimestamp / termUnit) * termUnit
+    : voteTerm - termUnit * 2;
+  return { voteTerm, claimableTerm };
 };
 
 export class Voter
@@ -64,8 +71,16 @@ export class Voter
     this.multicall = Multicall__factory.connect(multicallAdress, provider);
   }
 
-  voteData: VoterInterface['voteData'] = async ({ timestamp, termUnit }) => {
-    const { voteTerm, claimableTerm } = timestampToTerms(timestamp, termUnit);
+  voteData: VoterInterface['voteData'] = async ({
+    timestamp,
+    termUnit,
+    revenueTimestamp,
+  }) => {
+    const { voteTerm, claimableTerm } = timestampToTerms(
+      timestamp,
+      termUnit,
+      revenueTimestamp,
+    );
     const contract = this.getContractInstance(this.voterAddress);
     const iContract = contract.interface;
 
