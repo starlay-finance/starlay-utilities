@@ -22,7 +22,7 @@ import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import { LeverageParamsType } from './types';
 
-export interface LeverageInterface {
+export interface LeverageLdotInterface {
   leverageDot: (
     args: LeverageParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
@@ -30,7 +30,7 @@ export interface LeverageInterface {
 
 export class LeveragerLdot
   extends BaseService<LeveragerContract>
-  implements LeverageInterface
+  implements LeverageLdotInterface
 {
   readonly erc20Service: IERC20ServiceInterface;
 
