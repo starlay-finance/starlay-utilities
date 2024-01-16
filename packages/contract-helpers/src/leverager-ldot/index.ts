@@ -73,7 +73,7 @@ export class LeveragerLdot
     );
     const convertedRepayAmount: string = valueToWei(repay_dot_amount, decimals);
     const approveableBorrowDotAmount: string = calcDelegateAmount(
-      new BigNumberJs(borrow_dot_amount),
+      new BigNumberJs(convertedRepayAmount),
     ).toString();
     const approved = await isApproved({
       token,
@@ -97,7 +97,7 @@ export class LeveragerLdot
         user,
         token,
         spender: this.leveragerAddress,
-        amount: repay_dot_amount,
+        amount: convertedRepayAmount,
       });
       txs.push(approveTx);
     }
