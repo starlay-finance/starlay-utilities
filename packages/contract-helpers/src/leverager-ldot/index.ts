@@ -8,15 +8,19 @@ import {
 } from '../commons/types';
 import {
   gasLimitRecommendations,
-  getTxValue,
   valueToWei,
   DEFAULT_APPROVE_AMOUNT,
+  DEFAULT_NULL_VALUE_ON_TX,
 } from '../commons/utils';
 import { LeveragerValidator } from '../commons/validators/methodValidators';
 import {
   isEthAddress,
   isPositiveAmount,
 } from '../commons/validators/paramValidators';
+import {
+  DebtERC20Service,
+  IDebtERC20ServiceInterface,
+} from '../debtErc20-contract';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
@@ -34,6 +38,8 @@ export class LeveragerLdot
 {
   readonly erc20Service: IERC20ServiceInterface;
 
+  readonly debtErc20Service: IDebtERC20ServiceInterface;
+
   readonly leveragerAddress: string;
 
   constructor(provider: providers.Provider, leveragerAddress: string) {
@@ -41,6 +47,7 @@ export class LeveragerLdot
     this.leveragerAddress = leveragerAddress;
     // initialize services
     this.erc20Service = new ERC20Service(provider);
+    this.debtErc20Service = new DebtERC20Service(provider);
   }
 
   @LeveragerValidator
@@ -53,6 +60,8 @@ export class LeveragerLdot
   ): Promise<EthereumTransactionTypeExtended[]> {
     const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
       this.erc20Service;
+    const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
+      this.debtErc20Service;
     const txs: EthereumTransactionTypeExtended[] = [];
     const decimals: number = await decimalsOf(token);
     const convertedBorrowAmount: string = valueToWei(
@@ -68,6 +77,17 @@ export class LeveragerLdot
       amount: repay_dot_amount,
     });
 
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const reservesData = await leveragerContract.getReserveData(token);
+    const { variableDebtTokenAddress } = reservesData;
+
+    const delegated = await isDelegated({
+      token: variableDebtTokenAddress,
+      user,
+      delegatee: this.leveragerAddress,
+      amount: borrow_dot_amount,
+    });
+
     if (!approved) {
       const approveTx: EthereumTransactionTypeExtended = approve({
         user,
@@ -78,7 +98,15 @@ export class LeveragerLdot
       txs.push(approveTx);
     }
 
-    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    if (!delegated) {
+      const delegateTx: EthereumTransactionTypeExtended = approveDelegation({
+        user,
+        token: variableDebtTokenAddress,
+        delegatee: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(delegateTx);
+    }
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
@@ -88,7 +116,7 @@ export class LeveragerLdot
         ),
       action: ProtocolAction.leverageDot,
       from: user,
-      value: getTxValue(token, convertedRepayAmount),
+      value: DEFAULT_NULL_VALUE_ON_TX,
       skipEstimation: true,
     });
 

@@ -27,7 +27,11 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     'LDOT()': FunctionFragment;
     'LENDING_POOL()': FunctionFragment;
     'executeOperation(address[],uint256[],uint256[],address,bytes)': FunctionFragment;
+    'getConfiguration(address)': FunctionFragment;
+    'getReserveData(address)': FunctionFragment;
     'leverageDot(uint256,uint256)': FunctionFragment;
+    'lt(address)': FunctionFragment;
+    'ltv(address)': FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: 'DOT', values?: undefined): string;
@@ -42,9 +46,19 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     values: [string[], BigNumberish[], BigNumberish[], string, BytesLike],
   ): string;
   encodeFunctionData(
+    functionFragment: 'getConfiguration',
+    values: [string],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'getReserveData',
+    values: [string],
+  ): string;
+  encodeFunctionData(
     functionFragment: 'leverageDot',
     values: [BigNumberish, BigNumberish],
   ): string;
+  encodeFunctionData(functionFragment: 'lt', values: [string]): string;
+  encodeFunctionData(functionFragment: 'ltv', values: [string]): string;
 
   decodeFunctionResult(functionFragment: 'DOT', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'HOMA', data: BytesLike): Result;
@@ -58,9 +72,19 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
+    functionFragment: 'getConfiguration',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'getReserveData',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
     functionFragment: 'leverageDot',
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: 'lt', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ltv', data: BytesLike): Result;
 
   events: {};
 }
@@ -130,6 +154,86 @@ export interface LeveragerLdot extends Contract {
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
+    getConfiguration(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      data: BigNumber;
+      0: BigNumber;
+    }>;
+
+    'getConfiguration(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      data: BigNumber;
+      0: BigNumber;
+    }>;
+
+    getReserveData(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: {
+        configuration: { data: BigNumber; 0: BigNumber };
+        liquidityIndex: BigNumber;
+        variableBorrowIndex: BigNumber;
+        currentLiquidityRate: BigNumber;
+        currentVariableBorrowRate: BigNumber;
+        currentStableBorrowRate: BigNumber;
+        lastUpdateTimestamp: number;
+        lTokenAddress: string;
+        stableDebtTokenAddress: string;
+        variableDebtTokenAddress: string;
+        interestRateStrategyAddress: string;
+        id: number;
+        0: { data: BigNumber; 0: BigNumber };
+        1: BigNumber;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: string;
+        8: string;
+        9: string;
+        10: string;
+        11: number;
+      };
+    }>;
+
+    'getReserveData(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: {
+        configuration: { data: BigNumber; 0: BigNumber };
+        liquidityIndex: BigNumber;
+        variableBorrowIndex: BigNumber;
+        currentLiquidityRate: BigNumber;
+        currentVariableBorrowRate: BigNumber;
+        currentStableBorrowRate: BigNumber;
+        lastUpdateTimestamp: number;
+        lTokenAddress: string;
+        stableDebtTokenAddress: string;
+        variableDebtTokenAddress: string;
+        interestRateStrategyAddress: string;
+        id: number;
+        0: { data: BigNumber; 0: BigNumber };
+        1: BigNumber;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: string;
+        8: string;
+        9: string;
+        10: string;
+        11: number;
+      };
+    }>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -141,6 +245,34 @@ export interface LeveragerLdot extends Contract {
       repay_dot_amount: BigNumberish,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
+
+    lt(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'lt(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    ltv(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'ltv(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      0: BigNumber;
+    }>;
   };
 
   DOT(overrides?: CallOverrides): Promise<string>;
@@ -177,6 +309,76 @@ export interface LeveragerLdot extends Contract {
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
+  getConfiguration(
+    asset: string,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
+  'getConfiguration(address)'(
+    asset: string,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
+  getReserveData(
+    asset: string,
+    overrides?: CallOverrides,
+  ): Promise<{
+    configuration: { data: BigNumber; 0: BigNumber };
+    liquidityIndex: BigNumber;
+    variableBorrowIndex: BigNumber;
+    currentLiquidityRate: BigNumber;
+    currentVariableBorrowRate: BigNumber;
+    currentStableBorrowRate: BigNumber;
+    lastUpdateTimestamp: number;
+    lTokenAddress: string;
+    stableDebtTokenAddress: string;
+    variableDebtTokenAddress: string;
+    interestRateStrategyAddress: string;
+    id: number;
+    0: { data: BigNumber; 0: BigNumber };
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+    6: number;
+    7: string;
+    8: string;
+    9: string;
+    10: string;
+    11: number;
+  }>;
+
+  'getReserveData(address)'(
+    asset: string,
+    overrides?: CallOverrides,
+  ): Promise<{
+    configuration: { data: BigNumber; 0: BigNumber };
+    liquidityIndex: BigNumber;
+    variableBorrowIndex: BigNumber;
+    currentLiquidityRate: BigNumber;
+    currentVariableBorrowRate: BigNumber;
+    currentStableBorrowRate: BigNumber;
+    lastUpdateTimestamp: number;
+    lTokenAddress: string;
+    stableDebtTokenAddress: string;
+    variableDebtTokenAddress: string;
+    interestRateStrategyAddress: string;
+    id: number;
+    0: { data: BigNumber; 0: BigNumber };
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+    6: number;
+    7: string;
+    8: string;
+    9: string;
+    10: string;
+    11: number;
+  }>;
+
   leverageDot(
     borrow_dot_amount: BigNumberish,
     repay_dot_amount: BigNumberish,
@@ -188,6 +390,14 @@ export interface LeveragerLdot extends Contract {
     repay_dot_amount: BigNumberish,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
+
+  lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  'lt(address)'(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  'ltv(address)'(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     DOT(overrides?: CallOverrides): Promise<string>;
@@ -224,17 +434,98 @@ export interface LeveragerLdot extends Contract {
       overrides?: CallOverrides,
     ): Promise<boolean>;
 
+    getConfiguration(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getConfiguration(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    getReserveData(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      configuration: { data: BigNumber; 0: BigNumber };
+      liquidityIndex: BigNumber;
+      variableBorrowIndex: BigNumber;
+      currentLiquidityRate: BigNumber;
+      currentVariableBorrowRate: BigNumber;
+      currentStableBorrowRate: BigNumber;
+      lastUpdateTimestamp: number;
+      lTokenAddress: string;
+      stableDebtTokenAddress: string;
+      variableDebtTokenAddress: string;
+      interestRateStrategyAddress: string;
+      id: number;
+      0: { data: BigNumber; 0: BigNumber };
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: string;
+      8: string;
+      9: string;
+      10: string;
+      11: number;
+    }>;
+
+    'getReserveData(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<{
+      configuration: { data: BigNumber; 0: BigNumber };
+      liquidityIndex: BigNumber;
+      variableBorrowIndex: BigNumber;
+      currentLiquidityRate: BigNumber;
+      currentVariableBorrowRate: BigNumber;
+      currentStableBorrowRate: BigNumber;
+      lastUpdateTimestamp: number;
+      lTokenAddress: string;
+      stableDebtTokenAddress: string;
+      variableDebtTokenAddress: string;
+      interestRateStrategyAddress: string;
+      id: number;
+      0: { data: BigNumber; 0: BigNumber };
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: string;
+      8: string;
+      9: string;
+      10: string;
+      11: number;
+    }>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     'leverageDot(uint256,uint256)'(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
       overrides?: CallOverrides,
-    ): Promise<void>;
+    ): Promise<boolean>;
+
+    lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lt(address)'(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'ltv(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
   };
 
   filters: {};
@@ -274,6 +565,26 @@ export interface LeveragerLdot extends Contract {
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
+    getConfiguration(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getConfiguration(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    getReserveData(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getReserveData(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -284,6 +595,17 @@ export interface LeveragerLdot extends Contract {
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
       overrides?: Overrides,
+    ): Promise<BigNumber>;
+
+    lt(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lt(address)'(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    ltv(asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'ltv(address)'(
+      asset: string,
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
 
@@ -322,6 +644,26 @@ export interface LeveragerLdot extends Contract {
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 
+    getConfiguration(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'getConfiguration(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    getReserveData(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'getReserveData(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -332,6 +674,23 @@ export interface LeveragerLdot extends Contract {
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
       overrides?: Overrides,
+    ): Promise<PopulatedTransaction>;
+
+    lt(asset: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lt(address)'(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    ltv(
+      asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'ltv(address)'(
+      asset: string,
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }
