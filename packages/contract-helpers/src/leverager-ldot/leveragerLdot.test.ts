@@ -80,7 +80,7 @@ describe('LeveragerLdot', () => {
       return { decimalsSpy, isApprovedSpy, isDelegatedSpy };
     };
 
-    it.skip('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
+    it('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
       const leveragerInstance = newLeveragerInstance();
 
       const { decimalsSpy, isApprovedSpy, isDelegatedSpy } = setup(
@@ -130,7 +130,7 @@ describe('LeveragerLdot', () => {
       expect(gasPrice?.gasPrice).toEqual('1');
     });
 
-    it.skip('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
+    it('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
       const leveragerInstance = newLeveragerInstance();
 
       const { decimalsSpy, isApprovedSpy, isDelegatedSpy } =
