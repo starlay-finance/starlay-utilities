@@ -1,4 +1,11 @@
-import { BigNumber, providers } from 'ethers';
+import { BigNumber, providers, utils } from 'ethers';
+import {
+  eEthereumTxType,
+  GasType,
+  ProtocolAction,
+  transactionType,
+} from '../commons/types';
+import { gasLimitRecommendations, valueToWei } from '../commons/utils';
 import { LeverageParamsType } from './types';
 import { LeveragerLdot } from './index';
 
@@ -33,6 +40,8 @@ describe('LeveragerLdot', () => {
     const borrow_dot_amount = '10';
     const repay_dot_amount = '1';
 
+    const defaultDecimals = 18;
+
     const validArgs: LeverageParamsType = {
       user,
       token,
@@ -46,7 +55,105 @@ describe('LeveragerLdot', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
+    const setup = (
+      instance: LeveragerLdot,
+      params: {
+        decimals?: number;
+        isApproved?: boolean;
+        isDelegated?: boolean;
+      } = {},
+    ) => {
+      const {
+        decimals = defaultDecimals,
+        isApproved = false,
+        isDelegated = false,
+      } = params || {};
+      const decimalsSpy = jest
+        .spyOn(instance.erc20Service, 'decimalsOf')
+        .mockReturnValueOnce(Promise.resolve(decimals));
+      const isApprovedSpy = jest
+        .spyOn(instance.erc20Service, 'isApproved')
+        .mockImplementationOnce(async () => Promise.resolve(isApproved));
+      const isDelegatedSpy = jest
+        .spyOn(instance.debtErc20Service, 'isDelegated')
+        .mockImplementationOnce(async () => Promise.resolve(isDelegated));
+      return { decimalsSpy, isApprovedSpy, isDelegatedSpy };
+    };
 
+    it.skip('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } = setup(
+        leveragerInstance,
+        { isApproved: false, isDelegated: false },
+      );
+
+      const txs = await leveragerInstance.leverageDot(validArgs);
+
+      const dlpTx = txs[2];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(txs).toHaveLength(3);
+      expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(txs[1].txType).toBe(eEthereumTxType.DEBTERC20_APPROVAL);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+        ),
+      );
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['uint256', 'uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+
+      expect(decoded[0]).toEqual(
+        BigNumber.from(valueToWei(borrow_dot_amount, defaultDecimals)),
+      );
+      expect(decoded[1]).toEqual(
+        BigNumber.from(valueToWei(repay_dot_amount, defaultDecimals)),
+      );
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
+    });
+
+    it.skip('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } =
+        setup(leveragerInstance);
+
+      const txs = await leveragerInstance.leverageDot({
+        ...validArgs,
+      });
+      const dlpTx = txs[2];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+        ),
+      );
+    });
     it('throw error if invalid user', async () => {
       const leveragerInstance = newLeveragerInstance();
       await expect(async () =>
