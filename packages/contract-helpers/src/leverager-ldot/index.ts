@@ -1,3 +1,4 @@
+import { BigNumber as BigNumberJs } from 'bignumber.js';
 import { providers } from 'ethers';
 import BaseService from '../commons/BaseService';
 import {
@@ -10,7 +11,6 @@ import {
 import {
   gasLimitRecommendations,
   valueToWei,
-  DEFAULT_APPROVE_AMOUNT,
   DEFAULT_NULL_VALUE_ON_TX,
 } from '../commons/utils';
 import { LeveragerValidator } from '../commons/validators/methodValidators';
@@ -26,6 +26,7 @@ import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import { LeverageParamsType } from './types';
+import { calcDelegateAmount } from './utils';
 
 export interface ILeveragerLdotInterface {
   leverageDot: (
@@ -71,7 +72,9 @@ export class LeveragerLdot
       decimals,
     );
     const convertedRepayAmount: string = valueToWei(repay_dot_amount, decimals);
-
+    const approveableBorrowDotAmount: string = calcDelegateAmount(
+      new BigNumberJs(borrow_dot_amount),
+    ).toString();
     const approved = await isApproved({
       token,
       user,
@@ -104,7 +107,7 @@ export class LeveragerLdot
         user,
         token: variableDebtTokenAddress,
         delegatee: this.leveragerAddress,
-        amount: borrow_dot_amount,
+        amount: approveableBorrowDotAmount,
       });
       txs.push(delegateTx);
     }
