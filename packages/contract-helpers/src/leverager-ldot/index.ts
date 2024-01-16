@@ -79,7 +79,7 @@ export class LeveragerLdot
       token,
       user,
       spender: this.leveragerAddress,
-      amount: repay_dot_amount,
+      amount: convertedRepayAmount,
     });
 
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
@@ -89,7 +89,7 @@ export class LeveragerLdot
       token: variableDebtTokenAddress,
       user,
       delegatee: this.leveragerAddress,
-      amount: borrow_dot_amount,
+      amount: approveableBorrowDotAmount,
     });
 
     if (!approved) {
