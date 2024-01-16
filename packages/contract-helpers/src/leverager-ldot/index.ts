@@ -4,6 +4,7 @@ import {
   eEthereumTxType,
   EthereumTransactionTypeExtended,
   ProtocolAction,
+  tEthereumAddress,
   transactionType,
 } from '../commons/types';
 import {
@@ -26,15 +27,16 @@ import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import { LeverageParamsType } from './types';
 
-export interface LeverageLdotInterface {
+export interface ILeveragerLdotInterface {
   leverageDot: (
     args: LeverageParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
+  getVariableDebtToken: (token: tEthereumAddress) => Promise<string>;
 }
 
 export class LeveragerLdot
   extends BaseService<LeveragerContract>
-  implements LeverageLdotInterface
+  implements ILeveragerLdotInterface
 {
   readonly erc20Service: IERC20ServiceInterface;
 
@@ -78,8 +80,7 @@ export class LeveragerLdot
     });
 
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
-    const reservesData = await leveragerContract.getReserveData(token);
-    const { variableDebtTokenAddress } = reservesData;
+    const variableDebtTokenAddress = await this.getVariableDebtToken(token);
 
     const delegated = await isDelegated({
       token: variableDebtTokenAddress,
@@ -131,5 +132,13 @@ export class LeveragerLdot
     });
 
     return txs;
+  }
+
+  public async getVariableDebtToken(
+    @isEthAddress() token: tEthereumAddress,
+  ): Promise<string> {
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const reservesData = await leveragerContract.getReserveData(token);
+    return reservesData.variableDebtTokenAddress;
   }
 }

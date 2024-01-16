@@ -6,8 +6,10 @@ import {
   transactionType,
 } from '../commons/types';
 import { gasLimitRecommendations, valueToWei } from '../commons/utils';
+import { LeveragerLdot as LeveragerLdotType } from './typechain/LeveragerLdot';
+import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import { LeverageParamsType } from './types';
-import { LeveragerLdot } from './index';
+import { ILeveragerLdotInterface, LeveragerLdot } from './index';
 
 jest.mock('../commons/gasStation', () => {
   return {
@@ -77,16 +79,26 @@ describe('LeveragerLdot', () => {
       const isDelegatedSpy = jest
         .spyOn(instance.debtErc20Service, 'isDelegated')
         .mockImplementationOnce(async () => Promise.resolve(isDelegated));
-      return { decimalsSpy, isApprovedSpy, isDelegatedSpy };
+      const getVariableDebtTokenSpy = jest
+        .spyOn(instance, 'getVariableDebtToken')
+        .mockImplementationOnce(async () => Promise.resolve(token));
+      return {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+      };
     };
 
     it('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
       const leveragerInstance = newLeveragerInstance();
 
-      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } = setup(
-        leveragerInstance,
-        { isApproved: false, isDelegated: false },
-      );
+      const {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+      } = setup(leveragerInstance, { isApproved: false, isDelegated: false });
 
       const txs = await leveragerInstance.leverageDot(validArgs);
 
@@ -95,6 +107,8 @@ describe('LeveragerLdot', () => {
       expect(isApprovedSpy).toHaveBeenCalled();
       expect(isDelegatedSpy).toHaveBeenCalled();
       expect(decimalsSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
+
       expect(txs).toHaveLength(3);
       expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
       expect(txs[1].txType).toBe(eEthereumTxType.DEBTERC20_APPROVAL);
@@ -133,8 +147,15 @@ describe('LeveragerLdot', () => {
     it('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
       const leveragerInstance = newLeveragerInstance();
 
-      const { decimalsSpy, isApprovedSpy, isDelegatedSpy } =
-        setup(leveragerInstance);
+      const {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+      } = setup(leveragerInstance, {
+        isApproved: false,
+        isDelegated: false,
+      });
 
       const txs = await leveragerInstance.leverageDot({
         ...validArgs,
@@ -144,6 +165,7 @@ describe('LeveragerLdot', () => {
       expect(isApprovedSpy).toHaveBeenCalled();
       expect(isDelegatedSpy).toHaveBeenCalled();
       expect(decimalsSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
 
       const tx: transactionType = await dlpTx.tx();
       expect(tx.to).toEqual(LEVERAGER);
@@ -208,6 +230,43 @@ describe('LeveragerLdot', () => {
           repay_dot_amount,
         }),
       ).toHaveLength(0);
+    });
+  });
+
+  describe('getVariableDebtToken', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
+      provider,
+      address,
+    );
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expect to get the variable Debt address same to the leverager address.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        getReserveData: async () =>
+          Promise.resolve({
+            configuration: {
+              data: BigNumber.from(0),
+            },
+            liquidityIndex: BigNumber.from(0),
+            variableBorrowIndex: BigNumber.from(0),
+            currentLiquidityRate: BigNumber.from(0),
+            currentVariableBorrowRate: BigNumber.from(0),
+            currentStableBorrowRate: BigNumber.from(0),
+            lastUpdateTimestamp: 0,
+            lTokenAddress: 'string',
+            stableDebtTokenAddress: 'string',
+            variableDebtTokenAddress: address,
+            interestRateStrategyAddress: 'string',
+            id: 0,
+          }),
+      } as unknown as LeveragerLdotType);
+
+      const variablesToken = await leverager.getVariableDebtToken(address);
+
+      expect(variablesToken).toEqual(address);
     });
   });
 });
