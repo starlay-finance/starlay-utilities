@@ -8,7 +8,7 @@ import {
 import { gasLimitRecommendations, valueToWei } from '../commons/utils';
 import { LeveragerLdot as LeveragerLdotType } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
-import { LeverageParamsType } from './types';
+import { LeveragerParamsType } from './types';
 import { ILeveragerLdotInterface, LeveragerLdot } from './index';
 
 jest.mock('../commons/gasStation', () => {
@@ -44,7 +44,7 @@ describe('LeveragerLdot', () => {
 
     const defaultDecimals = 18;
 
-    const validArgs: LeverageParamsType = {
+    const validArgs: LeveragerParamsType = {
       user,
       token,
       borrow_dot_amount,
@@ -267,6 +267,40 @@ describe('LeveragerLdot', () => {
       const variablesToken = await leverager.getVariableDebtToken(address);
 
       expect(variablesToken).toEqual(address);
+    });
+  });
+
+  describe('getStatusAfterTransaction', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
+      provider,
+      address,
+    );
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expect to get the variable Debt address same to the leverager address.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        getStatusAfterTransaction: async () =>
+          Promise.resolve({
+            totalCollateralAfterTx: 'totalCollateralAfterTx',
+            totalDebtAfterTx: 'totalDebtAfterTx',
+            healthFactorAfterTx: 'healthFactorAfterTx',
+          }),
+      } as unknown as LeveragerLdotType);
+
+      const variablesToken = await leverager.getStatusAfterTransaction(
+        address,
+        '10',
+        '10',
+      );
+
+      expect(variablesToken.healthFactorAfterTx).toEqual('healthFactorAfterTx');
+      expect(variablesToken.totalCollateralAfterTx).toEqual(
+        'totalCollateralAfterTx',
+      );
+      expect(variablesToken.totalDebtAfterTx).toEqual('totalDebtAfterTx');
     });
   });
 });

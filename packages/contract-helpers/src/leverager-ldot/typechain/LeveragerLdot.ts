@@ -17,18 +17,19 @@ import {
 } from '@ethersproject/contracts';
 import { BytesLike } from '@ethersproject/bytes';
 import { Listener, Provider } from '@ethersproject/providers';
-import { FunctionFragment, Result } from '@ethersproject/abi';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
 
-export interface LeveragerLdotInterface extends ethers.utils.Interface {
-  contractName: 'LeveragerLdot';
+interface LeveragerLdotInterface extends ethers.utils.Interface {
   functions: {
     'DOT()': FunctionFragment;
     'HOMA()': FunctionFragment;
     'LDOT()': FunctionFragment;
     'LENDING_POOL()': FunctionFragment;
+    'ORACLE()': FunctionFragment;
     'executeOperation(address[],uint256[],uint256[],address,bytes)': FunctionFragment;
     'getConfiguration(address)': FunctionFragment;
     'getReserveData(address)': FunctionFragment;
+    'getStatusAfterTransaction(address,uint256,uint256)': FunctionFragment;
     'leverageDot(uint256,uint256)': FunctionFragment;
     'lt(address)': FunctionFragment;
     'ltv(address)': FunctionFragment;
@@ -41,6 +42,7 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     functionFragment: 'LENDING_POOL',
     values?: undefined,
   ): string;
+  encodeFunctionData(functionFragment: 'ORACLE', values?: undefined): string;
   encodeFunctionData(
     functionFragment: 'executeOperation',
     values: [string[], BigNumberish[], BigNumberish[], string, BytesLike],
@@ -52,6 +54,10 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: 'getReserveData',
     values: [string],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'getStatusAfterTransaction',
+    values: [string, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: 'leverageDot',
@@ -67,6 +73,7 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     functionFragment: 'LENDING_POOL',
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: 'ORACLE', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'executeOperation',
     data: BytesLike,
@@ -80,6 +87,10 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
+    functionFragment: 'getStatusAfterTransaction',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
     functionFragment: 'leverageDot',
     data: BytesLike,
   ): Result;
@@ -89,8 +100,7 @@ export interface LeveragerLdotInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export interface LeveragerLdot extends Contract {
-  contractName: 'LeveragerLdot';
+export class LeveragerLdot extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -133,6 +143,14 @@ export interface LeveragerLdot extends Contract {
     }>;
 
     'LENDING_POOL()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    ORACLE(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'ORACLE()'(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
 
@@ -234,6 +252,34 @@ export interface LeveragerLdot extends Contract {
       };
     }>;
 
+    getStatusAfterTransaction(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    'getStatusAfterTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -290,6 +336,10 @@ export interface LeveragerLdot extends Contract {
   LENDING_POOL(overrides?: CallOverrides): Promise<string>;
 
   'LENDING_POOL()'(overrides?: CallOverrides): Promise<string>;
+
+  ORACLE(overrides?: CallOverrides): Promise<string>;
+
+  'ORACLE()'(overrides?: CallOverrides): Promise<string>;
 
   executeOperation(
     assets: string[],
@@ -379,6 +429,34 @@ export interface LeveragerLdot extends Contract {
     11: number;
   }>;
 
+  getStatusAfterTransaction(
+    account: string,
+    borrowAmount: BigNumberish,
+    repayAmount: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
+
+  'getStatusAfterTransaction(address,uint256,uint256)'(
+    account: string,
+    borrowAmount: BigNumberish,
+    repayAmount: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
+
   leverageDot(
     borrow_dot_amount: BigNumberish,
     repay_dot_amount: BigNumberish,
@@ -415,6 +493,10 @@ export interface LeveragerLdot extends Contract {
     LENDING_POOL(overrides?: CallOverrides): Promise<string>;
 
     'LENDING_POOL()'(overrides?: CallOverrides): Promise<string>;
+
+    ORACLE(overrides?: CallOverrides): Promise<string>;
+
+    'ORACLE()'(overrides?: CallOverrides): Promise<string>;
 
     executeOperation(
       assets: string[],
@@ -502,6 +584,34 @@ export interface LeveragerLdot extends Contract {
       9: string;
       10: string;
       11: number;
+    }>;
+
+    getStatusAfterTransaction(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    'getStatusAfterTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
     }>;
 
     leverageDot(
@@ -547,6 +657,10 @@ export interface LeveragerLdot extends Contract {
 
     'LENDING_POOL()'(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ORACLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'ORACLE()'(overrides?: CallOverrides): Promise<BigNumber>;
+
     executeOperation(
       assets: string[],
       amounts: BigNumberish[],
@@ -582,6 +696,20 @@ export interface LeveragerLdot extends Contract {
 
     'getReserveData(address)'(
       asset: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    getStatusAfterTransaction(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getStatusAfterTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
@@ -626,6 +754,10 @@ export interface LeveragerLdot extends Contract {
 
     'LENDING_POOL()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ORACLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'ORACLE()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     executeOperation(
       assets: string[],
       amounts: BigNumberish[],
@@ -661,6 +793,20 @@ export interface LeveragerLdot extends Contract {
 
     'getReserveData(address)'(
       asset: string,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    getStatusAfterTransaction(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'getStatusAfterTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 

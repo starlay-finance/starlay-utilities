@@ -25,14 +25,19 @@ import {
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
 import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
-import { LeverageParamsType } from './types';
+import { LeveragerParamsType, LeveragerStatusAfterTx } from './types';
 import { calcDelegateAmount } from './utils';
 
 export interface ILeveragerLdotInterface {
   leverageDot: (
-    args: LeverageParamsType,
+    args: LeveragerParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
   getVariableDebtToken: (token: tEthereumAddress) => Promise<string>;
+  getStatusAfterTransaction: (
+    account: tEthereumAddress,
+    borrowAmount: string,
+    repayAmount: string,
+  ) => Promise<LeveragerStatusAfterTx>;
 }
 
 export class LeveragerLdot
@@ -59,7 +64,7 @@ export class LeveragerLdot
     @isEthAddress('token')
     @isPositiveAmount('borrow_dot_amount')
     @isPositiveAmount('repay_dot_amount')
-    { user, token, borrow_dot_amount, repay_dot_amount }: LeverageParamsType,
+    { user, token, borrow_dot_amount, repay_dot_amount }: LeveragerParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
       this.erc20Service;
@@ -143,5 +148,29 @@ export class LeveragerLdot
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const reservesData = await leveragerContract.getReserveData(token);
     return reservesData.variableDebtTokenAddress;
+  }
+
+  public async getStatusAfterTransaction(
+    @isEthAddress()
+    @isPositiveAmount('borrowAmount')
+    @isPositiveAmount('repayAmount')
+    account: tEthereumAddress,
+    borrowAmount: string,
+    repayAmount: string,
+  ): Promise<LeveragerStatusAfterTx> {
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const statusAfterTransaction =
+      await leveragerContract.getStatusAfterTransaction(
+        account,
+        borrowAmount,
+        repayAmount,
+      );
+    return {
+      totalCollateralAfterTx:
+        statusAfterTransaction.totalCollateralAfterTx.toString(),
+      totalDebtAfterTx: statusAfterTransaction.totalDebtAfterTx.toString(),
+      healthFactorAfterTx:
+        statusAfterTransaction.healthFactorAfterTx.toString(),
+    };
   }
 }
