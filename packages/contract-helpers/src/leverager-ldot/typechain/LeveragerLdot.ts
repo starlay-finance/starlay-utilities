@@ -2,8 +2,7 @@
 /* eslint-disable */
 
 import {
-  ethers,
-  EventFilter,
+  utils,
   Signer,
   BigNumber,
   BigNumberish,
@@ -16,10 +15,11 @@ import {
   CallOverrides,
 } from '@ethersproject/contracts';
 import { BytesLike } from '@ethersproject/bytes';
-import { Listener, Provider } from '@ethersproject/providers';
-import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+import { Provider } from '@ethersproject/providers';
+import { FunctionFragment, Result } from '@ethersproject/abi';
 
-interface LeveragerLdotInterface extends ethers.utils.Interface {
+export interface LeveragerLdotInterface extends utils.Interface {
+  contractName: 'LeveragerLdot';
   functions: {
     'DOT()': FunctionFragment;
     'HOMA()': FunctionFragment;
@@ -100,16 +100,12 @@ interface LeveragerLdotInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class LeveragerLdot extends Contract {
+export interface LeveragerLdot extends Contract {
+  contractName: 'LeveragerLdot';
+
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
-
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
 
   interface: LeveragerLdotInterface;
 
