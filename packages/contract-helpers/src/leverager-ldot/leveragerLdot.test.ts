@@ -272,15 +272,12 @@ describe('LeveragerLdot', () => {
 
   describe('getStatusAfterTransaction', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
-      provider,
-      address,
-    );
+    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
     afterEach(() => {
       jest.clearAllMocks();
     });
 
-    it('Expect to get the variable Debt address same to the leverager address.', async () => {
+    it('Expect to get the user status after traansaction.', async () => {
       jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
         getStatusAfterTransaction: async () =>
           Promise.resolve({
@@ -289,6 +286,10 @@ describe('LeveragerLdot', () => {
             healthFactorAfterTx: 'healthFactorAfterTx',
           }),
       } as unknown as LeveragerLdotType);
+
+      jest
+        .spyOn(leverager.erc20Service, 'decimalsOf')
+        .mockReturnValueOnce(Promise.resolve(10));
 
       const variablesToken = await leverager.getStatusAfterTransaction(
         address,
