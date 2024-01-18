@@ -35,6 +35,7 @@ export interface ILeveragerLdotInterface {
   getVariableDebtToken: (token: tEthereumAddress) => Promise<string>;
   getStatusAfterTransaction: (
     account: tEthereumAddress,
+    token: tEthereumAddress,
     borrowAmount: string,
     repayAmount: string,
   ) => Promise<LeveragerStatusAfterTx>;
@@ -155,15 +156,20 @@ export class LeveragerLdot
     @isPositiveAmount('borrowAmount')
     @isPositiveAmount('repayAmount')
     account: tEthereumAddress,
+    token: tEthereumAddress,
     borrowAmount: string,
     repayAmount: string,
   ): Promise<LeveragerStatusAfterTx> {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const decimals: number = await decimalsOf(token);
+    const convertedBorrowAmount: string = valueToWei(borrowAmount, decimals);
+    const convertedRepayAmount: string = valueToWei(repayAmount, decimals);
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const statusAfterTransaction =
       await leveragerContract.getStatusAfterTransaction(
         account,
-        borrowAmount,
-        repayAmount,
+        convertedBorrowAmount,
+        convertedRepayAmount,
       );
     return {
       totalCollateralAfterTx:

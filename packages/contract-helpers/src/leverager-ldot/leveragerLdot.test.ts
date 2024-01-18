@@ -292,6 +292,7 @@ describe('LeveragerLdot', () => {
 
       const variablesToken = await leverager.getStatusAfterTransaction(
         address,
+        address,
         '10',
         '10',
       );
