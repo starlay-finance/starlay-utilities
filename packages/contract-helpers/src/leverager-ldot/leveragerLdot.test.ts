@@ -291,18 +291,34 @@ describe('LeveragerLdot', () => {
         .spyOn(leverager.erc20Service, 'decimalsOf')
         .mockReturnValueOnce(Promise.resolve(10));
 
-      const variablesToken = await leverager.getStatusAfterTransaction(
+      const status = await leverager.getStatusAfterTransaction(
         address,
         address,
         '10',
         '10',
       );
 
-      expect(variablesToken.healthFactorAfterTx).toEqual('healthFactorAfterTx');
-      expect(variablesToken.totalCollateralAfterTx).toEqual(
-        'totalCollateralAfterTx',
-      );
-      expect(variablesToken.totalDebtAfterTx).toEqual('totalDebtAfterTx');
+      expect(status.healthFactorAfterTx).toEqual('healthFactorAfterTx');
+      expect(status.totalCollateralAfterTx).toEqual('totalCollateralAfterTx');
+      expect(status.totalDebtAfterTx).toEqual('totalDebtAfterTx');
+    });
+  });
+
+  describe('ltv', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    const _ltv = '5000';
+    it('Expect to get the user status after traansaction.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        ltv: async () => Promise.resolve(_ltv),
+      } as unknown as LeveragerLdotType);
+
+      const ltv = await leverager.ltv(address);
+
+      expect(ltv).toEqual(_ltv);
     });
   });
 });

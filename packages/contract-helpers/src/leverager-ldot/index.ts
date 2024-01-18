@@ -39,6 +39,7 @@ export interface ILeveragerLdotInterface {
     borrowAmount: string,
     repayAmount: string,
   ) => Promise<LeveragerStatusAfterTx>;
+  ltv: (token: tEthereumAddress) => Promise<string>;
 }
 
 export class LeveragerLdot
@@ -144,7 +145,7 @@ export class LeveragerLdot
   }
 
   public async getVariableDebtToken(
-    @isEthAddress() token: tEthereumAddress,
+    @isEthAddress('token') token: tEthereumAddress,
   ): Promise<string> {
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const reservesData = await leveragerContract.getReserveData(token);
@@ -152,7 +153,8 @@ export class LeveragerLdot
   }
 
   public async getStatusAfterTransaction(
-    @isEthAddress()
+    @isEthAddress('account')
+    @isEthAddress('token')
     @isPositiveAmount('borrowAmount')
     @isPositiveAmount('repayAmount')
     account: tEthereumAddress,
@@ -178,5 +180,13 @@ export class LeveragerLdot
       healthFactorAfterTx:
         statusAfterTransaction.healthFactorAfterTx.toString(),
     };
+  }
+
+  public async ltv(
+    @isEthAddress('token') token: tEthereumAddress,
+  ): Promise<string> {
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const ltv = await leveragerContract.ltv(token);
+    return ltv.toString();
   }
 }
