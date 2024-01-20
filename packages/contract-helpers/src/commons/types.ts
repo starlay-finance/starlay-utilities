@@ -87,6 +87,7 @@ export enum ProtocolAction {
   ve = 've',
   bulk = 'bulk',
   leverageDot = 'leverageDot',
+  leverageDotFromPosition = 'leverageDotFromPosition',
 }
 
 export enum GovernanceVote {

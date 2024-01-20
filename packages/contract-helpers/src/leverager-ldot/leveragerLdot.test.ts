@@ -8,7 +8,10 @@ import {
 import { gasLimitRecommendations, valueToWei } from '../commons/utils';
 import { LeveragerLdot as LeveragerLdotType } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
-import { LeveragerParamsType } from './types';
+import {
+  LeverageDOTFromPositionParamsType,
+  LeverageDOTParamsType,
+} from './types';
 import { ILeveragerLdotInterface, LeveragerLdot } from './index';
 
 jest.mock('../commons/gasStation', () => {
@@ -36,6 +39,7 @@ describe('LeveragerLdot', () => {
       expect(instance instanceof LeveragerLdot).toEqual(true);
     });
   });
+
   describe('leverageDot', () => {
     const user = '0x0000000000000000000000000000000000000006';
     const token = '0x0000000000000000000000000000000000000007';
@@ -44,7 +48,7 @@ describe('LeveragerLdot', () => {
 
     const defaultDecimals = 18;
 
-    const validArgs: LeveragerParamsType = {
+    const validArgs: LeverageDOTParamsType = {
       user,
       token,
       borrow_dot_amount,
@@ -233,6 +237,212 @@ describe('LeveragerLdot', () => {
     });
   });
 
+  describe('leverageDotFromPosition', () => {
+    const user = '0x0000000000000000000000000000000000000006';
+    const token = '0x0000000000000000000000000000000000000007';
+    const borrow_dot_amount = '10';
+    const supply_dot_amount = '1';
+
+    const defaultDecimals = 18;
+
+    const validArgs: LeverageDOTFromPositionParamsType = {
+      user,
+      token,
+      borrow_dot_amount,
+      supply_dot_amount,
+    };
+
+    const invalidAddress = '0x0';
+    const invalidAmount = '0';
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    const setup = (
+      instance: LeveragerLdot,
+      params: {
+        decimals?: number;
+        isApproved?: boolean;
+        isDelegated?: boolean;
+      } = {},
+    ) => {
+      const {
+        decimals = defaultDecimals,
+        isApproved = false,
+        isDelegated = false,
+      } = params || {};
+      const decimalsSpy = jest
+        .spyOn(instance.erc20Service, 'decimalsOf')
+        .mockReturnValueOnce(Promise.resolve(decimals));
+      const isApprovedSpy = jest
+        .spyOn(instance.erc20Service, 'isApproved')
+        .mockImplementationOnce(async () => Promise.resolve(isApproved));
+      const isDelegatedSpy = jest
+        .spyOn(instance.debtErc20Service, 'isDelegated')
+        .mockImplementationOnce(async () => Promise.resolve(isDelegated));
+      const getVariableDebtTokenSpy = jest
+        .spyOn(instance, 'getVariableDebtToken')
+        .mockImplementationOnce(async () => Promise.resolve(token));
+      const getlTokenSpy = jest
+        .spyOn(instance, 'getLToken')
+        .mockImplementationOnce(async () => Promise.resolve(token));
+      return {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+        getlTokenSpy,
+      };
+    };
+
+    it('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+        getlTokenSpy,
+      } = setup(leveragerInstance, { isApproved: false, isDelegated: false });
+
+      const txs = await leveragerInstance.leverageDotFromPosition(validArgs);
+
+      const dlpTx = txs[2];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
+      expect(getlTokenSpy).toHaveBeenCalled();
+
+      expect(txs).toHaveLength(3);
+      expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(txs[1].txType).toBe(eEthereumTxType.DEBTERC20_APPROVAL);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDotFromPosition]
+            .recommended,
+        ),
+      );
+
+      const decoded = utils.defaultAbiCoder.decode(
+        ['uint256', 'uint256'],
+        utils.hexDataSlice(tx.data ?? '', 4),
+      );
+
+      expect(decoded[0]).toEqual(
+        BigNumber.from(valueToWei(borrow_dot_amount, defaultDecimals)),
+      );
+      expect(decoded[1]).toEqual(
+        BigNumber.from(valueToWei(supply_dot_amount, defaultDecimals)),
+      );
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.leverageDotFromPosition]
+          .recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
+    });
+
+    it('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const {
+        decimalsSpy,
+        isApprovedSpy,
+        isDelegatedSpy,
+        getVariableDebtTokenSpy,
+      } = setup(leveragerInstance, {
+        isApproved: false,
+        isDelegated: false,
+      });
+
+      const txs = await leveragerInstance.leverageDotFromPosition({
+        ...validArgs,
+      });
+      const dlpTx = txs[2];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(isDelegatedSpy).toHaveBeenCalled();
+      expect(decimalsSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDotFromPosition]
+            .recommended,
+        ),
+      );
+    });
+    it('throw error if invalid user', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.leverageDotFromPosition({
+          ...validArgs,
+          user: invalidAddress,
+        }),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+    it('throw error if invalid token', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.leverageDotFromPosition({
+          ...validArgs,
+          token: invalidAddress,
+        }),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+    it('throw error if borrow_dot_amount lte 0', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.leverageDotFromPosition({
+          ...validArgs,
+          borrow_dot_amount: invalidAmount,
+        }),
+      ).rejects.toThrowError(
+        `Amount: ${invalidAmount} needs to be greater than 0`,
+      );
+    });
+    it('throw error if repay_dot_amount lte 0', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.leverageDotFromPosition({
+          ...validArgs,
+          supply_dot_amount: invalidAmount,
+        }),
+      ).rejects.toThrowError(
+        `Amount: ${invalidAmount} needs to be greater than 0`,
+      );
+    });
+    it('return empty array if leverager address invalid', async () => {
+      const leveragerInstance = new LeveragerLdot(provider, invalidAddress);
+      expect(
+        leveragerInstance.leverageDotFromPosition({
+          user,
+          token,
+          borrow_dot_amount,
+          supply_dot_amount,
+        }),
+      ).toHaveLength(0);
+    });
+  });
+
   describe('getVariableDebtToken', () => {
     const address = '0x0000000000000000000000000000000000000001';
     const leverager: ILeveragerLdotInterface = new LeveragerLdot(
@@ -270,7 +480,44 @@ describe('LeveragerLdot', () => {
     });
   });
 
-  describe('getStatusAfterTransaction', () => {
+  describe('getLToken', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
+      provider,
+      address,
+    );
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expect to get the variable Debt address same to the leverager address.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        getReserveData: async () =>
+          Promise.resolve({
+            configuration: {
+              data: BigNumber.from(0),
+            },
+            liquidityIndex: BigNumber.from(0),
+            variableBorrowIndex: BigNumber.from(0),
+            currentLiquidityRate: BigNumber.from(0),
+            currentVariableBorrowRate: BigNumber.from(0),
+            currentStableBorrowRate: BigNumber.from(0),
+            lastUpdateTimestamp: 0,
+            lTokenAddress: address,
+            stableDebtTokenAddress: 'string',
+            variableDebtTokenAddress: address,
+            interestRateStrategyAddress: 'string',
+            id: 0,
+          }),
+      } as unknown as LeveragerLdotType);
+
+      const variablesToken = await leverager.getLToken(address);
+
+      expect(variablesToken).toEqual(address);
+    });
+  });
+
+  describe('getStatusAfterLeverageDotTransaction', () => {
     const address = '0x0000000000000000000000000000000000000001';
     const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
     afterEach(() => {
@@ -279,7 +526,7 @@ describe('LeveragerLdot', () => {
 
     it('Expect to get the user status after traansaction.', async () => {
       jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
-        getStatusAfterTransaction: async () =>
+        getStatusAfterLeverageDotTransaction: async () =>
           Promise.resolve({
             totalCollateralAfterTx: 'totalCollateralAfterTx',
             totalDebtAfterTx: 'totalDebtAfterTx',
@@ -291,12 +538,47 @@ describe('LeveragerLdot', () => {
         .spyOn(leverager.erc20Service, 'decimalsOf')
         .mockReturnValueOnce(Promise.resolve(10));
 
-      const status = await leverager.getStatusAfterTransaction(
-        address,
-        address,
-        '10',
-        '10',
-      );
+      const status = await leverager.getStatusAfterLeverageDotTransaction({
+        user: address,
+        token: address,
+        borrow_dot_amount: '10',
+        repay_dot_amount: '10',
+      });
+
+      expect(status.healthFactorAfterTx).toEqual('healthFactorAfterTx');
+      expect(status.totalCollateralAfterTx).toEqual('totalCollateralAfterTx');
+      expect(status.totalDebtAfterTx).toEqual('totalDebtAfterTx');
+    });
+  });
+
+  describe('getStatusAfterLeverageDotFromPositionTransaction', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('Expect to get the user status after traansaction.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        getStatusAfterLeverageDotFromPositionTransaction: async () =>
+          Promise.resolve({
+            totalCollateralAfterTx: 'totalCollateralAfterTx',
+            totalDebtAfterTx: 'totalDebtAfterTx',
+            healthFactorAfterTx: 'healthFactorAfterTx',
+          }),
+      } as unknown as LeveragerLdotType);
+
+      jest
+        .spyOn(leverager.erc20Service, 'decimalsOf')
+        .mockReturnValueOnce(Promise.resolve(10));
+
+      const status =
+        await leverager.getStatusAfterLeverageDotFromPositionTransaction({
+          user: address,
+          token: address,
+          borrow_dot_amount: '10',
+          supply_dot_amount: '10',
+        });
 
       expect(status.healthFactorAfterTx).toEqual('healthFactorAfterTx');
       expect(status.totalCollateralAfterTx).toEqual('totalCollateralAfterTx');
