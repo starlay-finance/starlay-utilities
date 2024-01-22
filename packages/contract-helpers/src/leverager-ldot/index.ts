@@ -130,7 +130,7 @@ export class LeveragerLdot
         user,
         token,
         spender: this.leveragerAddress,
-        amount: convertedRepayAmount,
+        amount: DEFAULT_APPROVE_AMOUNT,
       });
       txs.push(approveTx);
     }
@@ -140,7 +140,7 @@ export class LeveragerLdot
         user,
         token: variableDebtTokenAddress,
         delegatee: this.leveragerAddress,
-        amount: approveableBorrowDotAmount,
+        amount: DEFAULT_APPROVE_AMOUNT,
       });
       txs.push(delegateTx);
     }
@@ -225,7 +225,7 @@ export class LeveragerLdot
         user,
         token: lTokenAddress,
         spender: this.leveragerAddress,
-        amount: convertedSupplyAmount,
+        amount: DEFAULT_APPROVE_AMOUNT,
       });
       txs.push(approveTx);
     }
@@ -235,7 +235,7 @@ export class LeveragerLdot
         user,
         token: variableDebtTokenAddress,
         delegatee: this.leveragerAddress,
-        amount: approveableBorrowDotAmount,
+        amount: DEFAULT_APPROVE_AMOUNT,
       });
       txs.push(delegateTx);
     }
