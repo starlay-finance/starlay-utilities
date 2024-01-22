@@ -143,6 +143,19 @@ const _abi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'closeLeverageDOT',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'address[]',

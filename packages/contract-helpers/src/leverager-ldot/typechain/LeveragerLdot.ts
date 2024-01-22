@@ -26,6 +26,7 @@ export interface LeveragerLdotInterface extends utils.Interface {
     'LDOT()': FunctionFragment;
     'LENDING_POOL()': FunctionFragment;
     'ORACLE()': FunctionFragment;
+    'closeLeverageDOT()': FunctionFragment;
     'executeOperation(address[],uint256[],uint256[],address,bytes)': FunctionFragment;
     'getConfiguration(address)': FunctionFragment;
     'getExchangeRateDOT2LDOT()': FunctionFragment;
@@ -47,6 +48,10 @@ export interface LeveragerLdotInterface extends utils.Interface {
     values?: undefined,
   ): string;
   encodeFunctionData(functionFragment: 'ORACLE', values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: 'closeLeverageDOT',
+    values?: undefined,
+  ): string;
   encodeFunctionData(
     functionFragment: 'executeOperation',
     values: [string[], BigNumberish[], BigNumberish[], string, BytesLike],
@@ -94,6 +99,10 @@ export interface LeveragerLdotInterface extends utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: 'ORACLE', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: 'closeLeverageDOT',
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(
     functionFragment: 'executeOperation',
     data: BytesLike,
@@ -185,6 +194,10 @@ export interface LeveragerLdot extends Contract {
     'ORACLE()'(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
+
+    closeLeverageDOT(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'closeLeverageDOT()'(overrides?: Overrides): Promise<ContractTransaction>;
 
     executeOperation(
       assets: string[],
@@ -429,6 +442,10 @@ export interface LeveragerLdot extends Contract {
 
   'ORACLE()'(overrides?: CallOverrides): Promise<string>;
 
+  closeLeverageDOT(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'closeLeverageDOT()'(overrides?: Overrides): Promise<ContractTransaction>;
+
   executeOperation(
     assets: string[],
     amounts: BigNumberish[],
@@ -633,6 +650,10 @@ export interface LeveragerLdot extends Contract {
     ORACLE(overrides?: CallOverrides): Promise<string>;
 
     'ORACLE()'(overrides?: CallOverrides): Promise<string>;
+
+    closeLeverageDOT(overrides?: CallOverrides): Promise<boolean>;
+
+    'closeLeverageDOT()'(overrides?: CallOverrides): Promise<boolean>;
 
     executeOperation(
       assets: string[],
@@ -845,6 +866,10 @@ export interface LeveragerLdot extends Contract {
 
     'ORACLE()'(overrides?: CallOverrides): Promise<BigNumber>;
 
+    closeLeverageDOT(overrides?: Overrides): Promise<BigNumber>;
+
+    'closeLeverageDOT()'(overrides?: Overrides): Promise<BigNumber>;
+
     executeOperation(
       assets: string[],
       amounts: BigNumberish[],
@@ -975,6 +1000,10 @@ export interface LeveragerLdot extends Contract {
     ORACLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     'ORACLE()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    closeLeverageDOT(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'closeLeverageDOT()'(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     executeOperation(
       assets: string[],

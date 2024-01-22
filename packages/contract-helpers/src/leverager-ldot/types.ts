@@ -12,6 +12,12 @@ export type LeverageDOTFromPositionParamsType = {
   supply_dot_amount: string;
 };
 
+export type CloseLeverageDOTParamsType = {
+  user: string;
+  dotAddress: string;
+  ldotAddress: string;
+};
+
 export type LeveragerStatusAfterTx = {
   totalCollateralAfterTx: string;
   totalDebtAfterTx: string;

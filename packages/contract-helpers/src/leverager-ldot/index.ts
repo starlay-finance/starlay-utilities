@@ -12,6 +12,7 @@ import {
   gasLimitRecommendations,
   valueToWei,
   DEFAULT_NULL_VALUE_ON_TX,
+  DEFAULT_APPROVE_AMOUNT,
 } from '../commons/utils';
 import { LeveragerValidator } from '../commons/validators/methodValidators';
 import {
@@ -23,9 +24,11 @@ import {
   IDebtERC20ServiceInterface,
 } from '../debtErc20-contract';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
+import { WalletBalanceProvider } from '../wallet-balance-provider';
 import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import {
+  CloseLeverageDOTParamsType,
   LeverageDOTFromPositionParamsType,
   LeverageDOTParamsType,
   LeveragerStatusAfterTx,
@@ -50,6 +53,9 @@ export interface ILeveragerLdotInterface {
   ltv: (token: tEthereumAddress) => Promise<string>;
   getExchangeRateLDOT2DOT: () => Promise<string>;
   getExchangeRateDOT2LDOT: () => Promise<string>;
+  closeLeverageDOT: (
+    args: CloseLeverageDOTParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
 export class LeveragerLdot
@@ -60,11 +66,21 @@ export class LeveragerLdot
 
   readonly debtErc20Service: IDebtERC20ServiceInterface;
 
+  readonly walletBalanceProvider: WalletBalanceProvider;
+
   readonly leveragerAddress: string;
 
-  constructor(provider: providers.Provider, leveragerAddress: string) {
+  constructor(
+    provider: providers.Provider,
+    leveragerAddress: string,
+    walletBalanceProviderAddress: string,
+  ) {
     super(provider, LeveragerLdot__factory);
     this.leveragerAddress = leveragerAddress;
+    this.walletBalanceProvider = new WalletBalanceProvider({
+      provider,
+      walletBalanceProviderAddress,
+    });
     // initialize services
     this.erc20Service = new ERC20Service(provider);
     this.debtErc20Service = new DebtERC20Service(provider);
@@ -242,6 +258,88 @@ export class LeveragerLdot
       gas: async () => ({
         gasLimit:
           gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LeveragerValidator
+  public async closeLeverageDOT(
+    @isEthAddress('dotAddress')
+    @isEthAddress('ldotAddress')
+    @isEthAddress('user')
+    { user, dotAddress, ldotAddress }: CloseLeverageDOTParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const { isApproved, approve }: IERC20ServiceInterface = this.erc20Service;
+
+    const variableDebtTokenAddress = await this.getVariableDebtToken(
+      dotAddress,
+    );
+    const lTokenLDOTAddress = await this.getLToken(ldotAddress);
+
+    const debtDOTAmount = await this.walletBalanceProvider.balanceOf(
+      user,
+      variableDebtTokenAddress,
+    );
+
+    const approvedDOT = await isApproved({
+      token: dotAddress,
+      user,
+      spender: this.leveragerAddress,
+      amount: debtDOTAmount.toString(),
+    });
+
+    if (!approvedDOT) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: dotAddress,
+        spender: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    const lTokenBalance = await this.walletBalanceProvider.balanceOf(
+      user,
+      lTokenLDOTAddress,
+    );
+
+    const approvedLToken = await isApproved({
+      token: lTokenLDOTAddress,
+      user,
+      spender: this.leveragerAddress,
+      amount: lTokenBalance.toString(),
+    });
+
+    if (!approvedLToken) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: lTokenLDOTAddress,
+        spender: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        leveragerContract.populateTransaction.closeLeverageDOT(),
+      action: ProtocolAction.closeLeverageDot,
+      from: user,
+      value: DEFAULT_NULL_VALUE_ON_TX,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit:
+          gasLimitRecommendations[ProtocolAction.closeLeverageDot].recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });

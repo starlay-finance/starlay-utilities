@@ -9,6 +9,7 @@ import { gasLimitRecommendations, valueToWei } from '../commons/utils';
 import { LeveragerLdot as LeveragerLdotType } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import {
+  CloseLeverageDOTParamsType,
   LeverageDOTFromPositionParamsType,
   LeverageDOTParamsType,
 } from './types';
@@ -30,8 +31,10 @@ describe('LeveragerLdot', () => {
     .spyOn(provider, 'getGasPrice')
     .mockImplementation(async () => Promise.resolve(BigNumber.from(1)));
   const LEVERAGER = '0x0000000000000000000000000000000000000001';
+  const BALANCE_PROVIDER = '0x0000000000000000000000000000000000000002';
 
-  const newLeveragerInstance = () => new LeveragerLdot(provider, LEVERAGER);
+  const newLeveragerInstance = () =>
+    new LeveragerLdot(provider, LEVERAGER, BALANCE_PROVIDER);
 
   describe('Initialization', () => {
     it('Expects to initialize correctly with all params', () => {
@@ -148,7 +151,7 @@ describe('LeveragerLdot', () => {
       expect(gasPrice?.gasPrice).toEqual('1');
     });
 
-    it('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
+    it('Expects the dlp tx object passing all parameters and not needing approval', async () => {
       const leveragerInstance = newLeveragerInstance();
 
       const {
@@ -225,7 +228,11 @@ describe('LeveragerLdot', () => {
       );
     });
     it('return empty array if leverager address invalid', async () => {
-      const leveragerInstance = new LeveragerLdot(provider, invalidAddress);
+      const leveragerInstance = new LeveragerLdot(
+        provider,
+        invalidAddress,
+        token,
+      );
       expect(
         leveragerInstance.leverageDot({
           user,
@@ -431,7 +438,11 @@ describe('LeveragerLdot', () => {
       );
     });
     it('return empty array if leverager address invalid', async () => {
-      const leveragerInstance = new LeveragerLdot(provider, invalidAddress);
+      const leveragerInstance = new LeveragerLdot(
+        provider,
+        invalidAddress,
+        token,
+      );
       expect(
         leveragerInstance.leverageDotFromPosition({
           user,
@@ -443,12 +454,146 @@ describe('LeveragerLdot', () => {
     });
   });
 
+  describe('closeLeverageDOT', () => {
+    const user = '0x0000000000000000000000000000000000000006';
+    const token = '0x0000000000000000000000000000000000000007';
+
+    const validArgs: CloseLeverageDOTParamsType = {
+      user,
+      dotAddress: token,
+      ldotAddress: token,
+    };
+
+    const invalidAddress = '0x0';
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    const setup = (
+      instance: LeveragerLdot,
+      params: {
+        isApproved?: boolean;
+      } = {},
+    ) => {
+      const { isApproved = false } = params || {};
+
+      const isApprovedSpy = jest
+        .spyOn(instance.erc20Service, 'isApproved')
+        .mockImplementation(async () => Promise.resolve(isApproved));
+      const getVariableDebtTokenSpy = jest
+        .spyOn(instance, 'getVariableDebtToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      const getlTokenSpy = jest
+        .spyOn(instance, 'getLToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      const balanceOfSpy = jest
+        .spyOn(instance.walletBalanceProvider, 'balanceOf')
+        .mockImplementation(async () => Promise.resolve(BigNumber.from(5000)));
+
+      return {
+        isApprovedSpy,
+        getlTokenSpy,
+        getVariableDebtTokenSpy,
+        balanceOfSpy,
+      };
+    };
+
+    it('Expects the 3 tx objects passing all parameters and needing approval and delegation approval', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const {
+        isApprovedSpy,
+        getlTokenSpy,
+        balanceOfSpy,
+        getVariableDebtTokenSpy,
+      } = setup(leveragerInstance, { isApproved: false });
+
+      const txs = await leveragerInstance.closeLeverageDOT(validArgs);
+
+      const dlpTx = txs[2];
+
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(getlTokenSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
+      expect(balanceOfSpy).toHaveBeenCalled();
+
+      expect(txs).toHaveLength(3);
+      expect(txs[0].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(txs[1].txType).toBe(eEthereumTxType.ERC20_APPROVAL);
+      expect(dlpTx.txType).toBe(eEthereumTxType.DLP_ACTION);
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+        ),
+      );
+
+      // gas price
+      const gasPrice: GasType | null = await dlpTx.gas();
+      expect(gasPrice).not.toBeNull();
+      expect(gasPrice?.gasLimit).toEqual(
+        gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+      );
+      expect(gasPrice?.gasPrice).toEqual('1');
+    });
+
+    it('Expects the dlp tx object passing all parameters and not needing approval nor delegation', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      const { isApprovedSpy, getlTokenSpy, getVariableDebtTokenSpy } = setup(
+        leveragerInstance,
+        {
+          isApproved: true,
+        },
+      );
+
+      const txs = await leveragerInstance.closeLeverageDOT(validArgs);
+      const dlpTx = txs[0];
+
+      expect(txs).toHaveLength(1);
+      expect(isApprovedSpy).toHaveBeenCalled();
+      expect(getlTokenSpy).toHaveBeenCalled();
+      expect(getVariableDebtTokenSpy).toHaveBeenCalled();
+
+      const tx: transactionType = await dlpTx.tx();
+      expect(tx.to).toEqual(LEVERAGER);
+      expect(tx.from).toEqual(user);
+      expect(tx.gasLimit).toEqual(
+        BigNumber.from(
+          gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+        ),
+      );
+    });
+    it('throw error if invalid user', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.closeLeverageDOT({
+          ...validArgs,
+          user: invalidAddress,
+        }),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+    it('throw error if invalid token', async () => {
+      const leveragerInstance = newLeveragerInstance();
+      await expect(async () =>
+        leveragerInstance.closeLeverageDOT({
+          ...validArgs,
+          ldotAddress: invalidAddress,
+        }),
+      ).rejects.toThrowError(
+        `Address: ${invalidAddress} is not a valid ethereum Address`,
+      );
+    });
+  });
+
   describe('getVariableDebtToken', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
-      provider,
-      address,
-    );
+    const leverager: ILeveragerLdotInterface = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -482,10 +627,7 @@ describe('LeveragerLdot', () => {
 
   describe('getLToken', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: ILeveragerLdotInterface = new LeveragerLdot(
-      provider,
-      address,
-    );
+    const leverager: ILeveragerLdotInterface = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -519,7 +661,7 @@ describe('LeveragerLdot', () => {
 
   describe('getStatusAfterLeverageDotTransaction', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -553,7 +695,7 @@ describe('LeveragerLdot', () => {
 
   describe('getStatusAfterLeverageDotFromPositionTransaction', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -588,7 +730,7 @@ describe('LeveragerLdot', () => {
 
   describe('ltv', () => {
     const address = '0x0000000000000000000000000000000000000001';
-    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -605,8 +747,7 @@ describe('LeveragerLdot', () => {
   });
 
   describe('getExchangeRateLDOT2DOT', () => {
-    const address = '0x0000000000000000000000000000000000000001';
-    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -623,8 +764,7 @@ describe('LeveragerLdot', () => {
   });
 
   describe('getExchangeRateDOT2LDOT', () => {
-    const address = '0x0000000000000000000000000000000000000001';
-    const leverager: LeveragerLdot = new LeveragerLdot(provider, address);
+    const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
       jest.clearAllMocks();
     });
