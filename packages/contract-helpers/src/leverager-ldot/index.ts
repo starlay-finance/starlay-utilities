@@ -207,7 +207,7 @@ export class LeveragerLdot
     if (!approved) {
       const approveTx: EthereumTransactionTypeExtended = approve({
         user,
-        token,
+        token: lTokenAddress,
         spender: this.leveragerAddress,
         amount: convertedSupplyAmount,
       });
