@@ -589,6 +589,52 @@ describe('LeveragerLdot', () => {
         `Address: ${invalidAddress} is not a valid ethereum Address`,
       );
     });
+    it('return empty array if debt amount is zero', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      jest
+        .spyOn(leveragerInstance.erc20Service, 'isApproved')
+        .mockImplementation(async () => Promise.resolve(true));
+      jest
+        .spyOn(leveragerInstance, 'getVariableDebtToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      jest
+        .spyOn(leveragerInstance, 'getLToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      jest
+        .spyOn(leveragerInstance.walletBalanceProvider, 'balanceOf')
+        .mockImplementation(async () => Promise.resolve(BigNumber.from(0)));
+
+      await expect(async () =>
+        leveragerInstance.closeLeverageDOT(validArgs),
+      ).rejects.toThrowError(`INVALID_DEBT_AMOUNT`);
+    });
+
+    it('return empty array if deposit amount is zero', async () => {
+      const leveragerInstance = newLeveragerInstance();
+
+      jest
+        .spyOn(leveragerInstance.erc20Service, 'isApproved')
+        .mockImplementation(async () => Promise.resolve(true));
+      jest
+        .spyOn(leveragerInstance, 'getVariableDebtToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      jest
+        .spyOn(leveragerInstance, 'getLToken')
+        .mockImplementation(async () => Promise.resolve(token));
+      jest
+        .spyOn(leveragerInstance.walletBalanceProvider, 'balanceOf')
+        .mockImplementationOnce(async () =>
+          Promise.resolve(BigNumber.from(500)),
+        );
+      jest
+        .spyOn(leveragerInstance.walletBalanceProvider, 'balanceOf')
+        .mockImplementationOnce(async () => Promise.resolve(BigNumber.from(0)));
+
+      await expect(async () =>
+        leveragerInstance.closeLeverageDOT(validArgs),
+      ).rejects.toThrowError(`INVALID_DEPOSIT_AMOUNT`);
+    });
   });
 
   describe('getVariableDebtToken', () => {
