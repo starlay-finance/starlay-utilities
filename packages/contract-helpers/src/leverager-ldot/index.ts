@@ -51,6 +51,7 @@ export interface ILeveragerLdotInterface {
     args: LeverageDOTFromPositionParamsType,
   ) => Promise<LeveragerStatusAfterTx>;
   ltv: (token: tEthereumAddress) => Promise<string>;
+  lt: (token: tEthereumAddress) => Promise<string>;
   getExchangeRateLDOT2DOT: () => Promise<string>;
   getExchangeRateDOT2LDOT: () => Promise<string>;
   closeLeverageDOT: (
@@ -441,6 +442,14 @@ export class LeveragerLdot
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const ltv = await leveragerContract.ltv(token);
     return ltv.toString();
+  }
+
+  public async lt(
+    @isEthAddress('token') token: tEthereumAddress,
+  ): Promise<string> {
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const lt = await leveragerContract.lt(token);
+    return lt.toString();
   }
 
   public async getExchangeRateLDOT2DOT(): Promise<string> {

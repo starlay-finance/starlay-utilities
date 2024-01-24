@@ -792,6 +792,24 @@ describe('LeveragerLdot', () => {
     });
   });
 
+  describe('lt', () => {
+    const address = '0x0000000000000000000000000000000000000001';
+    const leverager: LeveragerLdot = newLeveragerInstance();
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    const _lt = '5000';
+    it('Expect to get the user status after traansaction.', async () => {
+      jest.spyOn(LeveragerLdot__factory, 'connect').mockReturnValue({
+        lt: async () => Promise.resolve(_lt),
+      } as unknown as LeveragerLdotType);
+
+      const lt = await leverager.lt(address);
+
+      expect(lt).toEqual(_lt);
+    });
+  });
+
   describe('getExchangeRateLDOT2DOT', () => {
     const leverager: LeveragerLdot = newLeveragerInstance();
     afterEach(() => {
