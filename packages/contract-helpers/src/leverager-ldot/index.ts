@@ -286,6 +286,10 @@ export class LeveragerLdot
       variableDebtTokenAddress,
     );
 
+    if (debtDOTAmount.isZero()) {
+      throw Error('INVALID_DEBT_AMOUNT');
+    }
+
     const approvedDOT = await isApproved({
       token: dotAddress,
       user,
@@ -307,6 +311,10 @@ export class LeveragerLdot
       user,
       lTokenLDOTAddress,
     );
+
+    if (lTokenBalance.isZero()) {
+      throw Error('INVALID_DEPOSIT_AMOUNT');
+    }
 
     const approvedLToken = await isApproved({
       token: lTokenLDOTAddress,
