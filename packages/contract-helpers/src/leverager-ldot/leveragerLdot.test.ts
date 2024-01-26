@@ -718,6 +718,8 @@ describe('LeveragerLdot', () => {
           Promise.resolve({
             totalCollateralAfterTx: 'totalCollateralAfterTx',
             totalDebtAfterTx: 'totalDebtAfterTx',
+            totalCollateralInDotAfterTx: 'totalCollateralInDotAfterTx',
+            totalDebtInDotAfterTx: 'totalDebtInDotAfterTx',
             healthFactorAfterTx: 'healthFactorAfterTx',
           }),
       } as unknown as LeveragerLdotType);
@@ -736,6 +738,10 @@ describe('LeveragerLdot', () => {
       expect(status.healthFactorAfterTx).toEqual('healthFactorAfterTx');
       expect(status.totalCollateralAfterTx).toEqual('totalCollateralAfterTx');
       expect(status.totalDebtAfterTx).toEqual('totalDebtAfterTx');
+      expect(status.totalCollateralInDotAfterTx).toEqual(
+        'totalCollateralInDotAfterTx',
+      );
+      expect(status.totalDebtInDotAfterTx).toEqual('totalDebtInDotAfterTx');
     });
   });
 
@@ -752,6 +758,8 @@ describe('LeveragerLdot', () => {
           Promise.resolve({
             totalCollateralAfterTx: 'totalCollateralAfterTx',
             totalDebtAfterTx: 'totalDebtAfterTx',
+            totalCollateralInDotAfterTx: 'totalCollateralInDotAfterTx',
+            totalDebtInDotAfterTx: 'totalDebtInDotAfterTx',
             healthFactorAfterTx: 'healthFactorAfterTx',
           }),
       } as unknown as LeveragerLdotType);
@@ -771,6 +779,10 @@ describe('LeveragerLdot', () => {
       expect(status.healthFactorAfterTx).toEqual('healthFactorAfterTx');
       expect(status.totalCollateralAfterTx).toEqual('totalCollateralAfterTx');
       expect(status.totalDebtAfterTx).toEqual('totalDebtAfterTx');
+      expect(status.totalCollateralInDotAfterTx).toEqual(
+        'totalCollateralInDotAfterTx',
+      );
+      expect(status.totalDebtInDotAfterTx).toEqual('totalDebtInDotAfterTx');
     });
   });
 
