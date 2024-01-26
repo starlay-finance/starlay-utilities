@@ -21,5 +21,7 @@ export type CloseLeverageDOTParamsType = {
 export type LeveragerStatusAfterTx = {
   totalCollateralAfterTx: string;
   totalDebtAfterTx: string;
+  totalCollateralInDotAfterTx: string;
+  totalDebtInDotAfterTx: string;
   healthFactorAfterTx: string;
 };

@@ -321,10 +321,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     'getStatusAfterLeverageDotFromPositionTransaction(address,uint256,uint256)'(
@@ -335,10 +339,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     getStatusAfterLeverageDotTransaction(
@@ -349,10 +357,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     'getStatusAfterLeverageDotTransaction(address,uint256,uint256)'(
@@ -363,10 +375,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     leverageDot(
@@ -550,10 +566,14 @@ export interface LeveragerLdot extends Contract {
   ): Promise<{
     totalCollateralAfterTx: BigNumber;
     totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
     healthFactorAfterTx: BigNumber;
     0: BigNumber;
     1: BigNumber;
     2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
   }>;
 
   'getStatusAfterLeverageDotFromPositionTransaction(address,uint256,uint256)'(
@@ -564,10 +584,14 @@ export interface LeveragerLdot extends Contract {
   ): Promise<{
     totalCollateralAfterTx: BigNumber;
     totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
     healthFactorAfterTx: BigNumber;
     0: BigNumber;
     1: BigNumber;
     2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
   }>;
 
   getStatusAfterLeverageDotTransaction(
@@ -578,10 +602,14 @@ export interface LeveragerLdot extends Contract {
   ): Promise<{
     totalCollateralAfterTx: BigNumber;
     totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
     healthFactorAfterTx: BigNumber;
     0: BigNumber;
     1: BigNumber;
     2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
   }>;
 
   'getStatusAfterLeverageDotTransaction(address,uint256,uint256)'(
@@ -592,10 +620,14 @@ export interface LeveragerLdot extends Contract {
   ): Promise<{
     totalCollateralAfterTx: BigNumber;
     totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
     healthFactorAfterTx: BigNumber;
     0: BigNumber;
     1: BigNumber;
     2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
   }>;
 
   leverageDot(
@@ -759,10 +791,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     'getStatusAfterLeverageDotFromPositionTransaction(address,uint256,uint256)'(
@@ -773,10 +809,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     getStatusAfterLeverageDotTransaction(
@@ -787,10 +827,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     'getStatusAfterLeverageDotTransaction(address,uint256,uint256)'(
@@ -801,10 +845,14 @@ export interface LeveragerLdot extends Contract {
     ): Promise<{
       totalCollateralAfterTx: BigNumber;
       totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
       healthFactorAfterTx: BigNumber;
       0: BigNumber;
       1: BigNumber;
       2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
     }>;
 
     leverageDot(

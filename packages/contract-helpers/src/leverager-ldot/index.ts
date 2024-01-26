@@ -399,6 +399,10 @@ export class LeveragerLdot
       totalCollateralAfterTx:
         statusAfterTransaction.totalCollateralAfterTx.toString(),
       totalDebtAfterTx: statusAfterTransaction.totalDebtAfterTx.toString(),
+      totalCollateralInDotAfterTx:
+        statusAfterTransaction.totalCollateralInDotAfterTx.toString(),
+      totalDebtInDotAfterTx:
+        statusAfterTransaction.totalDebtInDotAfterTx.toString(),
       healthFactorAfterTx:
         statusAfterTransaction.healthFactorAfterTx.toString(),
     };
@@ -431,6 +435,10 @@ export class LeveragerLdot
       totalCollateralAfterTx:
         statusAfterTransaction.totalCollateralAfterTx.toString(),
       totalDebtAfterTx: statusAfterTransaction.totalDebtAfterTx.toString(),
+      totalCollateralInDotAfterTx:
+        statusAfterTransaction.totalCollateralInDotAfterTx.toString(),
+      totalDebtInDotAfterTx:
+        statusAfterTransaction.totalDebtInDotAfterTx.toString(),
       healthFactorAfterTx:
         statusAfterTransaction.healthFactorAfterTx.toString(),
     };

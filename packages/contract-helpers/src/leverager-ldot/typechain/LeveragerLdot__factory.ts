@@ -359,6 +359,16 @@ const _abi = [
       },
       {
         internalType: 'uint256',
+        name: 'totalCollateralInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
         name: 'healthFactorAfterTx',
         type: 'uint256',
       },
@@ -394,6 +404,16 @@ const _abi = [
       {
         internalType: 'uint256',
         name: 'totalDebtAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalCollateralInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtInDotAfterTx',
         type: 'uint256',
       },
       {
