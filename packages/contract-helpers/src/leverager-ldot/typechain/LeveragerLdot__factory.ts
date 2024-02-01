@@ -4,6 +4,7 @@
 import { Signer } from 'ethers';
 import { Provider } from '@ethersproject/providers';
 import { Contract } from '@ethersproject/contracts';
+
 import type { LeveragerLdot } from './LeveragerLdot';
 
 const _abi = [
@@ -27,6 +28,11 @@ const _abi = [
       {
         internalType: 'address',
         name: 'homa',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'oracle',
         type: 'address',
       },
     ],
@@ -124,6 +130,32 @@ const _abi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'ORACLE',
+    outputs: [
+      {
+        internalType: 'contract IPriceOracleGetter',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'closeLeverageDOT',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'address[]',
@@ -175,6 +207,32 @@ const _abi = [
       {
         internalType: 'uint256',
         name: 'data',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getExchangeRateDOT2LDOT',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getExchangeRateLDOT2DOT',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
         type: 'uint256',
       },
     ],
@@ -272,6 +330,104 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'borrowAmount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'supplyAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'getStatusAfterLeverageDotFromPositionTransaction',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'totalCollateralAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalCollateralInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'healthFactorAfterTx',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'borrowAmount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'repayAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'getStatusAfterLeverageDotTransaction',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'totalCollateralAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalCollateralInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalDebtInDotAfterTx',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'healthFactorAfterTx',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'uint256',
         name: 'borrow_dot_amount',
         type: 'uint256',
@@ -283,6 +439,30 @@ const _abi = [
       },
     ],
     name: 'leverageDot',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'borrow_dot_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'supply_dot_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'leverageDotFromPosition',
     outputs: [
       {
         internalType: 'bool',
@@ -335,6 +515,7 @@ const _abi = [
 
 export class LeveragerLdot__factory {
   static readonly abi = _abi;
+
   static connect(
     address: string,
     signerOrProvider: Signer | Provider,
