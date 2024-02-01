@@ -86,6 +86,9 @@ export enum ProtocolAction {
   borrowETH = 'borrwoETH',
   ve = 've',
   bulk = 'bulk',
+  leverageDot = 'leverageDot',
+  leverageDotFromPosition = 'leverageDotFromPosition',
+  closeLeverageDot = 'closeLeverageDot',
 }
 
 export enum GovernanceVote {
