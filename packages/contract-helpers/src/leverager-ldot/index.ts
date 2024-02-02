@@ -28,34 +28,48 @@ import { WalletBalanceProvider } from '../wallet-balance-provider';
 import { LeveragerLdot as LeveragerContract } from './typechain/LeveragerLdot';
 import { LeveragerLdot__factory } from './typechain/LeveragerLdot__factory';
 import {
-  CloseLeverageDOTParamsType,
-  LeverageDOTFromPositionParamsType,
-  LeverageDOTParamsType,
+  CloseLeverageDotParamsType,
+  LeverageDotFromPositionParamsType,
+  LeverageDotParamsType,
+  LeverageLdotFromPositionParamsType,
+  LeverageLdotParamsType,
   LeveragerStatusAfterTx,
 } from './types';
 import { calcDelegateAmount } from './utils';
 
 export interface ILeveragerLdotInterface {
   leverageDot: (
-    args: LeverageDOTParamsType,
+    args: LeverageDotParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
   leverageDotFromPosition: (
-    args: LeverageDOTFromPositionParamsType,
+    args: LeverageDotFromPositionParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
+  leverageLdot: (
+    args: LeverageLdotParamsType,
+  ) => Promise<EthereumTransactionTypeExtended[]>;
+  leverageLdotFromPosition: (
+    args: LeverageLdotFromPositionParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
   getVariableDebtToken: (token: tEthereumAddress) => Promise<string>;
   getLToken: (token: tEthereumAddress) => Promise<string>;
   getStatusAfterLeverageDotTransaction: (
-    args: LeverageDOTParamsType,
+    args: LeverageDotParamsType,
   ) => Promise<LeveragerStatusAfterTx>;
   getStatusAfterLeverageDotFromPositionTransaction: (
-    args: LeverageDOTFromPositionParamsType,
+    args: LeverageDotFromPositionParamsType,
+  ) => Promise<LeveragerStatusAfterTx>;
+  getStatusAfterLeverageLdotTransaction: (
+    args: LeverageLdotParamsType,
+  ) => Promise<LeveragerStatusAfterTx>;
+  getStatusAfterLeverageLdotFromPositionTransaction: (
+    args: LeverageLdotFromPositionParamsType,
   ) => Promise<LeveragerStatusAfterTx>;
   ltv: (token: tEthereumAddress) => Promise<string>;
   lt: (token: tEthereumAddress) => Promise<string>;
   getExchangeRateLDOT2DOT: () => Promise<string>;
   getExchangeRateDOT2LDOT: () => Promise<string>;
   closeLeverageDOT: (
-    args: CloseLeverageDOTParamsType,
+    args: CloseLeverageDotParamsType,
   ) => Promise<EthereumTransactionTypeExtended[]>;
 }
 
@@ -90,34 +104,42 @@ export class LeveragerLdot
   @LeveragerValidator
   public async leverageDot(
     @isEthAddress('user')
-    @isEthAddress('token')
-    @isPositiveAmount('borrow_dot_amount')
-    @isPositiveAmount('repay_dot_amount')
-    { user, token, borrow_dot_amount, repay_dot_amount }: LeverageDOTParamsType,
+    @isEthAddress('dotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('repayAmountInDot')
+    { user, dotAddress, leverage, repayAmountInDot }: LeverageDotParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
       this.erc20Service;
     const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
       this.debtErc20Service;
     const txs: EthereumTransactionTypeExtended[] = [];
-    const decimals: number = await decimalsOf(token);
+    const decimals: number = await decimalsOf(dotAddress);
+    const borrowAmountInDot = (
+      Number(repayAmountInDot) * Number(leverage)
+    ).toString();
     const convertedBorrowAmount: string = valueToWei(
-      borrow_dot_amount,
+      borrowAmountInDot,
       decimals,
     );
-    const convertedRepayAmount: string = valueToWei(repay_dot_amount, decimals);
+    const convertedRepayAmount: string = valueToWei(
+      repayAmountInDot.toString(),
+      decimals,
+    );
     const approveableBorrowDotAmount: string = calcDelegateAmount(
       new BigNumberJs(convertedRepayAmount),
     ).toString();
     const approved = await isApproved({
-      token,
+      token: dotAddress,
       user,
       spender: this.leveragerAddress,
       amount: convertedRepayAmount,
     });
 
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
-    const variableDebtTokenAddress = await this.getVariableDebtToken(token);
+    const variableDebtTokenAddress = await this.getVariableDebtToken(
+      dotAddress,
+    );
 
     const delegated = await isDelegated({
       token: variableDebtTokenAddress,
@@ -129,7 +151,7 @@ export class LeveragerLdot
     if (!approved) {
       const approveTx: EthereumTransactionTypeExtended = approve({
         user,
-        token,
+        token: dotAddress,
         spender: this.leveragerAddress,
         amount: DEFAULT_APPROVE_AMOUNT,
       });
@@ -174,28 +196,31 @@ export class LeveragerLdot
   @LeveragerValidator
   public async leverageDotFromPosition(
     @isEthAddress('user')
-    @isEthAddress('token')
-    @isPositiveAmount('borrow_dot_amount')
-    @isPositiveAmount('supply_dot_amount')
+    @isEthAddress('dotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('supplyAmountInDot')
     {
       user,
-      token,
-      borrow_dot_amount,
-      supply_dot_amount,
-    }: LeverageDOTFromPositionParamsType,
+      dotAddress,
+      leverage,
+      supplyAmountInDot,
+    }: LeverageDotFromPositionParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
       this.erc20Service;
     const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
       this.debtErc20Service;
     const txs: EthereumTransactionTypeExtended[] = [];
-    const decimals: number = await decimalsOf(token);
+    const decimals: number = await decimalsOf(dotAddress);
+    const borrowAmountInDot = (
+      Number(supplyAmountInDot) * Number(leverage)
+    ).toString();
     const convertedBorrowAmount: string = valueToWei(
-      borrow_dot_amount,
+      borrowAmountInDot,
       decimals,
     );
     const convertedSupplyAmount: string = valueToWei(
-      supply_dot_amount,
+      supplyAmountInDot.toString(),
       decimals,
     );
     const approveableBorrowDotAmount: string = calcDelegateAmount(
@@ -203,7 +228,7 @@ export class LeveragerLdot
     ).toString();
 
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
-    const lTokenAddress = await this.getLToken(token);
+    const lTokenAddress = await this.getLToken(dotAddress);
 
     const approved = await isApproved({
       token: lTokenAddress,
@@ -212,7 +237,9 @@ export class LeveragerLdot
       amount: convertedSupplyAmount,
     });
 
-    const variableDebtTokenAddress = await this.getVariableDebtToken(token);
+    const variableDebtTokenAddress = await this.getVariableDebtToken(
+      dotAddress,
+    );
 
     const delegated = await isDelegated({
       token: variableDebtTokenAddress,
@@ -247,7 +274,7 @@ export class LeveragerLdot
           convertedBorrowAmount,
           convertedSupplyAmount,
         ),
-      action: ProtocolAction.leverageDot,
+      action: ProtocolAction.leverageDotFromPosition,
       from: user,
       value: DEFAULT_NULL_VALUE_ON_TX,
       skipEstimation: true,
@@ -258,7 +285,210 @@ export class LeveragerLdot
       txType: eEthereumTxType.DLP_ACTION,
       gas: async () => ({
         gasLimit:
-          gasLimitRecommendations[ProtocolAction.leverageDot].recommended,
+          gasLimitRecommendations[ProtocolAction.leverageDotFromPosition]
+            .recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LeveragerValidator
+  public async leverageLdot(
+    @isEthAddress('user')
+    @isEthAddress('dotAddress')
+    @isEthAddress('ldotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('repayAmountInLdot')
+    {
+      user,
+      dotAddress,
+      ldotAddress,
+      leverage,
+      repayAmountInLdot,
+    }: LeverageLdotParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
+      this.erc20Service;
+    const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
+      this.debtErc20Service;
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const decimals: number = await decimalsOf(ldotAddress);
+    const borrowAmountInLdot = (
+      Number(repayAmountInLdot) *
+      (Number(leverage) - 1)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInLdot,
+      decimals,
+    );
+    const convertedRepayAmount: string = valueToWei(
+      repayAmountInLdot.toString(),
+      decimals,
+    );
+    const approveableBorrowLdotAmount: string = calcDelegateAmount(
+      new BigNumberJs(convertedRepayAmount),
+    ).toString();
+
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const variableDebtTokenAddress = await this.getVariableDebtToken(
+      dotAddress,
+    );
+
+    const approved = await isApproved({
+      token: ldotAddress,
+      user,
+      spender: this.leveragerAddress,
+      amount: convertedRepayAmount,
+    });
+    const delegated = await isDelegated({
+      token: variableDebtTokenAddress,
+      user,
+      delegatee: this.leveragerAddress,
+      amount: approveableBorrowLdotAmount,
+    });
+
+    if (!approved) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: ldotAddress,
+        spender: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    if (!delegated) {
+      const delegateTx: EthereumTransactionTypeExtended = approveDelegation({
+        user,
+        token: variableDebtTokenAddress,
+        delegatee: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(delegateTx);
+    }
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        leveragerContract.populateTransaction.leverageLdot(
+          convertedBorrowAmount,
+          convertedRepayAmount,
+        ),
+      action: ProtocolAction.leverageLdot,
+      from: user,
+      value: DEFAULT_NULL_VALUE_ON_TX,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit:
+          gasLimitRecommendations[ProtocolAction.leverageLdot].recommended,
+        gasPrice: (await this.provider.getGasPrice()).toString(),
+      }),
+    });
+
+    return txs;
+  }
+
+  @LeveragerValidator
+  public async leverageLdotFromPosition(
+    @isEthAddress('user')
+    @isEthAddress('dotAddress')
+    @isEthAddress('ldotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('supplyAmountInLdot')
+    {
+      user,
+      dotAddress,
+      ldotAddress,
+      leverage,
+      supplyAmountInLdot,
+    }: LeverageLdotFromPositionParamsType,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const { isApproved, approve, decimalsOf }: IERC20ServiceInterface =
+      this.erc20Service;
+    const { isDelegated, approveDelegation }: IDebtERC20ServiceInterface =
+      this.debtErc20Service;
+    const txs: EthereumTransactionTypeExtended[] = [];
+    const decimals: number = await decimalsOf(ldotAddress);
+    const borrowAmountInLdot = (
+      Number(supplyAmountInLdot) *
+      (Number(leverage) - 1)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInLdot,
+      decimals,
+    );
+    const convertedRepayAmount: string = valueToWei(
+      supplyAmountInLdot.toString(),
+      decimals,
+    );
+    const approveableBorrowLdotAmount: string = calcDelegateAmount(
+      new BigNumberJs(convertedRepayAmount),
+    ).toString();
+
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const variableDebtTokenAddress = await this.getVariableDebtToken(
+      dotAddress,
+    );
+    const lTokenAddress = await this.getLToken(ldotAddress);
+
+    const approved = await isApproved({
+      token: lTokenAddress,
+      user,
+      spender: this.leveragerAddress,
+      amount: convertedRepayAmount,
+    });
+    const delegated = await isDelegated({
+      token: variableDebtTokenAddress,
+      user,
+      delegatee: this.leveragerAddress,
+      amount: approveableBorrowLdotAmount,
+    });
+
+    if (!approved) {
+      const approveTx: EthereumTransactionTypeExtended = approve({
+        user,
+        token: lTokenAddress,
+        spender: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(approveTx);
+    }
+
+    if (!delegated) {
+      const delegateTx: EthereumTransactionTypeExtended = approveDelegation({
+        user,
+        token: variableDebtTokenAddress,
+        delegatee: this.leveragerAddress,
+        amount: DEFAULT_APPROVE_AMOUNT,
+      });
+      txs.push(delegateTx);
+    }
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        leveragerContract.populateTransaction.leverageLdotFromPosition(
+          convertedBorrowAmount,
+          convertedRepayAmount,
+        ),
+      action: ProtocolAction.leverageLdotFromPosition,
+      from: user,
+      value: DEFAULT_NULL_VALUE_ON_TX,
+      skipEstimation: true,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.DLP_ACTION,
+      gas: async () => ({
+        gasLimit:
+          gasLimitRecommendations[ProtocolAction.leverageLdotFromPosition]
+            .recommended,
         gasPrice: (await this.provider.getGasPrice()).toString(),
       }),
     });
@@ -271,7 +501,7 @@ export class LeveragerLdot
     @isEthAddress('dotAddress')
     @isEthAddress('ldotAddress')
     @isEthAddress('user')
-    { user, dotAddress, ldotAddress }: CloseLeverageDOTParamsType,
+    { user, dotAddress, ldotAddress }: CloseLeverageDotParamsType,
   ): Promise<EthereumTransactionTypeExtended[]> {
     const txs: EthereumTransactionTypeExtended[] = [];
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
@@ -374,20 +604,24 @@ export class LeveragerLdot
 
   public async getStatusAfterLeverageDotTransaction(
     @isEthAddress('user')
-    @isEthAddress('token')
-    @isPositiveAmount('borrowAmount')
-    @isPositiveAmount('repayAmount')
-    {
-      user,
-      token,
-      borrow_dot_amount: borrowAmount,
-      repay_dot_amount: repayAmount,
-    }: LeverageDOTParamsType,
+    @isEthAddress('dotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('repayAmountInDot')
+    { user, dotAddress, leverage, repayAmountInDot }: LeverageDotParamsType,
   ): Promise<LeveragerStatusAfterTx> {
     const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
-    const decimals: number = await decimalsOf(token);
-    const convertedBorrowAmount: string = valueToWei(borrowAmount, decimals);
-    const convertedRepayAmount: string = valueToWei(repayAmount, decimals);
+    const decimals: number = await decimalsOf(dotAddress);
+    const borrowAmountInDot = (
+      Number(repayAmountInDot) * Number(leverage)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInDot,
+      decimals,
+    );
+    const convertedRepayAmount: string = valueToWei(
+      repayAmountInDot.toString(),
+      decimals,
+    );
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const statusAfterTransaction =
       await leveragerContract.getStatusAfterLeverageDotTransaction(
@@ -410,23 +644,119 @@ export class LeveragerLdot
 
   public async getStatusAfterLeverageDotFromPositionTransaction(
     @isEthAddress('user')
-    @isEthAddress('token')
-    @isPositiveAmount('borrowAmount')
-    @isPositiveAmount('supplyAmount')
+    @isEthAddress('dotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('supplyAmountInDot')
     {
       user,
-      token,
-      borrow_dot_amount: borrowAmount,
-      supply_dot_amount: supplyAmount,
-    }: LeverageDOTFromPositionParamsType,
+      dotAddress,
+      leverage,
+      supplyAmountInDot,
+    }: LeverageDotFromPositionParamsType,
   ): Promise<LeveragerStatusAfterTx> {
     const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
-    const decimals: number = await decimalsOf(token);
-    const convertedBorrowAmount: string = valueToWei(borrowAmount, decimals);
-    const convertedSupplyAmount: string = valueToWei(supplyAmount, decimals);
+    const decimals: number = await decimalsOf(dotAddress);
+    const borrowAmountInDot = (
+      Number(supplyAmountInDot) * Number(leverage)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInDot,
+      decimals,
+    );
+    const convertedSupplyAmount: string = valueToWei(
+      supplyAmountInDot.toString(),
+      decimals,
+    );
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
     const statusAfterTransaction =
       await leveragerContract.getStatusAfterLeverageDotFromPositionTransaction(
+        user,
+        convertedBorrowAmount,
+        convertedSupplyAmount,
+      );
+    return {
+      totalCollateralAfterTx:
+        statusAfterTransaction.totalCollateralAfterTx.toString(),
+      totalDebtAfterTx: statusAfterTransaction.totalDebtAfterTx.toString(),
+      totalCollateralInDotAfterTx:
+        statusAfterTransaction.totalCollateralInDotAfterTx.toString(),
+      totalDebtInDotAfterTx:
+        statusAfterTransaction.totalDebtInDotAfterTx.toString(),
+      healthFactorAfterTx:
+        statusAfterTransaction.healthFactorAfterTx.toString(),
+    };
+  }
+
+  public async getStatusAfterLeverageLdotTransaction(
+    @isEthAddress('user')
+    @isEthAddress('ldotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('repayAmountInLdot')
+    { user, ldotAddress, leverage, repayAmountInLdot }: LeverageLdotParamsType,
+  ): Promise<LeveragerStatusAfterTx> {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const decimals: number = await decimalsOf(ldotAddress);
+    const borrowAmountInLdot = (
+      Number(repayAmountInLdot) *
+      (Number(leverage) - 1)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInLdot,
+      decimals,
+    );
+    const convertedRepayAmount: string = valueToWei(
+      repayAmountInLdot.toString(),
+      decimals,
+    );
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const statusAfterTransaction =
+      await leveragerContract.getStatusAfterLeverageLdotTransaction(
+        user,
+        convertedBorrowAmount,
+        convertedRepayAmount,
+      );
+    return {
+      totalCollateralAfterTx:
+        statusAfterTransaction.totalCollateralAfterTx.toString(),
+      totalDebtAfterTx: statusAfterTransaction.totalDebtAfterTx.toString(),
+      totalCollateralInDotAfterTx:
+        statusAfterTransaction.totalCollateralInDotAfterTx.toString(),
+      totalDebtInDotAfterTx:
+        statusAfterTransaction.totalDebtInDotAfterTx.toString(),
+      healthFactorAfterTx:
+        statusAfterTransaction.healthFactorAfterTx.toString(),
+    };
+  }
+
+  public async getStatusAfterLeverageLdotFromPositionTransaction(
+    @isEthAddress('user')
+    @isEthAddress('ldotAddress')
+    @isPositiveAmount('leverage')
+    @isPositiveAmount('supplyAmountInLdot')
+    {
+      user,
+      ldotAddress,
+      leverage,
+      supplyAmountInLdot,
+    }: LeverageLdotFromPositionParamsType,
+  ): Promise<LeveragerStatusAfterTx> {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const decimals: number = await decimalsOf(ldotAddress);
+    const borrowAmountInLdot = (
+      Number(supplyAmountInLdot) *
+      (Number(leverage) - 1)
+    ).toString();
+    const convertedBorrowAmount: string = valueToWei(
+      borrowAmountInLdot,
+      decimals,
+    );
+    const convertedSupplyAmount: string = valueToWei(
+      supplyAmountInLdot.toString(),
+      decimals,
+    );
+    const leveragerContract = this.getContractInstance(this.leveragerAddress);
+    const statusAfterTransaction =
+      await leveragerContract.getStatusAfterLeverageLdotFromPositionTransaction(
         user,
         convertedBorrowAmount,
         convertedSupplyAmount,

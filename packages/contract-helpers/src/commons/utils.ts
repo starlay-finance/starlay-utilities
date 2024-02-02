@@ -78,6 +78,14 @@ export const gasLimitRecommendations: GasRecommendationType = {
     limit: '15000000',
     recommended: '10000000',
   },
+  [ProtocolAction.leverageLdot]: {
+    limit: '15000000',
+    recommended: '10000000',
+  },
+  [ProtocolAction.leverageLdotFromPosition]: {
+    limit: '15000000',
+    recommended: '10000000',
+  },
   [ProtocolAction.closeLeverageDot]: {
     limit: '15000000',
     recommended: '10000000',
