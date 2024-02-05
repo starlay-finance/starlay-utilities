@@ -423,12 +423,12 @@ export class LeveragerLdot
       borrowAmountInLdot,
       decimals,
     );
-    const convertedRepayAmount: string = valueToWei(
+    const convertedSupplyAmount: string = valueToWei(
       supplyAmountInLdot.toString(),
       decimals,
     );
     const approveableBorrowLdotAmount: string = calcDelegateAmount(
-      new BigNumberJs(convertedRepayAmount),
+      new BigNumberJs(convertedSupplyAmount),
     ).toString();
 
     const leveragerContract = this.getContractInstance(this.leveragerAddress);
@@ -441,7 +441,7 @@ export class LeveragerLdot
       token: lTokenAddress,
       user,
       spender: this.leveragerAddress,
-      amount: convertedRepayAmount,
+      amount: convertedSupplyAmount,
     });
     const delegated = await isDelegated({
       token: variableDebtTokenAddress,
@@ -474,7 +474,7 @@ export class LeveragerLdot
       rawTxMethod: async () =>
         leveragerContract.populateTransaction.leverageLdotFromPosition(
           convertedBorrowAmount,
-          convertedRepayAmount,
+          convertedSupplyAmount,
         ),
       action: ProtocolAction.leverageLdotFromPosition,
       from: user,
