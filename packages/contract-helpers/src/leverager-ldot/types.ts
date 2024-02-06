@@ -1,18 +1,34 @@
-export type LeverageDOTParamsType = {
+export type LeverageDotParamsType = {
   user: string;
-  token: string;
-  borrow_dot_amount: string;
-  repay_dot_amount: string;
+  dotAddress: string;
+  leverage: string;
+  repayAmountInDot: string;
 };
 
-export type LeverageDOTFromPositionParamsType = {
+export type LeverageDotFromPositionParamsType = {
   user: string;
-  token: string;
-  borrow_dot_amount: string;
-  supply_dot_amount: string;
+  dotAddress: string;
+  leverage: string;
+  supplyAmountInDot: string;
 };
 
-export type CloseLeverageDOTParamsType = {
+export type LeverageLdotParamsType = {
+  user: string;
+  dotAddress: string;
+  ldotAddress: string;
+  leverage: string;
+  repayAmountInLdot: string;
+};
+
+export type LeverageLdotFromPositionParamsType = {
+  user: string;
+  dotAddress: string;
+  ldotAddress: string;
+  leverage: string;
+  supplyAmountInLdot: string;
+};
+
+export type CloseLeverageDotParamsType = {
   user: string;
   dotAddress: string;
   ldotAddress: string;

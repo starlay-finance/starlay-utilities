@@ -34,8 +34,12 @@ export interface LeveragerLdotInterface extends utils.Interface {
     'getReserveData(address)': FunctionFragment;
     'getStatusAfterLeverageDotFromPositionTransaction(address,uint256,uint256)': FunctionFragment;
     'getStatusAfterLeverageDotTransaction(address,uint256,uint256)': FunctionFragment;
+    'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)': FunctionFragment;
+    'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)': FunctionFragment;
     'leverageDot(uint256,uint256)': FunctionFragment;
     'leverageDotFromPosition(uint256,uint256)': FunctionFragment;
+    'leverageLdot(uint256,uint256)': FunctionFragment;
+    'leverageLdotFromPosition(uint256,uint256)': FunctionFragment;
     'lt(address)': FunctionFragment;
     'ltv(address)': FunctionFragment;
   };
@@ -81,11 +85,27 @@ export interface LeveragerLdotInterface extends utils.Interface {
     values: [string, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
+    functionFragment: 'getStatusAfterLeverageLdotFromPositionTransaction',
+    values: [string, BigNumberish, BigNumberish],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'getStatusAfterLeverageLdotTransaction',
+    values: [string, BigNumberish, BigNumberish],
+  ): string;
+  encodeFunctionData(
     functionFragment: 'leverageDot',
     values: [BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: 'leverageDotFromPosition',
+    values: [BigNumberish, BigNumberish],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'leverageLdot',
+    values: [BigNumberish, BigNumberish],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'leverageLdotFromPosition',
     values: [BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(functionFragment: 'lt', values: [string]): string;
@@ -132,11 +152,27 @@ export interface LeveragerLdotInterface extends utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
+    functionFragment: 'getStatusAfterLeverageLdotFromPositionTransaction',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'getStatusAfterLeverageLdotTransaction',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
     functionFragment: 'leverageDot',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: 'leverageDotFromPosition',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'leverageLdot',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'leverageLdotFromPosition',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: 'lt', data: BytesLike): Result;
@@ -385,6 +421,78 @@ export interface LeveragerLdot extends Contract {
       4: BigNumber;
     }>;
 
+    getStatusAfterLeverageLdotFromPositionTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    getStatusAfterLeverageLdotTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -406,6 +514,30 @@ export interface LeveragerLdot extends Contract {
     'leverageDotFromPosition(uint256,uint256)'(
       borrow_dot_amount: BigNumberish,
       supply_dot_amount: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<ContractTransaction>;
+
+    leverageLdot(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<ContractTransaction>;
+
+    'leverageLdot(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<ContractTransaction>;
+
+    leverageLdotFromPosition(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<ContractTransaction>;
+
+    'leverageLdotFromPosition(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
       overrides?: Overrides,
     ): Promise<ContractTransaction>;
 
@@ -630,6 +762,78 @@ export interface LeveragerLdot extends Contract {
     4: BigNumber;
   }>;
 
+  getStatusAfterLeverageLdotFromPositionTransaction(
+    account: string,
+    borrowAmountInLdot: BigNumberish,
+    supplyAmountInLdot: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
+  'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)'(
+    account: string,
+    borrowAmountInLdot: BigNumberish,
+    supplyAmountInLdot: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
+  getStatusAfterLeverageLdotTransaction(
+    account: string,
+    borrowAmountInLdot: BigNumberish,
+    repayAmountInLdot: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
+  'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)'(
+    account: string,
+    borrowAmountInLdot: BigNumberish,
+    repayAmountInLdot: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<{
+    totalCollateralAfterTx: BigNumber;
+    totalDebtAfterTx: BigNumber;
+    totalCollateralInDotAfterTx: BigNumber;
+    totalDebtInDotAfterTx: BigNumber;
+    healthFactorAfterTx: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
   leverageDot(
     borrow_dot_amount: BigNumberish,
     repay_dot_amount: BigNumberish,
@@ -651,6 +855,30 @@ export interface LeveragerLdot extends Contract {
   'leverageDotFromPosition(uint256,uint256)'(
     borrow_dot_amount: BigNumberish,
     supply_dot_amount: BigNumberish,
+    overrides?: Overrides,
+  ): Promise<ContractTransaction>;
+
+  leverageLdot(
+    borrowAmountInLdot: BigNumberish,
+    repayAmountInLdot: BigNumberish,
+    overrides?: Overrides,
+  ): Promise<ContractTransaction>;
+
+  'leverageLdot(uint256,uint256)'(
+    borrowAmountInLdot: BigNumberish,
+    repayAmountInLdot: BigNumberish,
+    overrides?: Overrides,
+  ): Promise<ContractTransaction>;
+
+  leverageLdotFromPosition(
+    borrowAmountInLdot: BigNumberish,
+    supplyAmountInLdot: BigNumberish,
+    overrides?: Overrides,
+  ): Promise<ContractTransaction>;
+
+  'leverageLdotFromPosition(uint256,uint256)'(
+    borrowAmountInLdot: BigNumberish,
+    supplyAmountInLdot: BigNumberish,
     overrides?: Overrides,
   ): Promise<ContractTransaction>;
 
@@ -855,6 +1083,78 @@ export interface LeveragerLdot extends Contract {
       4: BigNumber;
     }>;
 
+    getStatusAfterLeverageLdotFromPositionTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    getStatusAfterLeverageLdotTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<{
+      totalCollateralAfterTx: BigNumber;
+      totalDebtAfterTx: BigNumber;
+      totalCollateralInDotAfterTx: BigNumber;
+      totalDebtInDotAfterTx: BigNumber;
+      healthFactorAfterTx: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -876,6 +1176,30 @@ export interface LeveragerLdot extends Contract {
     'leverageDotFromPosition(uint256,uint256)'(
       borrow_dot_amount: BigNumberish,
       supply_dot_amount: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<boolean>;
+
+    leverageLdot(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<boolean>;
+
+    'leverageLdot(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<boolean>;
+
+    leverageLdotFromPosition(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<boolean>;
+
+    'leverageLdotFromPosition(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<boolean>;
 
@@ -992,6 +1316,34 @@ export interface LeveragerLdot extends Contract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
+    getStatusAfterLeverageLdotFromPositionTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    getStatusAfterLeverageLdotTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -1013,6 +1365,30 @@ export interface LeveragerLdot extends Contract {
     'leverageDotFromPosition(uint256,uint256)'(
       borrow_dot_amount: BigNumberish,
       supply_dot_amount: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<BigNumber>;
+
+    leverageLdot(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<BigNumber>;
+
+    'leverageLdot(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<BigNumber>;
+
+    leverageLdotFromPosition(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<BigNumber>;
+
+    'leverageLdotFromPosition(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
       overrides?: Overrides,
     ): Promise<BigNumber>;
 
@@ -1135,6 +1511,34 @@ export interface LeveragerLdot extends Contract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
+    getStatusAfterLeverageLdotFromPositionTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'getStatusAfterLeverageLdotFromPositionTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    getStatusAfterLeverageLdotTransaction(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    'getStatusAfterLeverageLdotTransaction(address,uint256,uint256)'(
+      account: string,
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
     leverageDot(
       borrow_dot_amount: BigNumberish,
       repay_dot_amount: BigNumberish,
@@ -1156,6 +1560,30 @@ export interface LeveragerLdot extends Contract {
     'leverageDotFromPosition(uint256,uint256)'(
       borrow_dot_amount: BigNumberish,
       supply_dot_amount: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<PopulatedTransaction>;
+
+    leverageLdot(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<PopulatedTransaction>;
+
+    'leverageLdot(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      repayAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<PopulatedTransaction>;
+
+    leverageLdotFromPosition(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
+      overrides?: Overrides,
+    ): Promise<PopulatedTransaction>;
+
+    'leverageLdotFromPosition(uint256,uint256)'(
+      borrowAmountInLdot: BigNumberish,
+      supplyAmountInLdot: BigNumberish,
       overrides?: Overrides,
     ): Promise<PopulatedTransaction>;
 

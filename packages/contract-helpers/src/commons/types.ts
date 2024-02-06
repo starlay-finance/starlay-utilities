@@ -88,6 +88,8 @@ export enum ProtocolAction {
   bulk = 'bulk',
   leverageDot = 'leverageDot',
   leverageDotFromPosition = 'leverageDotFromPosition',
+  leverageLdot = 'leverageLdot',
+  leverageLdotFromPosition = 'leverageLdotFromPosition',
   closeLeverageDot = 'closeLeverageDot',
 }
 
