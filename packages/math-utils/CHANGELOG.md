@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.0.20 (2024-02-06)
+
+**Note:** Version bump only for package @starlay-finance/math-utils
+
+
+
+
+
+## 0.0.19 (2024-02-01)
+
+**Note:** Version bump only for package @starlay-finance/math-utils
+
+
+
+
+
+## 0.0.18 (2022-07-15)
+
+**Note:** Version bump only for package @starlay-finance/math-utils
+
+
+
+
+
 ## 0.0.17 (2022-07-05)
 
 **Note:** Version bump only for package @starlay-finance/math-utils
